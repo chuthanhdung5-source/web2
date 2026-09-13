@@ -51,9 +51,17 @@ def my_sessions(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Lịch học của tôi."""
+    """Lịch học của tôi (bao gồm ca được phân công & ca đang đăng ký chờ duyệt)."""
+    from app.models.session import SessionRegistration, RegistrationStatus
+    reg_session_ids = [
+        r.weekly_session_id for r in db.query(SessionRegistration).filter(
+            SessionRegistration.member_id == current_user.id,
+            SessionRegistration.status == RegistrationStatus.pending
+        ).all()
+    ]
     return db.query(WeeklySession).filter(
-        WeeklySession.assigned_member_id == current_user.id
+        (WeeklySession.assigned_member_id == current_user.id) |
+        (WeeklySession.id.in_(reg_session_ids))
     ).order_by(WeeklySession.session_date.desc()).all()
 
 

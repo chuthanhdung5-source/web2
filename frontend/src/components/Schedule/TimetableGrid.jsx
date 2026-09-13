@@ -30,6 +30,7 @@ export default function TimetableGrid({
   isAdmin = false,
   members = [],
   onRegister,
+  onCancelRegister,
   onAssign,
   onApprove,
   currentUserId,
@@ -263,9 +264,18 @@ export default function TimetableGrid({
                                   const myReg = session.registrations?.find(r => r.member_id === currentUserId)
                                   if (myReg) {
                                     return (
-                                      <span className="badge badge-registered" style={{ fontSize: '0.62rem', width: '100%', justifyContent: 'center' }}>
-                                        🟠 Đã đăng ký
-                                      </span>
+                                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                        <span className="badge badge-registered" style={{ fontSize: '0.62rem', width: '100%', justifyContent: 'center' }}>
+                                          🟠 Đã đăng ký
+                                        </span>
+                                        <button
+                                          className="btn btn-danger btn-sm"
+                                          style={{ width: '100%', padding: '1px 4px', fontSize: '0.62rem', justifyContent: 'center' }}
+                                          onClick={() => onCancelRegister && onCancelRegister(session.id)}
+                                        >
+                                          ❌ Hủy đăng ký
+                                        </button>
+                                      </div>
                                     )
                                   }
                                   if (session.status === 'open' || session.status === 'registered') {

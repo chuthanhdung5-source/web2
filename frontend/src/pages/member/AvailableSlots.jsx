@@ -43,6 +43,20 @@ export default function AvailableSlots() {
     }
   }
 
+  const cancelRegister = async (sessionId) => {
+    if (!confirm('Bạn có chắc muốn hủy đăng ký ca học này?')) return
+    setRegistering(sessionId)
+    try {
+      await memberAPI.cancelRegistration(sessionId)
+      toast.success('Đã hủy đăng ký ca học')
+      load()
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Hủy thất bại')
+    } finally {
+      setRegistering(null)
+    }
+  }
+
   const weekLabel = `${format(weekStart, 'dd/MM')} – ${format(addWeeks(weekStart, 1), 'dd/MM/yyyy')}`
 
   return (
@@ -84,6 +98,7 @@ export default function AvailableSlots() {
           isAdmin={false}
           currentUserId={user?.id}
           onRegister={register}
+          onCancelRegister={cancelRegister}
         />
       ) : sessions.length === 0 ? (
         <div className="empty-state">
