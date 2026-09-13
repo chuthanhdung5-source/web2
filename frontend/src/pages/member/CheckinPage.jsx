@@ -87,7 +87,7 @@ export default function CheckinPage() {
       <div className="grid grid-2">
         {checkins.map(c => {
           const isActive = isCurrentPeriod(c.period_number)
-          const canUpload = ['pending'].includes(c.status) && c.status !== 'missed'
+          const canUpload = c.status !== 'verified' && c.status !== 'missed'
           const hasPhoto = Boolean(c.photo_url || preview[c.id])
 
           let statusBadge = { label: 'Chưa nộp', icon: '📷', cls: 'badge-open' }
@@ -103,8 +103,8 @@ export default function CheckinPage() {
 
           return (
             <div key={c.id} className={`card ${isActive ? '' : ''}`} style={{
-              border: `1px solid ${hasPhoto ? 'var(--accent)' : isActive ? 'var(--primary)' : 'var(--border)'}`,
-              boxShadow: isActive || hasPhoto ? 'var(--shadow-glow)' : 'none',
+              border: `1px solid ${c.status === 'rejected' ? 'var(--accent-red)' : hasPhoto ? 'var(--accent)' : isActive ? 'var(--primary)' : 'var(--border)'}`,
+              boxShadow: c.status === 'rejected' ? '0 0 12px rgba(239, 68, 68, 0.25)' : isActive || hasPhoto ? 'var(--shadow-glow)' : 'none',
             }}>
               <div className="flex flex-between" style={{ marginBottom: 12 }}>
                 <div>
@@ -143,13 +143,19 @@ export default function CheckinPage() {
               {canUpload && (
                 <label
                   id={`upload-period-${c.period_number}`}
-                  className={`btn ${isActive ? 'btn-primary' : 'btn-secondary'}`}
-                  style={{ width: '100%', justifyContent: 'center', cursor: 'pointer' }}
+                  className={`btn ${c.status === 'rejected' ? 'btn-danger' : isActive ? 'btn-primary' : 'btn-secondary'}`}
+                  style={{
+                    width: '100%',
+                    justify: 'center',
+                    cursor: 'pointer',
+                    background: c.status === 'rejected' ? 'var(--accent-red)' : undefined,
+                    color: c.status === 'rejected' ? '#fff' : undefined,
+                  }}
                 >
                   {uploading === c.id ? (
                     <><span className="spinner" /> Đang upload...</>
                   ) : (
-                    <>{c.photo_url ? '🔄 Nộp lại ảnh' : '📷 Chụp/Chọn ảnh'}</>
+                    <>{c.status === 'rejected' ? '🔄 Upload lại ảnh bị từ chối' : c.photo_url ? '🔄 Nộp lại ảnh' : '📷 Chụp/Chọn ảnh'}</>
                   )}
                   <input
                     type="file"

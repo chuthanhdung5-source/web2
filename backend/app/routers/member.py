@@ -200,9 +200,11 @@ async def upload_checkin_photo(
         raise HTTPException(status_code=400, detail="Tiết này đã quá hạn nộp ảnh")
 
     # Kiểm tra thời gian nộp ảnh (dùng UTC chuẩn để lưu DB và quy đổi hiển thị Frontend)
+    # Nếu bị từ chối, admin đã yêu cầu nộp lại nên cho phép nộp khắc phục ảnh
     now = datetime.utcnow()
-    if not is_checkin_time_valid(checkin.period_number, now, session.session_date):
-        # Cho phép nộp trước giờ học 15 phút hoặc trong giờ + 30p buffer
+    is_reupload = (checkin.status == CheckinStatus.rejected)
+
+    if not is_reupload and not is_checkin_time_valid(checkin.period_number, now, session.session_date):
         period_info = PERIOD_SCHEDULE.get(checkin.period_number)
         raise HTTPException(
             status_code=400,
@@ -220,13 +222,14 @@ async def upload_checkin_photo(
     checkin.photo_filename = filename
     checkin.submitted_at = now
     checkin.status = CheckinStatus.pending
+    checkin.reject_reason = None  # Xóa lý do từ chối cũ khi nộp lại ảnh mới
 
     db.commit()
 
     log_activity(
-        db, current_user, "PHOTO_UPLOAD",
-        f"Nộp ảnh điểm danh tiết {checkin.period_number}",
-        f"Thành viên {current_user.full_name} đã nộp ảnh điểm danh tiết {checkin.period_number} cho ca học ngày {session.session_date}.",
+        db, current_user, "PHOTO_REUPLOAD" if is_reupload else "PHOTO_UPLOAD",
+        f"{'Nộp lại' if is_reupload else 'Nộp'} ảnh điểm danh tiết {checkin.period_number}",
+        f"Thành viên {current_user.full_name} đã {'nộp lại' if is_reupload else 'nộp'} ảnh điểm danh tiết {checkin.period_number} cho ca học ngày {session.session_date}.",
         target_id=checkin.id
     )
 
