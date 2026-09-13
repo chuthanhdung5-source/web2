@@ -16,6 +16,9 @@ from app.utils.period_time import (
 )
 from app.config import settings
 
+router = APIRouter(prefix="/member", tags=["Member"])
+
+
 @router.post("/upload-qr")
 async def upload_payment_qr(
     file: UploadFile = File(...),
