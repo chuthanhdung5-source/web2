@@ -88,11 +88,23 @@ export default function CheckinPage() {
         {checkins.map(c => {
           const isActive = isCurrentPeriod(c.period_number)
           const canUpload = ['pending'].includes(c.status) && c.status !== 'missed'
+          const hasPhoto = Boolean(c.photo_url || preview[c.id])
+
+          let statusBadge = { label: 'Chưa nộp', icon: '📷', cls: 'badge-open' }
+          if (c.status === 'verified') {
+            statusBadge = { label: 'Đã xác nhận', icon: '✅', cls: 'badge-verified' }
+          } else if (c.status === 'rejected') {
+            statusBadge = { label: 'Bị từ chối', icon: '❌', cls: 'badge-rejected' }
+          } else if (c.status === 'missed') {
+            statusBadge = { label: 'Bỏ tiết', icon: '🚫', cls: 'badge-missed' }
+          } else if (hasPhoto) {
+            statusBadge = { label: 'Chờ xác nhận', icon: '⏳', cls: 'badge-registered' }
+          }
 
           return (
             <div key={c.id} className={`card ${isActive ? '' : ''}`} style={{
-              border: `1px solid ${isActive ? 'var(--primary)' : 'var(--border)'}`,
-              boxShadow: isActive ? 'var(--shadow-glow)' : 'none',
+              border: `1px solid ${hasPhoto ? 'var(--accent)' : isActive ? 'var(--primary)' : 'var(--border)'}`,
+              boxShadow: isActive || hasPhoto ? 'var(--shadow-glow)' : 'none',
             }}>
               <div className="flex flex-between" style={{ marginBottom: 12 }}>
                 <div>
@@ -100,10 +112,8 @@ export default function CheckinPage() {
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{PERIOD_TIMES[c.period_number]}</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
-                  <span className={`badge ${STATUS_CLS[c.status]}`}>
-                    {STATUS_ICON[c.status]} {
-                      { pending: 'Chưa nộp', verified: 'Đã xác nhận', rejected: 'Bị từ chối', missed: 'Bỏ tiết' }[c.status]
-                    }
+                  <span className={`badge ${statusBadge.cls}`}>
+                    {statusBadge.icon} {statusBadge.label}
                   </span>
                   {isActive && <span style={{ fontSize: '0.7rem', color: 'var(--primary-light)', fontWeight: 600 }}>🔴 ĐANG HỌC</span>}
                 </div>
