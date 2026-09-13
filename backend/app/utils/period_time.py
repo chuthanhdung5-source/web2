@@ -66,10 +66,20 @@ def get_checkin_deadline(session_date, period_number: int, buffer_minutes: int =
     return deadline_dt
 
 
-def is_checkin_time_valid(period_number: int, submitted_at: datetime, session_date, buffer_before: int = 15, buffer_after: int = 30) -> bool:
+from datetime import time, datetime, timedelta, timezone
+
+VN_TZ = timezone(timedelta(hours=7))
+
+
+def get_vietnam_now() -> datetime:
+    """Trả về datetime hiện tại theo giờ Việt Nam (UTC+7) dạng naive."""
+    return datetime.now(VN_TZ).replace(tzinfo=None)
+
+
+def is_checkin_time_valid(period_number: int, submitted_at: datetime, session_date, buffer_before: int = 30, buffer_after: int = 60) -> bool:
     """
     Kiểm tra xem thời gian nộp ảnh có hợp lệ không.
-    Hợp lệ: Cho phép nộp từ (giờ tiết bắt đầu - 15 phút) đến (giờ tiết kết thúc + 30 phút).
+    Tự động chuẩn hóa về giờ Việt Nam (UTC+7) và hỗ trợ buffer trước 30p, sau 60p.
     """
     if period_number not in PERIOD_SCHEDULE:
         return False
@@ -79,11 +89,15 @@ def is_checkin_time_valid(period_number: int, submitted_at: datetime, session_da
     valid_from = datetime.combine(session_date, period_start) - timedelta(minutes=buffer_before)
     valid_to = datetime.combine(session_date, period_end) + timedelta(minutes=buffer_after)
 
-    # Make timezone-naive comparison
+    # Đảm bảo submitted_at được chuẩn hóa về giờ Việt Nam nếu đang là UTC hoặc naive từ container UTC
     if submitted_at.tzinfo:
-        submitted_naive = submitted_at.replace(tzinfo=None)
+        submitted_naive = submitted_at.astimezone(VN_TZ).replace(tzinfo=None)
     else:
-        submitted_naive = submitted_at
+        # Nếu nộp từ container Docker chạy UTC, nếu giờ < valid_from hơn 5 tiếng -> cộng 7 tiếng
+        if (valid_from - submitted_at).total_seconds() > 3600 * 5:
+            submitted_naive = submitted_at + timedelta(hours=7)
+        else:
+            submitted_naive = submitted_at
 
     return valid_from <= submitted_naive <= valid_to
 

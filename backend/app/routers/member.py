@@ -12,7 +12,7 @@ from app.middleware.auth import get_current_user
 from app.utils.gcs import upload_photo
 from app.utils.period_time import (
     get_periods_for_slot, get_checkin_deadline,
-    is_checkin_time_valid, PERIOD_SCHEDULE
+    is_checkin_time_valid, PERIOD_SCHEDULE, get_vietnam_now
 )
 from app.config import settings
 
@@ -145,7 +145,7 @@ async def upload_checkin_photo(
         raise HTTPException(status_code=400, detail="Tiết này đã quá hạn nộp ảnh")
 
     # Kiểm tra thời gian nộp ảnh
-    now = datetime.now()
+    now = get_vietnam_now()
     if not is_checkin_time_valid(checkin.period_number, now, session.session_date):
         # Cho phép nộp trước giờ học 15 phút hoặc trong giờ + 30p buffer
         period_info = PERIOD_SCHEDULE.get(checkin.period_number)

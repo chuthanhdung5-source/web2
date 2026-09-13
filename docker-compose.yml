@@ -32,6 +32,7 @@ services:
     env_file:
       - .env
     environment:
+      TZ: Asia/Ho_Chi_Minh
       DATABASE_URL: postgresql://admin:${DB_PASSWORD:-webhocho123}@db:5432/webhocho
     volumes:
       - ./backend:/app
