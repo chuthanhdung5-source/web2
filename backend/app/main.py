@@ -107,6 +107,39 @@ async def startup_event():
         # Seed học kỳ và lịch học
         semester_id = seed_default_semester(db)
         seed_schedule(db, semester_id)
+
+        # Xóa môn MAT3382 (Lập trình cho Khoa học dữ liệu) nếu còn trong DB do người dùng đã hủy
+        try:
+            db.execute(text("""
+                DELETE FROM period_checkins 
+                WHERE weekly_session_id IN (
+                    SELECT ws.id FROM weekly_sessions ws
+                    JOIN schedule_slots ss ON ws.schedule_slot_id = ss.id
+                    JOIN subjects subj ON ss.subject_id = subj.id
+                    WHERE subj.code = 'MAT3382'
+                );
+                DELETE FROM session_registrations 
+                WHERE weekly_session_id IN (
+                    SELECT ws.id FROM weekly_sessions ws
+                    JOIN schedule_slots ss ON ws.schedule_slot_id = ss.id
+                    JOIN subjects subj ON ss.subject_id = subj.id
+                    WHERE subj.code = 'MAT3382'
+                );
+                DELETE FROM weekly_sessions 
+                WHERE schedule_slot_id IN (
+                    SELECT ss.id FROM schedule_slots ss 
+                    JOIN subjects subj ON ss.subject_id = subj.id 
+                    WHERE subj.code = 'MAT3382'
+                );
+                DELETE FROM schedule_slots 
+                WHERE subject_id IN (
+                    SELECT id FROM subjects WHERE code = 'MAT3382'
+                );
+                DELETE FROM subjects WHERE code = 'MAT3382';
+            """))
+            db.commit()
+        except Exception:
+            db.rollback()
     finally:
         db.close()
 

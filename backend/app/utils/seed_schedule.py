@@ -21,18 +21,6 @@ SUBJECTS_DATA = [
         ]
     },
     {
-        "code": "MAT3382",
-        "name": "Lập trình cho Khoa học dữ liệu",
-        "credits": 2,
-        "class_code": "MAT3382 1",
-        "status": "Đăng ký lần đầu",
-        "tuition": 0.0,
-        "slots": [
-            {"day": 2, "start_period": 9, "end_period": 10, "classroom": "303T4 Phong May"},  # T2, tiết 9-10
-            {"day": 3, "start_period": 1, "end_period": 2, "classroom": "303T4 Phong May"},  # T3, tiết 1-2
-        ]
-    },
-    {
         "code": "MAT3390",
         "name": "Nhập môn Tin sinh học",
         "credits": 3,

@@ -32,6 +32,24 @@ class AdminProfileUpdate(BaseModel):
     notes: Optional[str] = None
 
 
+class SubjectCreate(BaseModel):
+    code: str
+    name: str
+    credits: Optional[int] = 3
+    class_code: Optional[str] = None
+    status: Optional[str] = "Đăng ký lần đầu"
+    tuition: Optional[float] = 0.0
+
+
+class SubjectUpdate(BaseModel):
+    code: Optional[str] = None
+    name: Optional[str] = None
+    credits: Optional[int] = None
+    class_code: Optional[str] = None
+    status: Optional[str] = None
+    tuition: Optional[float] = None
+
+
 class SubjectOut(BaseModel):
     id: int
     code: str
@@ -56,9 +74,33 @@ class SemesterOut(BaseModel):
         from_attributes = True
 
 
+class ScheduleSlotCreate(BaseModel):
+    subject_id: int
+    semester_id: int
+    day_of_week: int  # 2: Monday, ..., 8: Sunday
+    start_period: int
+    end_period: int
+    classroom: Optional[str] = "Chưa có phòng"
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    session_type: Optional[str] = None
+
+
+class ScheduleSlotUpdate(BaseModel):
+    subject_id: Optional[int] = None
+    day_of_week: Optional[int] = None
+    start_period: Optional[int] = None
+    end_period: Optional[int] = None
+    classroom: Optional[str] = None
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
 class ScheduleSlotOut(BaseModel):
     id: int
     subject_id: int
+    semester_id: Optional[int] = None
     day_of_week: int
     session_type: Optional[str]
     start_period: int
@@ -66,7 +108,9 @@ class ScheduleSlotOut(BaseModel):
     start_time: Optional[str]
     end_time: Optional[str]
     classroom: Optional[str]
+    is_active: Optional[bool] = True
     subject: SubjectOut
 
     class Config:
         from_attributes = True
+

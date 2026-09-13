@@ -40,6 +40,14 @@ export const adminAPI = {
   getFeedbacks: (status) => api.get('/admin/feedbacks', { params: { status } }),
   replyFeedback: (id, reply, status) =>
     api.post(`/admin/feedbacks/${id}/reply`, null, { params: { reply, status } }),
+  // Subject & Slot CRUD
+  createSubject: (data) => api.post('/admin/subjects', data),
+  updateSubject: (id, data) => api.put(`/admin/subjects/${id}`, data),
+  deleteSubject: (id) => api.delete(`/admin/subjects/${id}`),
+  createSlot: (data) => api.post('/admin/schedule-slots', data),
+  updateSlot: (id, data) => api.put(`/admin/schedule-slots/${id}`, data),
+  deleteSlot: (id) => api.delete(`/admin/schedule-slots/${id}`),
+  deleteWeeklySession: (id) => api.delete(`/admin/weekly-sessions/${id}`),
 }
 
 export const scheduleAPI = {

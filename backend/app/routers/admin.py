@@ -7,11 +7,15 @@ from app.models.checkin import CheckinStatus
 from app.models.session import SessionStatus
 from app.models.payment import PaymentStatus
 from app.schemas.auth import UserOut
-from app.schemas.schedule import AdminProfileOut, AdminProfileUpdate, SubjectOut, ScheduleSlotOut
+from app.schemas.schedule import (
+    AdminProfileOut, AdminProfileUpdate, SubjectOut, ScheduleSlotOut,
+    SubjectCreate, SubjectUpdate, ScheduleSlotCreate, ScheduleSlotUpdate
+)
 from app.schemas.session import WeeklySessionOut, PaymentOut, NotificationOut, MemberStatsOut
 from app.middleware.auth import require_admin, get_current_user
 from app.utils.gcs import upload_photo
 from app.utils.activity import log_activity
+from app.utils.period_time import get_slot_start_time, get_slot_end_time, get_session_type
 from app.config import settings
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
@@ -604,3 +608,228 @@ def reply_feedback(
 
     db.commit()
     return {"message": "Đã gửi phản hồi thành công"}
+
+
+# ===== SUBJECT & SCHEDULE SLOT CRUD (ADMIN) =====
+@router.post("/subjects", response_model=SubjectOut)
+def create_subject(
+    data: SubjectCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    existing = db.query(Subject).filter(Subject.code == data.code).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Mã môn học đã tồn tại")
+    
+    subject = Subject(
+        code=data.code,
+        name=data.name,
+        credits=data.credits,
+        class_code=data.class_code,
+        status=data.status,
+        tuition=data.tuition,
+    )
+    db.add(subject)
+    db.commit()
+    db.refresh(subject)
+
+    log_activity(
+        db, current_user, "SUBJECT_CREATE",
+        f"Thêm môn học mới: {subject.name}",
+        f"Admin {current_user.full_name} đã thêm môn học {subject.code} - {subject.name}.",
+        target_id=subject.id
+    )
+    return subject
+
+
+@router.put("/subjects/{subject_id}", response_model=SubjectOut)
+def update_subject(
+    subject_id: int,
+    data: SubjectUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    subject = db.query(Subject).filter(Subject.id == subject_id).first()
+    if not subject:
+        raise HTTPException(status_code=404, detail="Môn học không tồn tại")
+    
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(subject, field, value)
+    
+    db.commit()
+    db.refresh(subject)
+
+    log_activity(
+        db, current_user, "SUBJECT_UPDATE",
+        f"Cập nhật môn học: {subject.name}",
+        f"Admin {current_user.full_name} đã cập nhật môn học {subject.code}.",
+        target_id=subject.id
+    )
+    return subject
+
+
+@router.delete("/subjects/{subject_id}")
+def delete_subject(
+    subject_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    subject = db.query(Subject).filter(Subject.id == subject_id).first()
+    if not subject:
+        raise HTTPException(status_code=404, detail="Môn học không tồn tại")
+
+    subject_name = subject.name
+    # Delete related period_checkins, registrations, sessions, slots
+    slots = db.query(ScheduleSlot).filter(ScheduleSlot.subject_id == subject_id).all()
+    for slot in slots:
+        sessions = db.query(WeeklySession).filter(WeeklySession.schedule_slot_id == slot.id).all()
+        for ws in sessions:
+            db.query(PeriodCheckin).filter(PeriodCheckin.weekly_session_id == ws.id).delete()
+            from app.models.session import SessionRegistration
+            db.query(SessionRegistration).filter(SessionRegistration.weekly_session_id == ws.id).delete()
+            db.delete(ws)
+        db.delete(slot)
+    
+    db.delete(subject)
+    db.commit()
+
+    log_activity(
+        db, current_user, "SUBJECT_DELETE",
+        f"Xóa môn học: {subject_name}",
+        f"Admin {current_user.full_name} đã xóa môn học {subject_name} và toàn bộ lịch liên quan.",
+        target_id=subject_id
+    )
+    return {"message": f"Đã xóa môn học {subject_name}"}
+
+
+@router.post("/schedule-slots", response_model=ScheduleSlotOut)
+def create_schedule_slot(
+    data: ScheduleSlotCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    subject = db.query(Subject).filter(Subject.id == data.subject_id).first()
+    if not subject:
+        raise HTTPException(status_code=404, detail="Môn học không tồn tại")
+
+    start_t = data.start_time or get_slot_start_time(data.start_period)
+    end_t = data.end_time or get_slot_end_time(data.end_period)
+    s_type = data.session_type or get_session_type(data.start_period)
+
+    slot = ScheduleSlot(
+        subject_id=data.subject_id,
+        semester_id=data.semester_id,
+        day_of_week=data.day_of_week,
+        start_period=data.start_period,
+        end_period=data.end_period,
+        start_time=start_t,
+        end_time=end_t,
+        session_type=s_type,
+        classroom=data.classroom,
+        is_active=True,
+    )
+    db.add(slot)
+    db.commit()
+    db.refresh(slot)
+
+    log_activity(
+        db, current_user, "SCHEDULE_SLOT_CREATE",
+        f"Thêm lịch cố định môn {subject.name}",
+        f"Admin {current_user.full_name} đã thêm ca thứ {slot.day_of_week} (tiết {slot.start_period}-{slot.end_period}).",
+        target_id=slot.id
+    )
+    return slot
+
+
+@router.put("/schedule-slots/{slot_id}", response_model=ScheduleSlotOut)
+def update_schedule_slot(
+    slot_id: int,
+    data: ScheduleSlotUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    slot = db.query(ScheduleSlot).filter(ScheduleSlot.id == slot_id).first()
+    if not slot:
+        raise HTTPException(status_code=404, detail="Lịch học không tồn tại")
+
+    for field, value in data.model_dump(exclude_unset=True).items():
+        setattr(slot, field, value)
+
+    # Recalculate time if periods changed
+    if data.start_period:
+        slot.start_time = data.start_time or get_slot_start_time(slot.start_period)
+        slot.session_type = get_session_type(slot.start_period)
+    if data.end_period:
+        slot.end_time = data.end_time or get_slot_end_time(slot.end_period)
+
+    db.commit()
+    db.refresh(slot)
+
+    log_activity(
+        db, current_user, "SCHEDULE_SLOT_UPDATE",
+        f"Cập nhật lịch cố định ca #{slot.id}",
+        f"Admin {current_user.full_name} đã sửa lịch cố định cho môn {slot.subject.name if slot.subject else 'N/A'}.",
+        target_id=slot.id
+    )
+    return slot
+
+
+@router.delete("/schedule-slots/{slot_id}")
+def delete_schedule_slot(
+    slot_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    slot = db.query(ScheduleSlot).filter(ScheduleSlot.id == slot_id).first()
+    if not slot:
+        raise HTTPException(status_code=404, detail="Lịch học không tồn tại")
+
+    # Delete related sessions
+    sessions = db.query(WeeklySession).filter(WeeklySession.schedule_slot_id == slot_id).all()
+    for ws in sessions:
+        db.query(PeriodCheckin).filter(PeriodCheckin.weekly_session_id == ws.id).delete()
+        from app.models.session import SessionRegistration
+        db.query(SessionRegistration).filter(SessionRegistration.weekly_session_id == ws.id).delete()
+        db.delete(ws)
+
+    subj_name = slot.subject.name if slot.subject else "N/A"
+    db.delete(slot)
+    db.commit()
+
+    log_activity(
+        db, current_user, "SCHEDULE_SLOT_DELETE",
+        f"Xóa lịch cố định môn {subj_name}",
+        f"Admin {current_user.full_name} đã xóa lịch cố định thứ {slot.day_of_week} tiết {slot.start_period}-{slot.end_period}.",
+        target_id=slot_id
+    )
+    return {"message": "Đã xóa lịch cố định thành công"}
+
+
+@router.delete("/weekly-sessions/{session_id}")
+def delete_weekly_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    ws = db.query(WeeklySession).filter(WeeklySession.id == session_id).first()
+    if not ws:
+        raise HTTPException(status_code=404, detail="Ca học không tồn tại")
+
+    db.query(PeriodCheckin).filter(PeriodCheckin.weekly_session_id == ws.id).delete()
+    from app.models.session import SessionRegistration
+    db.query(SessionRegistration).filter(SessionRegistration.weekly_session_id == ws.id).delete()
+    
+    date_str = str(ws.session_date)
+    subj_name = ws.schedule_slot.subject.name if (ws.schedule_slot and ws.schedule_slot.subject) else "N/A"
+    
+    db.delete(ws)
+    db.commit()
+
+    log_activity(
+        db, current_user, "WEEKLY_SESSION_DELETE",
+        f"Xóa ca học ngày {date_str}",
+        f"Admin {current_user.full_name} đã xóa ca học môn {subj_name} ngày {date_str}.",
+        target_id=session_id
+    )
+    return {"message": f"Đã xóa ca học ngày {date_str}"}
+

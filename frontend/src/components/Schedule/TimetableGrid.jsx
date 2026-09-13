@@ -33,6 +33,7 @@ export default function TimetableGrid({
   onCancelRegister,
   onAssign,
   onApprove,
+  onDeleteSession,
   currentUserId,
 }) {
   const [selectedMember, setSelectedMember] = useState({})
@@ -230,11 +231,11 @@ export default function TimetableGrid({
                                   </div>
                                 )}
 
-                                {/* Admin Direct Assign Select */}
-                                <div style={{ marginTop: 2 }}>
+                                {/* Admin Direct Assign Select & Delete */}
+                                <div className="flex gap-1" style={{ marginTop: 2 }}>
                                   <select
                                     style={{
-                                      width: '100%',
+                                      flex: 1,
                                       fontSize: '0.65rem',
                                       padding: '2px 3px',
                                       borderRadius: 4,
@@ -256,6 +257,16 @@ export default function TimetableGrid({
                                       </option>
                                     ))}
                                   </select>
+                                  {onDeleteSession && (
+                                    <button
+                                      className="btn btn-danger btn-sm"
+                                      style={{ padding: '1px 5px', fontSize: '0.65rem' }}
+                                      onClick={() => onDeleteSession(session.id)}
+                                      title="Xóa ca này khỏi tuần"
+                                    >
+                                      🗑️
+                                    </button>
+                                  )}
                                 </div>
                               </div>
                             ) : (
