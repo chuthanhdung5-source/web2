@@ -115,7 +115,7 @@ def approve_session(
 
     session.status = SessionStatus.approved if approve else SessionStatus.open
     session.approved_by = current_user.id if approve else None
-    session.approved_at = datetime.utcnow() if approve else None
+    session.approved_at = datetime.now() if approve else None
     session.notes = notes
 
     if not approve:
@@ -163,7 +163,7 @@ def verify_checkin(
 
     checkin.status = CheckinStatus.verified if approve else CheckinStatus.rejected
     checkin.reject_reason = reject_reason if not approve else None
-    checkin.verified_at = datetime.utcnow()
+    checkin.verified_at = datetime.now()
 
     # Cập nhật payment nếu tất cả tiết đã được verify
     session = checkin.weekly_session
@@ -227,7 +227,7 @@ def mark_paid(
     if not payment:
         raise HTTPException(status_code=404, detail="Không tìm thấy")
     payment.status = PaymentStatus.paid
-    payment.paid_at = datetime.utcnow()
+    payment.paid_at = datetime.now()
     payment.notes = notes
 
     notif = Notification(

@@ -20,7 +20,7 @@ def mark_missed_checkins():
 
     db: Session = SessionLocal()
     try:
-        now = datetime.utcnow()
+        now = datetime.now()
         missed = db.query(PeriodCheckin).filter(
             PeriodCheckin.status == CheckinStatus.pending,
             PeriodCheckin.photo_url == None,
@@ -115,7 +115,7 @@ def send_session_reminders():
     db: Session = SessionLocal()
     try:
         today = date.today()
-        now = datetime.utcnow()
+        now = datetime.now()
         target_time = (now + timedelta(minutes=30)).time()
 
         approved_sessions = db.query(WeeklySession).filter(

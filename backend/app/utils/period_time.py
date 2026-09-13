@@ -66,17 +66,18 @@ def get_checkin_deadline(session_date, period_number: int, buffer_minutes: int =
     return deadline_dt
 
 
-def is_checkin_time_valid(period_number: int, submitted_at: datetime, session_date) -> bool:
+def is_checkin_time_valid(period_number: int, submitted_at: datetime, session_date, buffer_before: int = 15, buffer_after: int = 30) -> bool:
     """
     Kiểm tra xem thời gian nộp ảnh có hợp lệ không.
-    Hợp lệ: Nộp trong khoảng từ khi tiết bắt đầu đến 15 phút sau khi tiết kết thúc.
+    Hợp lệ: Cho phép nộp từ (giờ tiết bắt đầu - 15 phút) đến (giờ tiết kết thúc + 30 phút).
     """
-    from datetime import datetime
+    if period_number not in PERIOD_SCHEDULE:
+        return False
     period_start = PERIOD_SCHEDULE[period_number]["start"]
     period_end = PERIOD_SCHEDULE[period_number]["end"]
 
-    valid_from = datetime.combine(session_date, period_start)
-    valid_to = datetime.combine(session_date, period_end) + timedelta(minutes=15)
+    valid_from = datetime.combine(session_date, period_start) - timedelta(minutes=buffer_before)
+    valid_to = datetime.combine(session_date, period_end) + timedelta(minutes=buffer_after)
 
     # Make timezone-naive comparison
     if submitted_at.tzinfo:

@@ -61,7 +61,7 @@ def register_session(
 
     session.assigned_member_id = current_user.id
     session.status = SessionStatus.registered
-    session.registered_at = datetime.utcnow()
+    session.registered_at = datetime.now()
 
     # Tạo các PeriodCheckin records
     periods = get_periods_for_slot(slot.start_period, slot.end_period)
@@ -145,14 +145,14 @@ async def upload_checkin_photo(
         raise HTTPException(status_code=400, detail="Tiết này đã quá hạn nộp ảnh")
 
     # Kiểm tra thời gian nộp ảnh
-    now = datetime.utcnow()
+    now = datetime.now()
     if not is_checkin_time_valid(checkin.period_number, now, session.session_date):
-        # Cho phép nộp trước giờ học 10 phút hoặc trong giờ + 15p buffer
+        # Cho phép nộp trước giờ học 15 phút hoặc trong giờ + 30p buffer
         period_info = PERIOD_SCHEDULE.get(checkin.period_number)
         raise HTTPException(
             status_code=400,
-            detail=f"Chỉ được nộp ảnh trong giờ học tiết {checkin.period_number} "
-                   f"({period_info['start'].strftime('%H:%M')}-{period_info['end'].strftime('%H:%M')} + 15 phút)"
+            detail=f"Chỉ được nộp ảnh trong khoảng giờ học tiết {checkin.period_number} "
+                   f"({period_info['start'].strftime('%H:%M')}-{period_info['end'].strftime('%H:%M')} ± buffer)"
         )
 
     # Validate file type
