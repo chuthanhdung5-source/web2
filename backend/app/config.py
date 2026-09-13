@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     GCS_BUCKET_NAME: str = "webhocho-checkin-photos"
     GCS_PROJECT_ID: str = ""
     GOOGLE_APPLICATION_CREDENTIALS: str = ""
+    GCS_CREDENTIALS_JSON: str = ""
 
     FRONTEND_URL: str = "http://localhost:5173"
 
