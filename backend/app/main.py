@@ -16,10 +16,24 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# CORS
+# CORS Configuration
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+    "https://web2-tan-gamma.vercel.app",
+]
+
+if settings.FRONTEND_URL:
+    for url in settings.FRONTEND_URL.split(","):
+        clean_url = url.strip().rstrip("/")
+        if clean_url and clean_url not in origins:
+            origins.append(clean_url)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL, "http://localhost:5173", "http://localhost:3000"],
+    allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
