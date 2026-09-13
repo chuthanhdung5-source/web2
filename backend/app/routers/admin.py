@@ -668,6 +668,19 @@ def update_subject(
     return subject
 
 
+def _cleanup_session_dependencies(db: Session, session_id: int):
+    """Xóa hoặc hủy liên kết tất cả bảng phụ liên quan đến weekly_session_id trước khi xóa ca học."""
+    from app.models import PeriodCheckin, Payment, Notification
+    from app.models.session import SessionRegistration
+    from app.models.payment import MemberRating
+
+    db.query(PeriodCheckin).filter(PeriodCheckin.weekly_session_id == session_id).delete(synchronize_session=False)
+    db.query(SessionRegistration).filter(SessionRegistration.weekly_session_id == session_id).delete(synchronize_session=False)
+    db.query(Payment).filter(Payment.weekly_session_id == session_id).delete(synchronize_session=False)
+    db.query(MemberRating).filter(MemberRating.weekly_session_id == session_id).delete(synchronize_session=False)
+    db.query(Notification).filter(Notification.related_session_id == session_id).update({"related_session_id": None}, synchronize_session=False)
+
+
 @router.delete("/subjects/{subject_id}")
 def delete_subject(
     subject_id: int,
@@ -679,14 +692,12 @@ def delete_subject(
         raise HTTPException(status_code=404, detail="Môn học không tồn tại")
 
     subject_name = subject.name
-    # Delete related period_checkins, registrations, sessions, slots
+    # Delete related sessions & slots
     slots = db.query(ScheduleSlot).filter(ScheduleSlot.subject_id == subject_id).all()
     for slot in slots:
         sessions = db.query(WeeklySession).filter(WeeklySession.schedule_slot_id == slot.id).all()
         for ws in sessions:
-            db.query(PeriodCheckin).filter(PeriodCheckin.weekly_session_id == ws.id).delete()
-            from app.models.session import SessionRegistration
-            db.query(SessionRegistration).filter(SessionRegistration.weekly_session_id == ws.id).delete()
+            _cleanup_session_dependencies(db, ws.id)
             db.delete(ws)
         db.delete(slot)
     
@@ -787,9 +798,7 @@ def delete_schedule_slot(
     # Delete related sessions
     sessions = db.query(WeeklySession).filter(WeeklySession.schedule_slot_id == slot_id).all()
     for ws in sessions:
-        db.query(PeriodCheckin).filter(PeriodCheckin.weekly_session_id == ws.id).delete()
-        from app.models.session import SessionRegistration
-        db.query(SessionRegistration).filter(SessionRegistration.weekly_session_id == ws.id).delete()
+        _cleanup_session_dependencies(db, ws.id)
         db.delete(ws)
 
     subj_name = slot.subject.name if slot.subject else "N/A"
@@ -815,9 +824,7 @@ def delete_weekly_session(
     if not ws:
         raise HTTPException(status_code=404, detail="Ca học không tồn tại")
 
-    db.query(PeriodCheckin).filter(PeriodCheckin.weekly_session_id == ws.id).delete()
-    from app.models.session import SessionRegistration
-    db.query(SessionRegistration).filter(SessionRegistration.weekly_session_id == ws.id).delete()
+    _cleanup_session_dependencies(db, ws.id)
     
     date_str = str(ws.session_date)
     subj_name = ws.schedule_slot.subject.name if (ws.schedule_slot and ws.schedule_slot.subject) else "N/A"
@@ -832,4 +839,5 @@ def delete_weekly_session(
         target_id=session_id
     )
     return {"message": f"Đã xóa ca học ngày {date_str}"}
+
 

@@ -124,9 +124,9 @@ def delete_weekly_session_in_schedule(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    from app.middleware.auth import require_admin
-    from app.models import PeriodCheckin, ActivityLog
+    from app.models import PeriodCheckin, Payment, Notification
     from app.models.session import SessionRegistration
+    from app.models.payment import MemberRating
     from app.utils.activity import log_activity
     from fastapi import HTTPException
 
@@ -137,8 +137,11 @@ def delete_weekly_session_in_schedule(
     if not ws:
         raise HTTPException(status_code=404, detail="Ca học không tồn tại")
 
-    db.query(PeriodCheckin).filter(PeriodCheckin.weekly_session_id == ws.id).delete()
-    db.query(SessionRegistration).filter(SessionRegistration.weekly_session_id == ws.id).delete()
+    db.query(PeriodCheckin).filter(PeriodCheckin.weekly_session_id == ws.id).delete(synchronize_session=False)
+    db.query(SessionRegistration).filter(SessionRegistration.weekly_session_id == ws.id).delete(synchronize_session=False)
+    db.query(Payment).filter(Payment.weekly_session_id == ws.id).delete(synchronize_session=False)
+    db.query(MemberRating).filter(MemberRating.weekly_session_id == ws.id).delete(synchronize_session=False)
+    db.query(Notification).filter(Notification.related_session_id == ws.id).update({"related_session_id": None}, synchronize_session=False)
     
     date_str = str(ws.session_date)
     subj_name = ws.schedule_slot.subject.name if (ws.schedule_slot and ws.schedule_slot.subject) else "N/A"
