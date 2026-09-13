@@ -22,6 +22,8 @@ export const adminAPI = {
   getPendingSessions: () => api.get('/admin/sessions/pending'),
   approveSession: (id, approve, notes) =>
     api.post(`/admin/sessions/${id}/approve`, null, { params: { approve, notes } }),
+  assignSession: (id, memberId) =>
+    api.post(`/admin/sessions/${id}/assign`, null, { params: { member_id: memberId } }),
   getPendingCheckins: () => api.get('/admin/checkins/pending'),
   verifyCheckin: (id, approve, reason) =>
     api.post(`/admin/checkins/${id}/verify`, null, { params: { approve, reject_reason: reason } }),

@@ -136,6 +136,57 @@ def approve_session(
     return {"message": "Đã duyệt" if approve else "Đã từ chối"}
 
 
+@router.post("/sessions/{session_id}/assign")
+def assign_session(
+    session_id: int,
+    member_id: int,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin)
+):
+    """Admin giao/phân công trực tiếp ca học cho một thành viên."""
+    from datetime import datetime
+    from app.models import PeriodCheckin, User
+    from app.models.checkin import CheckinStatus
+    from app.utils.period_time import get_periods_for_slot, get_checkin_deadline
+
+    session = db.query(WeeklySession).filter(WeeklySession.id == session_id).first()
+    if not session:
+        raise HTTPException(status_code=404, detail="Ca học không tồn tại")
+
+    member = db.query(User).filter(User.id == member_id).first()
+    if not member:
+        raise HTTPException(status_code=404, detail="Thành viên không tồn tại")
+
+    session.assigned_member_id = member.id
+    session.status = SessionStatus.approved
+    session.approved_at = datetime.now()
+
+    # Tạo các PeriodCheckin records nếu chưa có
+    if not session.period_checkins:
+        slot = session.schedule_slot
+        periods = get_periods_for_slot(slot.start_period, slot.end_period)
+        for period_num in periods:
+            deadline = get_checkin_deadline(session.session_date, period_num)
+            checkin = PeriodCheckin(
+                weekly_session_id=session.id,
+                period_number=period_num,
+                status=CheckinStatus.pending,
+                deadline=deadline,
+            )
+            db.add(checkin)
+
+    notif = Notification(
+        user_id=member.id,
+        title="Bạn được phân công ca học mới 🎓",
+        message=f"Admin đã phân công bạn ca học môn {session.schedule_slot.subject.name} ngày {session.session_date}.",
+        type="info",
+        related_session_id=session.id,
+    )
+    db.add(notif)
+    db.commit()
+    return {"message": f"Đã phân công ca học cho {member.full_name}"}
+
+
 # ===== CHECKIN REVIEW =====
 @router.get("/checkins/pending")
 def get_pending_checkins(

@@ -1,21 +1,31 @@
 import { useEffect, useState } from 'react'
 import { scheduleAPI, memberAPI } from '../../api'
+import TimetableGrid from '../../components/Schedule/TimetableGrid'
+import { useAuth } from '../../context/AuthContext'
 import toast from 'react-hot-toast'
 import { format, startOfWeek, addWeeks, subWeeks } from 'date-fns'
 
 const DAY_NAMES = { 2: 'Thứ 2', 3: 'Thứ 3', 4: 'Thứ 4', 5: 'Thứ 5', 6: 'Thứ 6', 7: 'Thứ 7', 8: 'Chủ nhật' }
 
 export default function AvailableSlots() {
+  const { user } = useAuth()
   const [sessions, setSessions] = useState([])
+  const [allWeeklySessions, setAllWeeklySessions] = useState([])
   const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }))
   const [loading, setLoading] = useState(false)
   const [registering, setRegistering] = useState(null)
+  const [viewMode, setViewMode] = useState('grid') // 'grid' | 'cards'
 
   const load = () => {
     setLoading(true)
-    scheduleAPI.getAvailableSessions(format(weekStart, 'yyyy-MM-dd'))
-      .then(r => setSessions(r.data))
-      .finally(() => setLoading(false))
+    const formattedWeek = format(weekStart, 'yyyy-MM-dd')
+    Promise.all([
+      scheduleAPI.getAvailableSessions(formattedWeek),
+      scheduleAPI.getWeeklySessions(formattedWeek),
+    ]).then(([availRes, allRes]) => {
+      setSessions(availRes.data)
+      setAllWeeklySessions(allRes.data)
+    }).finally(() => setLoading(false))
   }
 
   useEffect(load, [weekStart])
@@ -37,9 +47,26 @@ export default function AvailableSlots() {
 
   return (
     <div>
-      <div className="page-header">
-        <h1>📋 Đăng ký ca học</h1>
-        <p>Chọn ca học phù hợp và đăng ký, sau đó chờ admin duyệt</p>
+      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+        <div>
+          <h1>📋 Đăng ký ca học</h1>
+          <p>Xem Bảng Thời khóa biểu ma trận tuần và bấm Đăng ký ca phù hợp</p>
+        </div>
+
+        <div className="flex gap-2">
+          <button
+            className={`btn ${viewMode === 'grid' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
+            onClick={() => setViewMode('grid')}
+          >
+            🗓️ Bảng TKB Ma trận
+          </button>
+          <button
+            className={`btn ${viewMode === 'cards' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
+            onClick={() => setViewMode('cards')}
+          >
+            📋 Ca học Trống ({sessions.length})
+          </button>
+        </div>
       </div>
 
       {/* Week nav */}
@@ -50,12 +77,19 @@ export default function AvailableSlots() {
       </div>
 
       {loading ? (
-        <div className="flex-center" style={{ height: 200 }}><div className="spinner" style={{ width: 32, height: 32 }} /></div>
+        <div className="flex-center" style={{ height: 300 }}><div className="spinner" style={{ width: 36, height: 36 }} /></div>
+      ) : viewMode === 'grid' ? (
+        <TimetableGrid
+          weeklySessions={allWeeklySessions}
+          isAdmin={false}
+          currentUserId={user?.id}
+          onRegister={register}
+        />
       ) : sessions.length === 0 ? (
         <div className="empty-state">
           <div className="icon">🏖️</div>
           <h3>Không có ca học trống trong tuần này</h3>
-          <p>Thử xem tuần khác hoặc chờ admin tạo ca mới</p>
+          <p>Thử xem tuần khác hoặc chuyển sang dạng Bảng TKB Ma trận</p>
         </div>
       ) : (
         <div className="grid grid-2">
