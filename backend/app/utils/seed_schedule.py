@@ -148,7 +148,7 @@ def seed_default_semester(db: Session) -> int:
 
 
 def seed_default_admin(db: Session):
-    """Seed tài khoản admin mặc định nếu chưa có."""
+    """Seed hoặc cập nhật mật khẩu tài khoản admin mặc định (admin / admin123456)."""
     from app.models import User, UserRole
     from app.utils.security import hash_password
 
@@ -157,7 +157,7 @@ def seed_default_admin(db: Session):
         admin_user = User(
             username="admin",
             email="admin@webhocho.com",
-            password_hash=hash_password("admin123"),
+            password_hash=hash_password("admin123456"),
             full_name="Quản Trị Viên",
             phone="0900000000",
             role=UserRole.admin,
@@ -165,5 +165,9 @@ def seed_default_admin(db: Session):
         )
         db.add(admin_user)
         db.commit()
-        print("[OK] Default admin created (admin / admin123)")
+        print("[OK] Default admin created (admin / admin123456)")
+    else:
+        admin.password_hash = hash_password("admin123456")
+        db.commit()
+        print("[OK] Admin password updated to admin123456")
 
