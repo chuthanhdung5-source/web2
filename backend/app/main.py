@@ -40,11 +40,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Routes
+# Routes (Hỗ trợ cả route chuẩn và route có prefix /api)
 app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(schedule.router)
 app.include_router(member.router)
+
+# Prefix /api compatibility
+app.include_router(auth.router, prefix="/api")
+app.include_router(admin.router, prefix="/api")
+app.include_router(schedule.router, prefix="/api")
+app.include_router(member.router, prefix="/api")
 
 # Serve local uploads (fallback khi chưa có GCS)
 uploads_dir = Path("uploads")
