@@ -63,19 +63,7 @@ def register_session(
     if session.session_date < date.today():
         raise HTTPException(status_code=400, detail="Không thể đăng ký ca học đã qua")
 
-    # Kiểm tra thành viên có đang đăng ký ca khác cùng giờ không
     slot = session.schedule_slot
-    conflict = db.query(WeeklySession).join(
-        WeeklySession.schedule_slot
-    ).filter(
-        WeeklySession.assigned_member_id == current_user.id,
-        WeeklySession.session_date == session.session_date,
-        WeeklySession.status.in_([SessionStatus.registered, SessionStatus.approved]),
-    ).first()
-
-    if conflict:
-        raise HTTPException(status_code=400, detail="Bạn đã đăng ký ca học cùng ngày")
-
     session.assigned_member_id = current_user.id
     session.status = SessionStatus.registered
     session.registered_at = datetime.now()
