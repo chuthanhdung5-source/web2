@@ -16,7 +16,21 @@ from app.utils.period_time import (
 )
 from app.config import settings
 
-router = APIRouter(prefix="/member", tags=["Member"])
+@router.post("/upload-qr")
+async def upload_payment_qr(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Upload ảnh mã QR chuyển khoản cá nhân."""
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Chỉ chấp nhận file ảnh")
+
+    url, filename = await upload_photo(file, folder=f"qr/{current_user.id}")
+    current_user.qr_code_url = url
+    db.commit()
+    db.refresh(current_user)
+    return {"message": "Đã lưu mã QR thanh toán thành công", "qr_code_url": url}
 
 
 # ===== MY SESSIONS =====

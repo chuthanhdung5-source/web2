@@ -42,9 +42,23 @@ async def startup_event():
     """Seed dữ liệu và khởi động scheduler."""
     from app.database import SessionLocal
     from app.utils.seed_schedule import seed_schedule, seed_default_semester, seed_default_admin
+    from sqlalchemy import text
 
     db = SessionLocal()
     try:
+        # Nâng cấp bảng users tự động
+        for col, col_type in [
+            ("bank_name", "VARCHAR(100)"),
+            ("bank_account_no", "VARCHAR(50)"),
+            ("bank_account_name", "VARCHAR(100)"),
+            ("qr_code_url", "VARCHAR(500)"),
+        ]:
+            try:
+                db.execute(text(f"ALTER TABLE users ADD COLUMN IF NOT EXISTS {col} {col_type};"))
+                db.commit()
+            except Exception:
+                db.rollback()
+
         # Seed admin mặc định
         seed_default_admin(db)
         # Seed học kỳ và lịch học

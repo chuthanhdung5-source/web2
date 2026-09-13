@@ -53,6 +53,7 @@ class PaymentOut(BaseModel):
     notes: Optional[str]
     created_at: datetime
     weekly_session: Optional[WeeklySessionOut]
+    member: Optional[UserOut] = None
 
     class Config:
         from_attributes = True

@@ -230,10 +230,13 @@ def mark_paid(
     payment.paid_at = datetime.now()
     payment.notes = notes
 
+    if payment.member:
+        payment.member.total_earnings = (payment.member.total_earnings or 0.0) + payment.amount
+
     notif = Notification(
         user_id=payment.member_id,
         title="Đã nhận thanh toán 💰",
-        message=f"Bạn đã nhận {payment.amount:,.0f} VNĐ cho {payment.periods_completed} tiết học.",
+        message=f"Admin đã chuyển khoản {payment.amount:,.0f}đ cho ca học {payment.weekly_session_id}.",
         type="payment",
     )
     db.add(notif)

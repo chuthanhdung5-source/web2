@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { memberAPI } from '../../api'
-import toast from 'react-hot-toast'
+import { useAuth } from '../../context/AuthContext'
 
 export default function Earnings() {
+  const { user } = useAuth()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -12,12 +14,36 @@ export default function Earnings() {
 
   if (loading) return <div className="flex-center" style={{ height: 300 }}><div className="spinner" style={{ width: 36, height: 36 }} /></div>
 
+  const hasPaymentInfo = Boolean(user?.bank_account_no || user?.qr_code_url)
+
   return (
     <div>
       <div className="page-header">
         <h1>💰 Thu nhập</h1>
         <p>Thống kê tiết học và tiền lương của bạn</p>
       </div>
+
+      {/* Payment info warning banner */}
+      {!hasPaymentInfo && (
+        <div style={{
+          background: 'rgba(245,158,11,0.15)',
+          border: '1px solid rgba(245,158,11,0.3)',
+          borderRadius: 8,
+          padding: '12px 16px',
+          marginBottom: 24,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 12
+        }}>
+          <div>
+            <strong>⚠️ Bạn chưa cài đặt tài khoản nhận tiền!</strong>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Vui lòng bổ sung Số tài khoản hoặc Mã QR để Admin chuyển khoản chính xác cho bạn.</div>
+          </div>
+          <Link to="/member/profile" className="btn btn-primary btn-sm">💳 Cài đặt ngay →</Link>
+        </div>
+      )}
 
       {/* Summary */}
       <div className="grid grid-2" style={{ marginBottom: 24 }}>

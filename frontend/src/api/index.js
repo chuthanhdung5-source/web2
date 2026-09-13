@@ -54,6 +54,11 @@ export const memberAPI = {
     form.append('file', file)
     return api.post(`/member/checkin/${checkinId}/upload`, form)
   },
+  uploadQR: (file) => {
+    const form = new FormData()
+    form.append('file', file)
+    return api.post('/member/upload-qr', form)
+  },
   getEarnings: () => api.get('/member/earnings'),
   getStats: () => api.get('/member/stats'),
   getAdminInfo: () => api.get('/member/admin-info'),

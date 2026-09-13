@@ -30,6 +30,10 @@ class UserOut(BaseModel):
     full_name: str
     phone: Optional[str]
     avatar_url: Optional[str]
+    bank_name: Optional[str] = None
+    bank_account_no: Optional[str] = None
+    bank_account_name: Optional[str] = None
+    qr_code_url: Optional[str] = None
     role: UserRole
     total_earnings: float
     is_active: bool
@@ -43,6 +47,10 @@ class UserUpdate(BaseModel):
     full_name: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[EmailStr] = None
+    bank_name: Optional[str] = None
+    bank_account_no: Optional[str] = None
+    bank_account_name: Optional[str] = None
+    qr_code_url: Optional[str] = None
 
 
 class PasswordChange(BaseModel):
