@@ -8,6 +8,18 @@ from app.schemas.schedule import ScheduleSlotOut
 from app.schemas.auth import UserOut
 
 
+class SessionRegistrationOut(BaseModel):
+    id: int
+    weekly_session_id: int
+    member_id: int
+    registered_at: datetime
+    status: str
+    member: Optional[UserOut] = None
+
+    class Config:
+        from_attributes = True
+
+
 class WeeklySessionOut(BaseModel):
     id: int
     session_date: date
@@ -17,9 +29,11 @@ class WeeklySessionOut(BaseModel):
     registered_at: Optional[datetime]
     schedule_slot: ScheduleSlotOut
     assigned_member: Optional[UserOut]
+    registrations: List[SessionRegistrationOut] = []
 
     class Config:
         from_attributes = True
+
 
 
 class WeeklySessionRegister(BaseModel):

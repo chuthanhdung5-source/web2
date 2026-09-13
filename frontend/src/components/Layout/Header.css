@@ -11,6 +11,38 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-8);
+  transition: left var(--transition);
+}
+
+.desktop-collapsed .top-header {
+  left: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.sidebar-toggle-btn {
+  display: flex;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius);
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+  cursor: pointer;
+}
+
+.sidebar-toggle-btn:hover {
+  background: var(--surface-elevated);
+  border-color: var(--primary);
+  color: var(--primary-light);
 }
 
 .header-title {
@@ -43,3 +75,25 @@
   font-size: 0.875rem;
   font-weight: 600;
 }
+
+@media (max-width: 768px) {
+  .top-header {
+    left: 0 !important;
+    padding: 0 var(--space-4);
+  }
+
+  .header-date {
+    display: none;
+  }
+
+  .header-title {
+    font-size: 1rem;
+  }
+
+  .earnings-pill {
+    padding: 4px 10px;
+    font-size: 0.78rem;
+  }
+}
+
+

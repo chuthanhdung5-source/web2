@@ -16,6 +16,9 @@ from app.utils.period_time import (
 )
 from app.config import settings
 
+from app.utils.activity import log_activity
+from app.models.activity_log import ActivityLog
+
 router = APIRouter(prefix="/member", tags=["Member"])
 
 
@@ -33,6 +36,12 @@ async def upload_payment_qr(
     current_user.qr_code_url = url
     db.commit()
     db.refresh(current_user)
+
+    log_activity(
+        db, current_user, "QR_UPLOAD",
+        "Cập nhật mã QR thanh toán",
+        f"Thành viên {current_user.full_name} đã tải lên mã QR nhận tiền mới."
+    )
     return {"message": "Đã lưu mã QR thanh toán thành công", "qr_code_url": url}
 
 
@@ -54,34 +63,57 @@ def register_session(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Đăng ký một ca học trống."""
+    """Đăng ký một ca học (cho phép nhiều thành viên cùng đăng ký chờ duyệt)."""
+    from app.models.session import SessionRegistration, RegistrationStatus
     session = db.query(WeeklySession).filter(WeeklySession.id == session_id).first()
     if not session:
         raise HTTPException(status_code=404, detail="Ca học không tồn tại")
-    if session.status != SessionStatus.open:
-        raise HTTPException(status_code=400, detail="Ca học này không còn trống")
+    if session.status in [SessionStatus.approved, SessionStatus.completed, SessionStatus.cancelled]:
+        raise HTTPException(status_code=400, detail="Ca học này đã được duyệt hoặc đóng")
     if session.session_date < date.today():
         raise HTTPException(status_code=400, detail="Không thể đăng ký ca học đã qua")
 
-    slot = session.schedule_slot
-    session.assigned_member_id = current_user.id
-    session.status = SessionStatus.registered
-    session.registered_at = datetime.now()
+    # Kiểm tra nếu thành viên đã đăng ký ca này rồi
+    existing = db.query(SessionRegistration).filter(
+        SessionRegistration.weekly_session_id == session_id,
+        SessionRegistration.member_id == current_user.id,
+        SessionRegistration.status == RegistrationStatus.pending
+    ).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Bạn đã đăng ký ca học này rồi, đang chờ admin duyệt")
 
-    # Tạo các PeriodCheckin records
-    periods = get_periods_for_slot(slot.start_period, slot.end_period)
-    for period_num in periods:
-        deadline = get_checkin_deadline(session.session_date, period_num)
-        checkin = PeriodCheckin(
-            weekly_session_id=session.id,
-            period_number=period_num,
-            status=CheckinStatus.pending,
-            deadline=deadline,
-        )
-        db.add(checkin)
+    slot = session.schedule_slot
+    now = datetime.now()
+
+    # Thêm record đăng ký mới vào bảng xếp hàng
+    reg = SessionRegistration(
+        weekly_session_id=session.id,
+        member_id=current_user.id,
+        registered_at=now,
+        status=RegistrationStatus.pending
+    )
+    db.add(reg)
+
+    session.status = SessionStatus.registered
+    if not session.registered_at:
+        session.registered_at = now
 
     db.commit()
-    return {"message": "Đã đăng ký ca học, chờ admin duyệt"}
+
+    # Đếm thứ tự đăng ký của thành viên trong ca này
+    order_num = db.query(SessionRegistration).filter(
+        SessionRegistration.weekly_session_id == session.id,
+        SessionRegistration.status == RegistrationStatus.pending
+    ).count()
+
+    log_activity(
+        db, current_user, "SESSION_REGISTER",
+        f"Đăng ký ca học môn {slot.subject.name if slot else 'N/A'} (Thứ tự #{order_num})",
+        f"Thành viên {current_user.full_name} đã đăng ký ca học ngày {session.session_date} (xếp vị trí #{order_num}).",
+        target_id=session.id
+    )
+
+    return {"message": f"Đã đăng ký ca học thành công (Xếp vị trí thứ #{order_num}), chờ admin duyệt"}
 
 
 @router.post("/sessions/{session_id}/cancel")
@@ -91,26 +123,44 @@ def cancel_registration(
     db: Session = Depends(get_db)
 ):
     """Hủy đăng ký ca học (chỉ khi chưa được duyệt)."""
-    session = db.query(WeeklySession).filter(
-        WeeklySession.id == session_id,
-        WeeklySession.assigned_member_id == current_user.id
-    ).first()
+    from app.models.session import SessionRegistration, RegistrationStatus
+    session = db.query(WeeklySession).filter(WeeklySession.id == session_id).first()
     if not session:
         raise HTTPException(status_code=404, detail="Không tìm thấy ca học")
     if session.status == SessionStatus.approved:
         raise HTTPException(status_code=400, detail="Ca học đã được duyệt, không thể hủy")
 
-    session.status = SessionStatus.open
-    session.assigned_member_id = None
+    reg = db.query(SessionRegistration).filter(
+        SessionRegistration.weekly_session_id == session_id,
+        SessionRegistration.member_id == current_user.id
+    ).first()
 
-    # Xóa checkin records chưa có ảnh
-    db.query(PeriodCheckin).filter(
-        PeriodCheckin.weekly_session_id == session.id,
-        PeriodCheckin.photo_url == None
-    ).delete()
+    if not reg:
+        raise HTTPException(status_code=400, detail="Bạn chưa đăng ký ca học này")
+
+    db.delete(reg)
+
+    # Kiểm tra xem còn ai đăng ký ca này không
+    remaining_count = db.query(SessionRegistration).filter(
+        SessionRegistration.weekly_session_id == session_id,
+        SessionRegistration.status == RegistrationStatus.pending
+    ).count()
+
+    if remaining_count == 0:
+        session.status = SessionStatus.open
+        session.assigned_member_id = None
 
     db.commit()
-    return {"message": "Đã hủy đăng ký"}
+
+    log_activity(
+        db, current_user, "SESSION_CANCEL_REGISTER",
+        f"Hủy đăng ký ca học môn {session.schedule_slot.subject.name if session.schedule_slot else 'N/A'}",
+        f"Thành viên {current_user.full_name} đã hủy đăng ký ca học ngày {session.session_date}.",
+        target_id=session.id
+    )
+
+    return {"message": "Đã hủy đăng ký ca học thành công"}
+
 
 
 # ===== CHECKIN =====
@@ -172,7 +222,27 @@ async def upload_checkin_photo(
     checkin.status = CheckinStatus.pending
 
     db.commit()
+
+    log_activity(
+        db, current_user, "PHOTO_UPLOAD",
+        f"Nộp ảnh điểm danh tiết {checkin.period_number}",
+        f"Thành viên {current_user.full_name} đã nộp ảnh điểm danh tiết {checkin.period_number} cho ca học ngày {session.session_date}.",
+        target_id=checkin.id
+    )
+
     return {"message": "Đã nộp ảnh thành công, chờ admin xác nhận", "photo_url": url}
+
+
+@router.get("/activity-logs")
+def get_member_activity_logs(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Lấy nhật ký hoạt động cá nhân của thành viên."""
+    return db.query(ActivityLog).filter(
+        ActivityLog.user_id == current_user.id
+    ).order_by(ActivityLog.created_at.desc()).limit(100).all()
+
 
 
 # ===== EARNINGS =====

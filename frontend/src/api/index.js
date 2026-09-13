@@ -20,16 +20,19 @@ export const adminAPI = {
     return api.post('/admin/profile/photo', form)
   },
   getPendingSessions: () => api.get('/admin/sessions/pending'),
-  approveSession: (id, approve, notes) =>
-    api.post(`/admin/sessions/${id}/approve`, null, { params: { approve, notes } }),
+  approveSession: (id, approve, memberId, notes) =>
+    api.post(`/admin/sessions/${id}/approve`, null, { params: { approve, member_id: memberId, notes } }),
+
   assignSession: (id, memberId) =>
     api.post(`/admin/sessions/${id}/assign`, null, { params: { member_id: memberId } }),
   getPendingCheckins: () => api.get('/admin/checkins/pending'),
+  getCheckins: (status) => api.get('/admin/checkins', { params: { status } }),
   verifyCheckin: (id, approve, reason) =>
     api.post(`/admin/checkins/${id}/verify`, null, { params: { approve, reject_reason: reason } }),
   getPayments: (status) => api.get('/admin/payments', { params: { status } }),
   markPaid: (id, notes) =>
     api.post(`/admin/payments/${id}/mark-paid`, null, { params: { notes } }),
+  getActivityLogs: (role) => api.get('/admin/activity-logs', { params: { role } }),
 }
 
 export const scheduleAPI = {
@@ -66,4 +69,6 @@ export const memberAPI = {
   getAdminInfo: () => api.get('/member/admin-info'),
   getNotifications: () => api.get('/member/notifications'),
   markNotifRead: (id) => api.post(`/member/notifications/${id}/read`),
+  getActivityLogs: () => api.get('/member/activity-logs'),
 }
+

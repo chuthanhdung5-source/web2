@@ -14,6 +14,29 @@ class SessionStatus(str, enum.Enum):
     cancelled = "cancelled"     # Đã hủy
 
 
+class RegistrationStatus(str, enum.Enum):
+    pending = "pending"
+    approved = "approved"
+    rejected = "rejected"
+    cancelled = "cancelled"
+
+
+class SessionRegistration(Base):
+    """
+    Bảng lưu vết danh sách các thành viên đăng ký cùng 1 ca học (xếp theo thứ tự thời gian).
+    """
+    __tablename__ = "session_registrations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    weekly_session_id = Column(Integer, ForeignKey("weekly_sessions.id"), nullable=False)
+    member_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    registered_at = Column(DateTime(timezone=True), server_default=func.now())
+    status = Column(SAEnum(RegistrationStatus), default=RegistrationStatus.pending)
+
+    weekly_session = relationship("WeeklySession", back_populates="registrations")
+    member = relationship("User")
+
+
 class WeeklySession(Base):
     """
     Một ca học cụ thể trong tuần (instance của ScheduleSlot).
@@ -37,3 +60,5 @@ class WeeklySession(Base):
     approved_by_user = relationship("User", back_populates="approved_sessions", foreign_keys=[approved_by])
     period_checkins = relationship("PeriodCheckin", back_populates="weekly_session", cascade="all, delete-orphan")
     payment = relationship("Payment", back_populates="weekly_session", uselist=False)
+    registrations = relationship("SessionRegistration", back_populates="weekly_session", cascade="all, delete-orphan", order_by="SessionRegistration.registered_at.asc()")
+

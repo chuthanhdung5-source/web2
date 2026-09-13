@@ -10,6 +10,7 @@ import AdminDashboard from './pages/admin/Dashboard'
 import AdminSchedule from './pages/admin/ScheduleManager'
 import AdminSessionApproval from './pages/admin/SessionApproval'
 import AdminCheckinReview from './pages/admin/CheckinReview'
+import AdminActivityLogs from './pages/admin/ActivityLogs'
 import AdminMembers from './pages/admin/MemberList'
 import AdminPayments from './pages/admin/PaymentManager'
 import AdminProfile from './pages/admin/ProfileSettings'
@@ -63,10 +64,12 @@ export default function App() {
             <Route path="schedule" element={<AdminSchedule />} />
             <Route path="sessions" element={<AdminSessionApproval />} />
             <Route path="checkins" element={<AdminCheckinReview />} />
+            <Route path="activity-logs" element={<AdminActivityLogs />} />
             <Route path="members" element={<AdminMembers />} />
             <Route path="payments" element={<AdminPayments />} />
             <Route path="profile" element={<AdminProfile />} />
           </Route>
+
 
           {/* Member Routes */}
           <Route path="/member" element={

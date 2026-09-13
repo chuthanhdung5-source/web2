@@ -7,10 +7,12 @@ const ADMIN_NAV = [
   { to: '/admin/schedule', icon: '📅', label: 'Thời khóa biểu' },
   { to: '/admin/sessions', icon: '✅', label: 'Duyệt ca học' },
   { to: '/admin/checkins', icon: '📸', label: 'Xem ảnh check-in' },
+  { to: '/admin/activity-logs', icon: '📜', label: 'Lịch sử hoạt động' },
   { to: '/admin/members', icon: '👥', label: 'Thành viên' },
   { to: '/admin/payments', icon: '💰', label: 'Thanh toán' },
   { to: '/admin/profile', icon: '👤', label: 'Hồ sơ SV' },
 ]
+
 
 const MEMBER_NAV = [
   { to: '/member', icon: '⊞', label: 'Dashboard', end: true },
@@ -21,12 +23,13 @@ const MEMBER_NAV = [
   { to: '/member/profile', icon: '👤', label: 'Hồ sơ' },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const nav = user?.role === 'admin' ? ADMIN_NAV : MEMBER_NAV
 
   const handleLogout = () => {
+    if (onClose) onClose()
     logout()
     navigate('/login')
   }
@@ -34,14 +37,21 @@ export default function Sidebar() {
   const initials = user?.full_name?.split(' ').map(w => w[0]).slice(-2).join('') || 'U'
 
   return (
-    <aside className="sidebar">
-      {/* Logo */}
-      <div className="sidebar-logo">
-        <div className="logo-icon">🎓</div>
-        <div>
-          <div className="logo-title">Web Học Hộ</div>
-          <div className="logo-badge">{user?.role === 'admin' ? 'Admin' : 'Thành viên'}</div>
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
+      {/* Logo & Mobile Close */}
+      <div className="sidebar-logo flex-between">
+        <div className="flex align-center gap-3">
+          <div className="logo-icon">🎓</div>
+          <div>
+            <div className="logo-title">Web Học Hộ</div>
+            <div className="logo-badge">{user?.role === 'admin' ? 'Admin' : 'Thành viên'}</div>
+          </div>
         </div>
+        {onClose && (
+          <button className="mobile-close-btn" onClick={onClose} aria-label="Close Sidebar">
+            ✕
+          </button>
+        )}
       </div>
 
       {/* Nav */}
@@ -51,6 +61,7 @@ export default function Sidebar() {
             key={item.to}
             to={item.to}
             end={item.end}
+            onClick={() => onClose && onClose()}
             className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
           >
             <span className="nav-icon">{item.icon}</span>
@@ -75,3 +86,4 @@ export default function Sidebar() {
     </aside>
   )
 }
+

@@ -18,7 +18,7 @@ const PAGE_TITLES = {
   '/member/profile': 'Hồ sơ',
 }
 
-export default function Header() {
+export default function Header({ onToggleSidebar }) {
   const { pathname } = useLocation()
   const { user } = useAuth()
   const title = Object.entries(PAGE_TITLES).find(([key]) => pathname === key)?.[1] || 'Web Học Hộ'
@@ -30,9 +30,22 @@ export default function Header() {
   return (
     <header className="top-header">
       <div className="header-left">
-        <h1 className="header-title">{title}</h1>
-        <span className="header-date">{dateStr}, {timeStr}</span>
+        {onToggleSidebar && (
+          <button
+            className="sidebar-toggle-btn"
+            onClick={onToggleSidebar}
+            aria-label="Toggle Navigation Menu"
+            id="sidebar-toggle-btn"
+          >
+            ☰
+          </button>
+        )}
+        <div>
+          <h1 className="header-title">{title}</h1>
+          <span className="header-date">{dateStr}, {timeStr}</span>
+        </div>
       </div>
+
       <div className="header-right">
         <div className="earnings-pill">
           <span>💰</span>
@@ -42,3 +55,4 @@ export default function Header() {
     </header>
   )
 }
+

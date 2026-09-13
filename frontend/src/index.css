@@ -126,7 +126,13 @@ input, textarea, select { font-family: var(--font); }
   padding-top: var(--header-height);
   min-height: 100vh;
   background: var(--bg);
+  transition: margin-left var(--transition);
 }
+
+.desktop-collapsed .main-content {
+  margin-left: 0;
+}
+
 
 .page-content {
   padding: var(--space-8);
@@ -449,10 +455,15 @@ tbody tr:hover { background: var(--surface-hover); }
 
 @media (max-width: 768px) {
   .main-content { margin-left: 0; }
-  .page-content { padding: var(--space-4); }
+  .page-content { padding: var(--space-3); }
   .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
   .hide-mobile { display: none; }
+
+  .page-header h1 { font-size: 1.35rem; }
+  .page-header p { font-size: 0.8rem; }
+  .table-wrapper { overflow-x: auto; }
 }
+
 
 /* --- Animations --- */
 .animate-in {
