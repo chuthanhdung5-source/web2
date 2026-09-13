@@ -352,3 +352,65 @@ def mark_read(
         notif.is_read = True
         db.commit()
     return {"message": "OK"}
+
+
+# ===== MEMBER FEEDBACK =====
+@router.post("/feedbacks")
+def create_feedback(
+    title: str,
+    content: str,
+    feedback_type: str = "general",
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Thành viên gửi góp ý/báo lỗi cho Admin."""
+    from app.models import Feedback, FeedbackType, FeedbackStatus
+
+    try:
+        ftype = FeedbackType(feedback_type)
+    except ValueError:
+        ftype = FeedbackType.general
+
+    feedback = Feedback(
+        user_id=current_user.id,
+        type=ftype,
+        title=title,
+        content=content,
+        status=FeedbackStatus.pending,
+    )
+    db.add(feedback)
+
+    log_activity(
+        db, current_user, "FEEDBACK_SUBMIT",
+        f"Gửi góp ý: {title}",
+        f"Thành viên {current_user.full_name} đã gửi một góp ý/báo lỗi tới Admin.",
+    )
+
+    db.commit()
+    return {"message": "Cảm ơn bạn! Góp ý đã được gửi tới Admin"}
+
+
+@router.get("/feedbacks")
+def get_my_feedbacks(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Lấy danh sách các góp ý cá nhân đã gửi cho Admin."""
+    from app.models import Feedback
+    feedbacks = db.query(Feedback).filter(
+        Feedback.user_id == current_user.id
+    ).order_by(Feedback.created_at.desc()).all()
+
+    res = []
+    for f in feedbacks:
+        res.append({
+            "id": f.id,
+            "type": f.type.value if hasattr(f.type, 'value') else str(f.type),
+            "title": f.title,
+            "content": f.content,
+            "status": f.status.value if hasattr(f.status, 'value') else str(f.status),
+            "admin_reply": f.admin_reply,
+            "replied_at": f.replied_at,
+            "created_at": f.created_at,
+        })
+    return res

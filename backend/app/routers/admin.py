@@ -477,8 +477,6 @@ def get_admin_stats(
         WeeklySession.status == SessionStatus.registered
     ).count()
     total_paid = db.query(Payment).filter(Payment.status == PaymentStatus.paid).all()
-    total_pending = db.query(Payment).filter(Payment.status == PaymentStatus.pending).all()
-
     return {
         "total_members": total_members,
         "total_sessions": total_sessions,
@@ -487,3 +485,122 @@ def get_admin_stats(
         "total_paid_amount": sum(p.amount for p in total_paid),
         "total_pending_amount": sum(p.amount for p in total_pending),
     }
+
+
+# ===== NOTIFICATIONS BROADCAST =====
+@router.post("/notifications/broadcast")
+def broadcast_notification(
+    title: str,
+    message: str,
+    notif_type: str = "info",
+    target_user_id: Optional[int] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    """Admin gửi thông báo tới tất cả thành viên hoặc một thành viên cụ thể."""
+    from app.models import Notification, NotificationType
+
+    try:
+        ntype = NotificationType(notif_type)
+    except ValueError:
+        ntype = NotificationType.info
+
+    if target_user_id:
+        target_users = db.query(User).filter(User.id == target_user_id).all()
+    else:
+        target_users = db.query(User).filter(User.role == UserRole.member).all()
+
+    count = 0
+    for u in target_users:
+        db.add(Notification(
+            user_id=u.id,
+            title=title,
+            message=message,
+            type=ntype,
+        ))
+        count += 1
+
+    log_activity(
+        db, current_user, "NOTIFICATION_BROADCAST",
+        f"Gửi thông báo: {title}",
+        f"Admin {current_user.full_name} đã gửi thông báo tới {count} thành viên.",
+    )
+
+    db.commit()
+    return {"message": f"Đã gửi thông báo tới {count} thành viên thành công"}
+
+
+# ===== FEEDBACK MANAGEMENT =====
+@router.get("/feedbacks")
+def get_feedbacks(
+    status: Optional[str] = None,
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin)
+):
+    """Admin lấy danh sách góp ý/báo lỗi từ thành viên."""
+    from app.models import Feedback
+    query = db.query(Feedback)
+    if status and status != 'all':
+        query = query.filter(Feedback.status == status)
+
+    feedbacks = query.order_by(Feedback.created_at.desc()).all()
+    res = []
+    for f in feedbacks:
+        u = f.user
+        res.append({
+            "id": f.id,
+            "user_id": f.user_id,
+            "user_name": u.full_name if u else "Khách",
+            "user_username": u.username if u else "",
+            "type": f.type.value if hasattr(f.type, 'value') else str(f.type),
+            "title": f.title,
+            "content": f.content,
+            "status": f.status.value if hasattr(f.status, 'value') else str(f.status),
+            "admin_reply": f.admin_reply,
+            "replied_at": f.replied_at,
+            "created_at": f.created_at,
+        })
+    return res
+
+
+@router.post("/feedbacks/{feedback_id}/reply")
+def reply_feedback(
+    feedback_id: int,
+    reply: str,
+    status: str = "replied",
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    """Admin trả lời góp ý của thành viên."""
+    from datetime import datetime
+    from app.models import Feedback, FeedbackStatus, Notification, NotificationType
+
+    feedback = db.query(Feedback).filter(Feedback.id == feedback_id).first()
+    if not feedback:
+        raise HTTPException(status_code=404, detail="Góp ý không tồn tại")
+
+    feedback.admin_reply = reply
+    feedback.replied_at = datetime.now()
+
+    try:
+        feedback.status = FeedbackStatus(status)
+    except ValueError:
+        feedback.status = FeedbackStatus.replied
+
+    # Gửi thông báo trực tiếp cho thành viên vừa gửi feedback
+    db.add(Notification(
+        user_id=feedback.user_id,
+        title="Admin đã phản hồi góp ý 💬",
+        message=f"Phản hồi về '{feedback.title}': {reply}",
+        type=NotificationType.info,
+    ))
+
+    log_activity(
+        db, current_user, "FEEDBACK_REPLY",
+        f"Phản hồi góp ý: {feedback.title}",
+        f"Admin {current_user.full_name} đã phản hồi góp ý của {feedback.user.full_name if feedback.user else 'thành viên'}.",
+        target_id=feedback.id
+    )
+
+    db.commit()
+    return {"message": "Đã gửi phản hồi thành công"}

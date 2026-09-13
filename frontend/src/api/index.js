@@ -33,6 +33,13 @@ export const adminAPI = {
   markPaid: (id, notes) =>
     api.post(`/admin/payments/${id}/mark-paid`, null, { params: { notes } }),
   getActivityLogs: (role) => api.get('/admin/activity-logs', { params: { role } }),
+  broadcastNotification: (title, message, notifType, targetUserId) =>
+    api.post('/admin/notifications/broadcast', null, {
+      params: { title, message, notif_type: notifType, target_user_id: targetUserId }
+    }),
+  getFeedbacks: (status) => api.get('/admin/feedbacks', { params: { status } }),
+  replyFeedback: (id, reply, status) =>
+    api.post(`/admin/feedbacks/${id}/reply`, null, { params: { reply, status } }),
 }
 
 export const scheduleAPI = {
@@ -70,5 +77,8 @@ export const memberAPI = {
   getNotifications: () => api.get('/member/notifications'),
   markNotifRead: (id) => api.post(`/member/notifications/${id}/read`),
   getActivityLogs: () => api.get('/member/activity-logs'),
+  createFeedback: (title, content, feedbackType) =>
+    api.post('/member/feedbacks', null, { params: { title, content, feedback_type: feedbackType } }),
+  getMyFeedbacks: () => api.get('/member/feedbacks'),
 }
 

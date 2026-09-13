@@ -11,6 +11,8 @@ import AdminSchedule from './pages/admin/ScheduleManager'
 import AdminSessionApproval from './pages/admin/SessionApproval'
 import AdminCheckinReview from './pages/admin/CheckinReview'
 import AdminActivityLogs from './pages/admin/ActivityLogs'
+import SendNotification from './pages/admin/SendNotification'
+import FeedbackManager from './pages/admin/FeedbackManager'
 import AdminMembers from './pages/admin/MemberList'
 import AdminPayments from './pages/admin/PaymentManager'
 import AdminProfile from './pages/admin/ProfileSettings'
@@ -21,6 +23,7 @@ import AvailableSlots from './pages/member/AvailableSlots'
 import MySchedule from './pages/member/MySchedule'
 import CheckinPage from './pages/member/CheckinPage'
 import Earnings from './pages/member/Earnings'
+import SendFeedback from './pages/member/SendFeedback'
 import AdminInfo from './pages/member/AdminInfo'
 import MemberProfile from './pages/member/ProfileSettings'
 
@@ -64,6 +67,8 @@ export default function App() {
             <Route path="schedule" element={<AdminSchedule />} />
             <Route path="sessions" element={<AdminSessionApproval />} />
             <Route path="checkins" element={<AdminCheckinReview />} />
+            <Route path="notifications/send" element={<SendNotification />} />
+            <Route path="feedbacks" element={<FeedbackManager />} />
             <Route path="activity-logs" element={<AdminActivityLogs />} />
             <Route path="members" element={<AdminMembers />} />
             <Route path="payments" element={<AdminPayments />} />
@@ -80,6 +85,7 @@ export default function App() {
             <Route path="schedule" element={<MySchedule />} />
             <Route path="checkin/:sessionId" element={<CheckinPage />} />
             <Route path="earnings" element={<Earnings />} />
+            <Route path="feedback" element={<SendFeedback />} />
             <Route path="admin-info" element={<AdminInfo />} />
             <Route path="profile" element={<MemberProfile />} />
           </Route>

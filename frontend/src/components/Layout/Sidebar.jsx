@@ -7,6 +7,8 @@ const ADMIN_NAV = [
   { to: '/admin/schedule', icon: '📅', label: 'Thời khóa biểu' },
   { to: '/admin/sessions', icon: '✅', label: 'Duyệt ca học' },
   { to: '/admin/checkins', icon: '📸', label: 'Xem ảnh check-in' },
+  { to: '/admin/notifications/send', icon: '📢', label: 'Gửi thông báo' },
+  { to: '/admin/feedbacks', icon: '💬', label: 'Góp ý & Feedback' },
   { to: '/admin/activity-logs', icon: '📜', label: 'Lịch sử hoạt động' },
   { to: '/admin/members', icon: '👥', label: 'Thành viên' },
   { to: '/admin/payments', icon: '💰', label: 'Thanh toán' },
@@ -19,6 +21,7 @@ const MEMBER_NAV = [
   { to: '/member/slots', icon: '📋', label: 'Đăng ký ca học' },
   { to: '/member/schedule', icon: '📅', label: 'Lịch của tôi' },
   { to: '/member/earnings', icon: '💰', label: 'Thu nhập' },
+  { to: '/member/feedback', icon: '💬', label: 'Gửi góp ý Admin' },
   { to: '/member/admin-info', icon: '🎓', label: 'Thông tin SV' },
   { to: '/member/profile', icon: '👤', label: 'Hồ sơ' },
 ]

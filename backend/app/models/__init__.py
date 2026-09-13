@@ -5,6 +5,7 @@ from app.models.session import WeeklySession, SessionStatus, SessionRegistration
 from app.models.checkin import PeriodCheckin, CheckinStatus
 from app.models.payment import Payment, PaymentStatus, Notification, NotificationType, MemberRating
 from app.models.activity_log import ActivityLog
+from app.models.feedback import Feedback, FeedbackStatus, FeedbackType
 
 __all__ = [
     "User", "UserRole",
@@ -17,6 +18,7 @@ __all__ = [
     "Notification", "NotificationType",
     "MemberRating",
     "ActivityLog",
+    "Feedback", "FeedbackStatus", "FeedbackType",
 ]
 
 
