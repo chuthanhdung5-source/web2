@@ -23,6 +23,8 @@ uploads/*
 !uploads/.gitkeep
 temp/
 *.log
+*.db
+
 
 # Environment & IDE
 .env
