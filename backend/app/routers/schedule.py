@@ -116,3 +116,41 @@ def generate_weekly_sessions(
 
     db.commit()
     return {"message": f"Đã tạo {created} ca học mới cho tuần {week_start}"}
+
+
+@router.delete("/weekly-sessions/{session_id}")
+def delete_weekly_session_in_schedule(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    from app.middleware.auth import require_admin
+    from app.models import PeriodCheckin, ActivityLog
+    from app.models.session import SessionRegistration
+    from app.utils.activity import log_activity
+    from fastapi import HTTPException
+
+    if current_user.role != "admin":
+        raise HTTPException(status_code=403, detail="Chỉ Admin mới có quyền xóa ca học")
+
+    ws = db.query(WeeklySession).filter(WeeklySession.id == session_id).first()
+    if not ws:
+        raise HTTPException(status_code=404, detail="Ca học không tồn tại")
+
+    db.query(PeriodCheckin).filter(PeriodCheckin.weekly_session_id == ws.id).delete()
+    db.query(SessionRegistration).filter(SessionRegistration.weekly_session_id == ws.id).delete()
+    
+    date_str = str(ws.session_date)
+    subj_name = ws.schedule_slot.subject.name if (ws.schedule_slot and ws.schedule_slot.subject) else "N/A"
+    
+    db.delete(ws)
+    db.commit()
+
+    log_activity(
+        db, current_user, "WEEKLY_SESSION_DELETE",
+        f"Xóa ca học ngày {date_str}",
+        f"Admin {current_user.full_name} đã xóa ca học môn {subj_name} ngày {date_str}.",
+        target_id=session_id
+    )
+    return {"message": f"Đã xóa ca học ngày {date_str}"}
+
