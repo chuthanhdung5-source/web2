@@ -144,8 +144,8 @@ async def upload_checkin_photo(
     if checkin.status == CheckinStatus.missed:
         raise HTTPException(status_code=400, detail="Tiết này đã quá hạn nộp ảnh")
 
-    # Kiểm tra thời gian nộp ảnh
-    now = get_vietnam_now()
+    # Kiểm tra thời gian nộp ảnh (dùng UTC chuẩn để lưu DB và quy đổi hiển thị Frontend)
+    now = datetime.utcnow()
     if not is_checkin_time_valid(checkin.period_number, now, session.session_date):
         # Cho phép nộp trước giờ học 15 phút hoặc trong giờ + 30p buffer
         period_info = PERIOD_SCHEDULE.get(checkin.period_number)

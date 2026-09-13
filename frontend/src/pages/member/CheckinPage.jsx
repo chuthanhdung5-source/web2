@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { memberAPI } from '../../api'
+import { getImageUrl } from '../../api/client'
 import toast from 'react-hot-toast'
 
 const PERIOD_TIMES = {
@@ -111,7 +112,7 @@ export default function CheckinPage() {
               {/* Photo preview */}
               {(c.photo_url || preview[c.id]) && (
                 <img
-                  src={preview[c.id] || c.photo_url}
+                  src={preview[c.id] || getImageUrl(c.photo_url)}
                   alt="checkin photo"
                   style={{ width: '100%', height: 160, objectFit: 'cover', borderRadius: 8, marginBottom: 12 }}
                 />

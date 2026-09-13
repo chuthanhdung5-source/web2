@@ -27,4 +27,11 @@ api.interceptors.response.use(
   }
 )
 
+export const getImageUrl = (url) => {
+  if (!url) return ''
+  if (url.startsWith('http://') || url.startsWith('https://')) return url
+  const apiHost = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/api$/, '')
+  return `${apiHost}${url.startsWith('/') ? '' : '/'}${url}`
+}
+
 export default api

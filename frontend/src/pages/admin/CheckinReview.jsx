@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { adminAPI } from '../../api'
+import { getImageUrl } from '../../api/client'
 import toast from 'react-hot-toast'
 
 export default function CheckinReview() {
@@ -46,7 +47,7 @@ export default function CheckinReview() {
             <div key={c.id} className="card card-interactive" onClick={() => setPreview(c)}>
               <div style={{ position: 'relative' }}>
                 {c.photo_url ? (
-                  <img src={c.photo_url} alt="check-in"
+                  <img src={getImageUrl(c.photo_url)} alt="check-in"
                     style={{ width: '100%', height: 180, objectFit: 'cover', borderRadius: 8, marginBottom: 12 }} />
                 ) : (
                   <div style={{ width: '100%', height: 180, background: 'var(--surface-hover)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
@@ -76,7 +77,7 @@ export default function CheckinReview() {
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 600 }}>
             <h3 style={{ marginBottom: 16 }}>📸 Ảnh Check-in — Tiết {preview.period_number}</h3>
             {preview.photo_url && (
-              <img src={preview.photo_url} alt="preview"
+              <img src={getImageUrl(preview.photo_url)} alt="preview"
                 style={{ width: '100%', maxHeight: 400, objectFit: 'contain', borderRadius: 8, marginBottom: 16 }} />
             )}
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 16 }}>
