@@ -4,10 +4,11 @@ from fastapi.staticfiles import StaticFiles
 from pathlib import Path
 from app.config import settings
 from app.database import engine, Base
+import app.models  # Import tất cả models vào Base.metadata
 from app.routers import auth, admin, schedule, member
 from app.services.scheduler import start_scheduler
 
-# Tạo tables
+# Tạo tables nếu chưa tồn tại
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -54,6 +55,9 @@ app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 @app.on_event("startup")
 async def startup_event():
     """Seed dữ liệu và khởi động scheduler."""
+    # Đảm bảo bảng mới luôn được tạo
+    Base.metadata.create_all(bind=engine)
+
     from app.database import SessionLocal
     from app.utils.seed_schedule import seed_schedule, seed_default_semester, seed_default_admin
     from sqlalchemy import text
@@ -72,6 +76,25 @@ async def startup_event():
                 db.commit()
             except Exception:
                 db.rollback()
+
+        # Nâng cấp bảng weekly_sessions
+        for col, col_type in [
+            ("registered_at", "TIMESTAMP WITH TIME ZONE"),
+            ("approved_at", "TIMESTAMP WITH TIME ZONE"),
+            ("notes", "TEXT"),
+        ]:
+            try:
+                db.execute(text(f"ALTER TABLE weekly_sessions ADD COLUMN IF NOT EXISTS {col} {col_type};"))
+                db.commit()
+            except Exception:
+                db.rollback()
+
+        # Nâng cấp bảng period_checkins
+        try:
+            db.execute(text("ALTER TABLE period_checkins ADD COLUMN IF NOT EXISTS reject_reason TEXT;"))
+            db.commit()
+        except Exception:
+            db.rollback()
 
         # Seed admin mặc định
         seed_default_admin(db)
