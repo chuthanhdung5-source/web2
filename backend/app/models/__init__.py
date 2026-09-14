@@ -6,6 +6,7 @@ from app.models.checkin import PeriodCheckin, CheckinStatus
 from app.models.payment import Payment, PaymentStatus, Notification, NotificationType, MemberRating
 from app.models.activity_log import ActivityLog
 from app.models.feedback import Feedback, FeedbackStatus, FeedbackType
+from app.models.douluo import DouluoCultivation, DouluoTransaction
 
 __all__ = [
     "User", "UserRole",
@@ -19,6 +20,7 @@ __all__ = [
     "MemberRating",
     "ActivityLog",
     "Feedback", "FeedbackStatus", "FeedbackType",
+    "DouluoCultivation", "DouluoTransaction",
 ]
 
 

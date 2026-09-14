@@ -22,6 +22,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  min-width: 0;
+  flex-shrink: 1;
 }
 
 .sidebar-toggle-btn {
@@ -37,6 +39,7 @@
   justify-content: center;
   transition: all var(--transition);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .sidebar-toggle-btn:hover {
@@ -49,18 +52,23 @@
   font-size: 1.125rem;
   font-weight: 700;
   letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-date {
   font-size: 0.8rem;
   color: var(--text-muted);
   margin-left: var(--space-3);
+  white-space: nowrap;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-2);
+  flex-shrink: 0;
 }
 
 .earnings-pill {
@@ -70,29 +78,41 @@
   background: rgba(16, 185, 129, 0.1);
   border: 1px solid rgba(16, 185, 129, 0.2);
   color: var(--accent-green);
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: var(--radius-full);
-  font-size: 0.875rem;
+  font-size: 0.825rem;
   font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+  .header-date {
+    display: none;
+  }
+  .top-header {
+    padding: 0 var(--space-4);
+  }
 }
 
 @media (max-width: 768px) {
   .top-header {
     left: 0 !important;
-    padding: 0 var(--space-4);
-  }
-
-  .header-date {
-    display: none;
+    padding: 0 10px;
+    height: 58px;
   }
 
   .header-title {
-    font-size: 1rem;
+    font-size: 0.95rem;
+    max-width: 120px;
+  }
+
+  .header-right {
+    gap: 6px;
   }
 
   .earnings-pill {
-    padding: 4px 10px;
-    font-size: 0.78rem;
+    padding: 3px 8px;
+    font-size: 0.72rem;
   }
 }
 

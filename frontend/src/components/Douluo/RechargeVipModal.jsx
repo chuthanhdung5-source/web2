@@ -8,42 +8,45 @@ export default function RechargeVipModal() {
   const PACKAGES = [
     {
       id: 'pkg-1',
+      tier: 1,
       title: 'Tân Thủ Đường Môn',
-      diamonds: 50000,
+      diamonds: 100000,
       icon: '🥋',
-      bonus: 'Tặng Hồn Hoàn 100 năm',
+      bonus: 'Tốc độ tu luyện x1.5',
       color: '#38bdf8'
     },
     {
       id: 'pkg-2',
+      tier: 2,
       title: 'Sử Lai Khắc Thất Quái',
       diamonds: 1000000,
       icon: '🐯',
-      bonus: 'Tặng Hồn Hoàn Vạn Năm',
+      bonus: 'Tốc độ tu luyện x2.0',
       color: '#a855f7'
     },
     {
       id: 'pkg-3',
+      tier: 3,
       title: 'Phong Hào Đấu La',
-      diamonds: 50000000,
+      diamonds: 10000000,
       icon: '🐉',
-      bonus: 'Tặng Hồn Hoàn 100.000 Năm',
+      bonus: 'Tốc độ tu luyện x2.5',
       featured: true,
       color: '#ef4444'
     },
     {
       id: 'pkg-4',
+      tier: 4,
       title: 'Tu La Thần Vương',
-      diamonds: 999999999,
+      diamonds: 100000000,
       icon: '🔱',
-      bonus: 'Hồn Hoàn Triệu Năm Hoàng Kim',
+      bonus: 'Tốc độ tu luyện x3.0 Thần Cấp',
       color: '#fbbf24'
     }
   ]
 
   const handleBuy = (pkg) => {
-    recharge(pkg.diamonds, pkg.title)
-    setIsRechargeOpen(false)
+    recharge(pkg.tier, pkg.diamonds, pkg.title)
   }
 
   return (

@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react'
 import { adminAPI } from '../../api'
+import { useDouluo, getRealmInfo } from '../../context/DouluoContext'
 import toast from 'react-hot-toast'
 
 export default function MemberList() {
+  const { adminPromote } = useDouluo()
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [resetModalMember, setResetModalMember] = useState(null)
   const [newPassword, setNewPassword] = useState('')
   const [resetting, setResetting] = useState(false)
+
+  // Sắc phong Hồn Sư state
+  const [promoteMember, setPromoteMember] = useState(null)
+  const [promoteLevel, setPromoteLevel] = useState(60)
+  const [promoteDiamonds, setPromoteDiamonds] = useState(100000)
+  const [promoteTitle, setPromoteTitle] = useState('Học Hộ Đấu La')
+  const [promoting, setPromoting] = useState(false)
 
   const load = () => {
     adminAPI.getMembers().then(r => setMembers(r.data)).finally(() => setLoading(false))
@@ -52,54 +61,98 @@ export default function MemberList() {
     }
   }
 
-  if (loading) return <div className="flex-center" style={{ height: 300 }}><div className="spinner" style={{ width: 36, height: 36 }} /></div>
+  const openPromoteModal = (member) => {
+    setPromoteMember(member)
+    setPromoteLevel(60)
+    setPromoteDiamonds(100000)
+    setPromoteTitle('Học Hộ Đấu La')
+  }
+
+  const handlePromoteSubmit = async (e) => {
+    e.preventDefault()
+    if (!promoteMember) return
+    setPromoting(true)
+    try {
+      await adminPromote({
+        target_type: 'user',
+        user_id: promoteMember.id,
+        level: Number(promoteLevel),
+        diamonds_add: Number(promoteDiamonds),
+        custom_title: promoteTitle
+      })
+      setPromoteMember(null)
+    } finally {
+      setPromoting(false)
+    }
+  }
 
   return (
     <div>
       <div className="page-header">
         <h1>👥 Quản lý thành viên</h1>
-        <p>{members.length} thành viên trong hệ thống</p>
+        <p>Danh sách tất cả thành viên trong hệ thống và thông tin chi trả</p>
       </div>
 
-      {members.length === 0 ? (
-        <div className="empty-state">
-          <div className="icon">👤</div>
-          <h3>Chưa có thành viên nào</h3>
-          <p>Thành viên tự đăng ký tài khoản</p>
-        </div>
+      {loading ? (
+        <div className="flex-center" style={{ height: 200 }}><div className="spinner" /></div>
+      ) : members.length === 0 ? (
+        <div className="empty-state">Chưa có thành viên nào</div>
       ) : (
-        <div className="table-wrapper">
-          <table>
+        <div className="table-responsive">
+          <table className="table">
             <thead>
-              <tr><th>Thành viên</th><th>Username</th><th>Số điện thoại</th><th>Thu nhập</th><th>Trạng thái</th><th>Ngày tham gia</th><th>Thao tác</th></tr>
+              <tr>
+                <th>Thành viên</th>
+                <th>Liên hệ</th>
+                <th>Thông tin ngân hàng</th>
+                <th>Tổng thu nhập</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
             </thead>
             <tbody>
               {members.map(m => (
                 <tr key={m.id}>
                   <td>
-                    <div className="flex gap-3" style={{ alignItems: 'center' }}>
-                      <div className="avatar" style={{ width: 36, height: 36, fontSize: '0.875rem' }}>
-                        {m.full_name?.charAt(0)}
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 600 }}>{m.full_name}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{m.email}</div>
-                      </div>
-                    </div>
+                    <div style={{ fontWeight: 600 }}>{m.full_name}</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>@{m.username}</div>
                   </td>
-                  <td style={{ color: 'var(--text-secondary)' }}>@{m.username}</td>
-                  <td>{m.phone || '—'}</td>
-                  <td className="money">{(m.total_earnings || 0).toLocaleString('vi-VN')}đ</td>
                   <td>
-                    <span className={`badge ${m.is_active ? 'badge-verified' : 'badge-missed'}`}>
-                      {m.is_active ? '✓ Hoạt động' : '✗ Bị khóa'}
+                    <div>{m.email}</div>
+                    <div style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>{m.phone || '—'}</div>
+                  </td>
+                  <td>
+                    {m.bank_name ? (
+                      <div>
+                        <div style={{ fontWeight: 500 }}>{m.bank_name}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                          {m.bank_account_no} • {m.bank_account_name}
+                        </div>
+                      </div>
+                    ) : (
+                      <span style={{ color: 'var(--text-muted)' }}>Chưa cập nhật</span>
+                    )}
+                  </td>
+                  <td>
+                    <span style={{ fontWeight: 600, color: 'var(--accent-green)' }}>
+                      {(m.total_earnings || 0).toLocaleString('vi-VN')}đ
                     </span>
                   </td>
-                  <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {new Date(m.created_at).toLocaleDateString('vi-VN')}
+                  <td>
+                    <span className={`badge ${m.is_active ? 'badge-verified' : 'badge-rejected'}`}>
+                      {m.is_active ? 'Hoạt động' : 'Đã khóa'}
+                    </span>
                   </td>
                   <td>
                     <div className="flex gap-2" style={{ alignItems: 'center' }}>
+                      <button
+                        className="btn btn-sm btn-ghost"
+                        title="Sắc phong Hồn Sư Đấu La"
+                        onClick={() => openPromoteModal(m)}
+                        style={{ border: '1px solid rgba(168, 85, 247, 0.4)', color: '#c084fc', padding: '4px 8px' }}
+                      >
+                        🔱 Sắc phong
+                      </button>
                       <button
                         className="btn btn-sm btn-secondary"
                         title="Cưỡng chế đổi mật khẩu"
@@ -121,6 +174,75 @@ export default function MemberList() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Modal Sắc phong Hồn Sư */}
+      {promoteMember && (
+        <div className="modal-backdrop" onClick={() => setPromoteMember(null)}>
+          <div className="modal card" style={{ maxWidth: 460, width: '100%', margin: 20 }} onClick={e => e.stopPropagation()}>
+            <div className="flex flex-between align-center" style={{ marginBottom: 16 }}>
+              <h2 className="h3">🔱 Sắc phong Hồn Sư</h2>
+              <button className="btn btn-ghost btn-sm" onClick={() => setPromoteMember(null)}>✕</button>
+            </div>
+
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 16 }}>
+              Sắc phong cho thành viên <strong>{promoteMember.full_name}</strong> (<code>@{promoteMember.username}</code>).
+            </p>
+
+            <form onSubmit={handlePromoteSubmit} className="flex flex-col gap-4">
+              <div className="form-group">
+                <label className="form-label">Cấp độ Hồn Sư</label>
+                <input
+                  type="number"
+                  className="form-input"
+                  value={promoteLevel}
+                  onChange={e => setPromoteLevel(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Kim cương thưởng (+)</label>
+                <input
+                  type="number"
+                  className="form-input"
+                  value={promoteDiamonds}
+                  onChange={e => setPromoteDiamonds(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Danh hiệu</label>
+                <input
+                  type="text"
+                  className="form-input"
+                  value={promoteTitle}
+                  onChange={e => setPromoteTitle(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="flex gap-3" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setPromoteMember(null)}
+                  disabled={promoting}
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={promoting}
+                >
+                  {promoting ? <><div className="spinner" style={{ width: 14, height: 14 }} /> Đang xử lý...</> : '✓ Xác nhận sắc phong'}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
 

@@ -1,4 +1,6 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useRef } from 'react'
+import { douluoAPI } from '../api'
+import { useAuth } from './AuthContext'
 import toast from 'react-hot-toast'
 
 // 12 Cảnh giới Hồn Sư chuẩn Đấu La Đại Lục
@@ -23,72 +25,152 @@ export const getRealmInfo = (level) => {
   return found || DOULUO_REALMS[DOULUO_REALMS.length - 1]
 }
 
-const STORAGE_KEY = 'douluo_mode_state'
-
-const defaultState = {
-  enabled: true, // Mặc định bật chế độ vui nhộn
-  level: 95, // Mặc định là Phong Hào Đấu La cho ngầu
-  diamonds: 888888, // 888.888 Kim Cương
-  customTitle: 'Học Hộ Đấu La',
-  vipTier: 10,
-}
-
 const DouluoContext = createContext(null)
 
 export function DouluoProvider({ children }) {
-  const [state, setState] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY)
-      if (saved) return { ...defaultState, ...JSON.parse(saved) }
-    } catch {
-      // fallback default
-    }
-    return defaultState
-  })
+  const { user } = useAuth()
 
-  // Modal controls
+  const [enabled, setEnabled] = useState(true)
+  const [level, setLevel] = useState(1)
+  const [realmName, setRealmName] = useState('Hồn Sĩ')
+  const [exp, setExp] = useState(0)
+  const [expNeeded, setExpNeeded] = useState(60)
+  const [diamonds, setDiamonds] = useState(88888)
+  const [totalCultivateSeconds, setTotalCultivateSeconds] = useState(0)
+  const [customTitle, setCustomTitle] = useState('')
+  const [vipTier, setVipTier] = useState(0)
+  const [loading, setLoading] = useState(true)
+
+  // Modals
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isRechargeOpen, setIsRechargeOpen] = useState(false)
+  const [isCultivationOpen, setIsCultivationOpen] = useState(false)
+  const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false)
 
-  // Persist state
-  useEffect(() => {
+  // Unsynced seconds buffer for heartbeat
+  const unsyncedSecondsRef = useRef(0)
+
+  // Load status from Backend API
+  const loadStatus = async () => {
+    if (!user) return
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-    } catch {
-      // ignore
+      const res = await douluoAPI.getMe()
+      const data = res.data
+      setLevel(data.level)
+      setRealmName(data.realm_name)
+      setExp(data.exp)
+      setExpNeeded(data.exp_needed)
+      setDiamonds(data.diamonds)
+      setTotalCultivateSeconds(data.total_cultivate_seconds)
+      setCustomTitle(data.custom_title || '')
+      setVipTier(data.vip_tier)
+      setEnabled(data.is_enabled)
+    } catch (e) {
+      console.error('Lỗi tải trạng thái Đấu La:', e)
+    } finally {
+      setLoading(false)
     }
-  }, [state])
-
-  const realm = getRealmInfo(state.level)
-
-  // Bật/Tắt chế độ
-  const toggleEnabled = () => {
-    setState(prev => {
-      const next = !prev.enabled
-      toast(next ? '🔮 Đã bật Chế Độ Đấu La Đại Lục!' : '🛡️ Đã tắt Chế Độ Đấu La Đại Lục (Về chế độ thường)', {
-        icon: next ? '⚡' : '🏢'
-      })
-      return { ...prev, enabled: next }
-    })
   }
 
-  // Tiêu hao kim cương hài hước khi thực hiện hành động
-  const spendDiamonds = (amount, actionName = 'Thao tác') => {
-    if (!state.enabled) return true
+  useEffect(() => {
+    loadStatus()
+  }, [user])
 
-    let currentDiamonds = state.diamonds
-    if (currentDiamonds < amount) {
-      // Tự động cấp vốn Đường Môn nếu hết kim cương
-      currentDiamonds += 50000
-      toast.success(`🎁 Bạn hết Kim Cương! Đường Môn bí mật trợ cấp +50.000 💎 để bạn tiếp tục xưng bá!`, {
-        duration: 4000
-      })
+  // Real-time cultivation timer: Cứ mỗi 1s chạy 1 tick
+  useEffect(() => {
+    if (!user || !enabled) return
+
+    const interval = setInterval(() => {
+      const multiplier = 1 + (vipTier * 0.5)
+      const earned = Math.max(1, Math.round(1 * multiplier))
+
+      setExp(prev => prev + earned)
+      setTotalCultivateSeconds(prev => prev + 1)
+      unsyncedSecondsRef.current += 1
+
+      // Cứ 30 giây sync 1 lần lên server
+      if (unsyncedSecondsRef.current >= 30) {
+        const secsToSync = unsyncedSecondsRef.current
+        unsyncedSecondsRef.current = 0
+        douluoAPI.cultivateHeartbeat(secsToSync).catch(err => {
+          console.error('Lỗi sync heartbeat tu luyện:', err)
+        })
+      }
+    }, 1000)
+
+    return () => {
+      clearInterval(interval)
+      // Sync nốt số giây còn tồn đọng khi unmount
+      if (unsyncedSecondsRef.current > 0) {
+        douluoAPI.cultivateHeartbeat(unsyncedSecondsRef.current).catch(() => {})
+        unsyncedSecondsRef.current = 0
+      }
     }
+  }, [user, enabled, vipTier])
 
+  const realm = getRealmInfo(level)
+
+  // Bật/Tắt chế độ
+  const toggleEnabled = async () => {
+    try {
+      const res = await douluoAPI.toggleMode()
+      const next = res.data.is_enabled
+      setEnabled(next)
+      toast(next ? '🔮 Đã kích hoạt Chế Độ Đấu La Đại Lục!' : '🛡️ Đã ẩn Chế Độ Đấu La Đại Lục', {
+        icon: next ? '⚡' : '🏢'
+      })
+    } catch {
+      setEnabled(prev => !prev)
+    }
+  }
+
+  // Đột phá cảnh giới
+  const breakthrough = async () => {
+    try {
+      const res = await douluoAPI.breakthrough()
+      const data = res.data
+      setLevel(data.new_level)
+      setRealmName(data.new_realm)
+      setExp(data.exp)
+      setExpNeeded(data.exp_needed)
+      // Cập nhật lại kim cương được thưởng
+      loadStatus()
+      toast.success(data.message, { duration: 5000, icon: '🎉' })
+      return true
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Chưa đủ hồn lực để đột phá!')
+      return false
+    }
+  }
+
+  // Nạp VIP 0đ mua kim cương
+  const recharge = async (tier, diamondsAmount, packName) => {
+    try {
+      const res = await douluoAPI.buyDiamonds(tier, diamondsAmount, packName)
+      setDiamonds(res.data.diamonds)
+      setVipTier(res.data.vip_tier)
+      toast.success(res.data.message, { duration: 5000, icon: '💎' })
+      setIsRechargeOpen(false)
+      loadStatus()
+    } catch (err) {
+      toast.error('Có lỗi xảy ra khi nạp VIP')
+    }
+  }
+
+  // Trừ kim cương khi thao tác
+  const spendDiamonds = (amount, actionName = 'Thao tác') => {
+    if (!enabled) return true
+
+    // Optimistic update
+    let currentDiamonds = diamonds
+    if (currentDiamonds < amount) {
+      currentDiamonds += 50000
+      toast.success('🎁 Hết Kim Cương! Đường Môn bí mật viện trợ +50.000 💎!', { duration: 4000 })
+    }
     const nextDiamonds = Math.max(0, currentDiamonds - amount)
-    setState(prev => ({ ...prev, diamonds: nextDiamonds }))
+    setDiamonds(nextDiamonds)
 
-    toast(`💎 -${amount.toLocaleString()} Kim Cương cho [${actionName}]. Chúc ${state.customTitle || realm.name} uy chấn bốn phương!`, {
+    toast(`💎 -${amount.toLocaleString()} 💎 cho [${actionName}]. Chúc ${customTitle || realm.name} vạn thọ vô cương!`, {
       icon: '✨',
       style: {
         borderRadius: '10px',
@@ -96,69 +178,55 @@ export function DouluoProvider({ children }) {
         color: '#38bdf8',
         border: '1px solid rgba(56, 189, 248, 0.3)',
       },
-      duration: 3500
+      duration: 3000
     })
 
+    // Gọi API trừ ngầm
+    douluoAPI.spendDiamonds(amount, actionName).catch(() => {})
     return true
   }
 
-  // Nạp VIP giả lập
-  const recharge = (amount, tierName = 'VIP') => {
-    setState(prev => {
-      const nextDiamonds = prev.diamonds + amount
-      // Nếu nạp gói siêu to thì tự thăng cấp
-      let nextLevel = prev.level
-      if (amount >= 100000000 && nextLevel < 100) nextLevel = 100
-      else if (amount >= 10000000 && nextLevel < 95) nextLevel = 95
-      else if (amount >= 1000000 && nextLevel < 85) nextLevel = 85
-
-      return {
-        ...prev,
-        diamonds: nextDiamonds,
-        level: nextLevel,
-        vipTier: Math.min(12, prev.vipTier + 1)
-      }
-    })
-
-    toast.success(`🎉 Nạp thành công [${tierName}]! +${amount.toLocaleString()} 💎 Kim Cương đã vào túi!`, {
-      duration: 5000,
-      icon: '💎'
-    })
-  }
-
-  // Tự phong cảnh giới
-  const selfPromote = ({ level, diamonds, customTitle }) => {
-    const newLvl = Math.max(1, Math.min(999, Number(level) || 1))
-    const newDia = Math.max(0, Number(diamonds) || 0)
-    const newTitle = (customTitle || '').trim() || getRealmInfo(newLvl).name
-
-    setState(prev => ({
-      ...prev,
-      level: newLvl,
-      diamonds: newDia,
-      customTitle: newTitle
-    }))
-
-    const newRealm = getRealmInfo(newLvl)
-    toast.success(`🔱 Sắc phong thành công! Bạn hiện là [${newTitle}] - Cấp ${newLvl} (${newRealm.name})!`, {
-      duration: 5000,
-      icon: newRealm.icon
-    })
+  // Admin sắc phong cảnh giới (1 người hoặc ALL)
+  const adminPromote = async (data) => {
+    try {
+      const res = await douluoAPI.adminPromote(data)
+      toast.success(res.data.message, { duration: 5000, icon: '🔱' })
+      loadStatus()
+      return true
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Lỗi khi sắc phong')
+      return false
+    }
   }
 
   return (
     <DouluoContext.Provider
       value={{
-        ...state,
+        enabled,
+        level,
+        realmName,
+        exp,
+        expNeeded,
+        diamonds,
+        totalCultivateSeconds,
+        customTitle,
+        vipTier,
         realm,
+        loading,
         toggleEnabled,
-        spendDiamonds,
+        breakthrough,
         recharge,
-        selfPromote,
+        spendDiamonds,
+        adminPromote,
+        loadStatus,
         isSettingsOpen,
         setIsSettingsOpen,
         isRechargeOpen,
         setIsRechargeOpen,
+        isCultivationOpen,
+        setIsCultivationOpen,
+        isLeaderboardOpen,
+        setIsLeaderboardOpen,
       }}
     >
       {children}

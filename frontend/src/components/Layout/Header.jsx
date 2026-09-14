@@ -29,7 +29,8 @@ export default function Header({ onToggleSidebar }) {
     diamonds,
     customTitle,
     setIsSettingsOpen,
-    setIsRechargeOpen
+    setIsRechargeOpen,
+    setIsCultivationOpen
   } = useDouluo()
 
   const title = Object.entries(PAGE_TITLES).find(([key]) => pathname === key)?.[1] || 'Web Học Hộ'
@@ -37,6 +38,15 @@ export default function Header({ onToggleSidebar }) {
   const now = new Date()
   const timeStr = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
   const dateStr = now.toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long' })
+
+  const isAdmin = user?.role === 'admin'
+
+  // Format kim cương gọn: 888.888 -> 888K
+  const formatDiamonds = (n) => {
+    if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
+    if (n >= 1000) return `${(n / 1000).toFixed(0)}K`
+    return n
+  }
 
   return (
     <header className="top-header">
@@ -57,18 +67,29 @@ export default function Header({ onToggleSidebar }) {
         </div>
       </div>
 
-      <div className="header-right flex align-center gap-3">
-        {/* Chế độ Đấu La Đại Lục (nếu bật) */}
+      <div className="header-right">
+        {/* Chế độ Đấu La Đại Lục */}
         {enabled ? (
           <>
+            {/* Nút Động Phủ Bế Quan Tu Luyện */}
+            <button
+              className="btn-cultivate-pulse"
+              onClick={() => setIsCultivationOpen(true)}
+              title="Động Phủ Bế Quan Tu Luyện (Tích lũy Hồn Lực theo thời gian)"
+            >
+              <span className="cult-icon">🧘</span>
+              <span>Bế Quan</span>
+            </button>
+
             {/* Huy hiệu Cảnh giới */}
             <div
               className={`douluo-badge ${realm.badge}`}
-              onClick={() => setIsSettingsOpen(true)}
-              title="Bấm để Tự Phong Cảnh Giới Đấu La"
+              onClick={() => (isAdmin ? setIsSettingsOpen(true) : setIsCultivationOpen(true))}
+              title={isAdmin ? 'Giáo Hoàng Điện (Sắc phong Hồn Sư)' : 'Xem tu vi & đột phá cảnh giới'}
             >
               <span>{realm.icon}</span>
-              <span>{customTitle || realm.name} Lv.{level}</span>
+              <span className="realm-full-title">{customTitle || realm.name}</span>
+              <span>Lv.{level}</span>
             </div>
 
             {/* Túi Kim Cương */}
@@ -78,18 +99,18 @@ export default function Header({ onToggleSidebar }) {
               title="Kho Kim Cương (Bấm để nạp VIP 0đ)"
             >
               <span>💎</span>
-              <span>{diamonds.toLocaleString()}</span>
+              <span>{formatDiamonds(diamonds)}</span>
               <span className="diamond-plus">+</span>
             </div>
 
-            {/* Nút cài đặt Đấu La */}
+            {/* Nút Cài đặt / Sắc phong */}
             <button
               className="btn btn-ghost btn-sm"
               onClick={() => setIsSettingsOpen(true)}
-              title="Cài đặt chế độ Đấu La Đại Lục"
-              style={{ padding: '6px 8px', fontSize: '1rem' }}
+              title={isAdmin ? 'Giáo Hoàng Điện: Sắc phong Hồn Sư toàn Server' : 'Cài đặt chế độ Đấu La'}
+              style={{ padding: '4px 7px', fontSize: '0.95rem' }}
             >
-              🔮
+              {isAdmin ? '🔱' : '🔮'}
             </button>
           </>
         ) : (
@@ -97,10 +118,10 @@ export default function Header({ onToggleSidebar }) {
           <button
             className="btn btn-ghost btn-sm"
             onClick={() => setIsSettingsOpen(true)}
-            title="Mở chế độ Đấu La Đại Lục (Troll VIP Mode)"
-            style={{ opacity: 0.6, fontSize: '0.9rem' }}
+            title="Mở lại chế độ Đấu La Đại Lục"
+            style={{ opacity: 0.7, fontSize: '0.78rem', padding: '4px 8px' }}
           >
-            🔮 VIP Đấu La
+            🔮 Đấu La
           </button>
         )}
 

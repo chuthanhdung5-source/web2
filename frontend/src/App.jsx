@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import { DouluoProvider } from './context/DouluoContext'
 import DouluoSettingsModal from './components/Douluo/DouluoSettingsModal'
 import RechargeVipModal from './components/Douluo/RechargeVipModal'
+import CultivationModal from './components/Douluo/CultivationModal'
 
 // Auth pages
 import Login from './pages/Login'
@@ -97,6 +98,7 @@ export default function App() {
           {/* Global Modals for Douluo Mode */}
           <DouluoSettingsModal />
           <RechargeVipModal />
+          <CultivationModal />
         </BrowserRouter>
       </DouluoProvider>
     </AuthProvider>

@@ -92,3 +92,15 @@ export const memberAPI = {
   getMyFeedbacks: () => api.get('/member/feedbacks'),
 }
 
+export const douluoAPI = {
+  getMe: () => api.get('/douluo/me'),
+  cultivateHeartbeat: (seconds) => api.post('/douluo/cultivate', { seconds }),
+  breakthrough: () => api.post('/douluo/breakthrough'),
+  buyDiamonds: (vipTier, diamonds, packName) =>
+    api.post('/douluo/buy-diamonds', { vip_tier: vipTier, diamonds, pack_name: packName }),
+  spendDiamonds: (amount, reason) => api.post('/douluo/spend', { amount, reason }),
+  toggleMode: () => api.post('/douluo/toggle'),
+  getLeaderboard: () => api.get('/douluo/leaderboard'),
+  adminPromote: (data) => api.post('/douluo/admin/promote', data),
+}
+

@@ -82,7 +82,7 @@
 .douluo-badge {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   padding: 4px 10px;
   border-radius: 9999px;
   font-size: 0.8rem;
@@ -91,16 +91,17 @@
   user-select: none;
   transition: all 0.2s ease;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .douluo-badge:hover {
-  transform: translateY(-1px) scale(1.04);
+  transform: translateY(-1px) scale(1.03);
 }
 
 .badge-douluo-white {
   background: rgba(255, 255, 255, 0.1);
   color: #f1f5f9;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .badge-douluo-yellow {
@@ -116,61 +117,114 @@
 }
 
 .badge-douluo-black {
-  background: rgba(15, 23, 42, 0.8);
-  color: #94a3b8;
-  border: 1px solid #475569;
+  background: rgba(30, 30, 36, 0.8);
+  color: #e2e8f0;
+  border: 1px solid #6b21a8;
+  box-shadow: 0 0 8px rgba(107, 33, 168, 0.3);
 }
 
 .badge-douluo-red {
-  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(220, 38, 38, 0.1));
+  background: rgba(239, 68, 68, 0.15);
   color: #f87171;
-  border: 1px solid #ef4444;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
 }
 
 .badge-douluo-gold {
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(236, 72, 153, 0.2));
+  background: linear-gradient(135deg, rgba(251,191,36,0.2) 0%, rgba(236,72,153,0.2) 100%);
   color: #fde047;
   border: 1px solid #fbbf24;
-  box-shadow: 0 0 16px rgba(251, 191, 36, 0.6);
-  text-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+  box-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
 }
 
-/* Túi Kim Cương 💎 */
+/* Túi Kim Cương */
 .diamond-wallet {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: rgba(56, 189, 248, 0.1);
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  gap: 5px;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(59, 130, 246, 0.15));
+  border: 1px solid rgba(6, 182, 212, 0.4);
   padding: 4px 10px;
   border-radius: 9999px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 700;
   color: #38bdf8;
   cursor: pointer;
   transition: all 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .diamond-wallet:hover {
-  background: rgba(56, 189, 248, 0.2);
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(59, 130, 246, 0.25));
   border-color: #38bdf8;
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
   transform: translateY(-1px);
 }
 
 .diamond-plus {
-  background: #38bdf8;
-  color: #0f172a;
+  background: rgba(56, 189, 248, 0.25);
+  color: #fff;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
-  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 900;
+  font-size: 0.7rem;
+  font-weight: 800;
   margin-left: 2px;
+}
+
+/* Nút Bế Quan Tu Luyện */
+.btn-cultivate-pulse {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(168, 85, 247, 0.15);
+  border: 1px solid rgba(168, 85, 247, 0.4);
+  color: #d8b4fe;
+  padding: 4px 9px;
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.btn-cultivate-pulse:hover {
+  background: rgba(168, 85, 247, 0.3);
+  border-color: #a855f7;
+  color: #fff;
+}
+
+/* Responsive ẩn bớt chữ khi màn hình hẹp */
+@media (max-width: 900px) {
+  .douluo-badge .realm-full-title {
+    display: none;
+  }
+  .btn-cultivate-pulse span:not(.cult-icon) {
+    display: none;
+  }
+  .btn-cultivate-pulse {
+    padding: 4px 6px;
+  }
+}
+
+@media (max-width: 600px) {
+  .douluo-badge {
+    padding: 3px 6px;
+    font-size: 0.72rem;
+  }
+  .diamond-wallet {
+    padding: 3px 6px;
+    font-size: 0.72rem;
+  }
+  .diamond-plus {
+    display: none;
+  }
 }
 
 /* Modal VIP Card Styles */
@@ -211,3 +265,138 @@
   transform: rotate(45deg);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
+
+/* =========================================================
+   🧘 ĐỘNG PHỦ BẾ QUAN TU LUYỆN & LEADERBOARD STYLES
+   ========================================================= */
+.cultivation-cave {
+  background: radial-gradient(circle at 50% 30%, rgba(168, 85, 247, 0.15) 0%, rgba(15, 23, 42, 0.8) 70%);
+  border: 1px solid rgba(168, 85, 247, 0.3);
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cultivation-orb-container {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cultivation-core {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #c084fc 0%, #7e22ce 70%, #3b0764 100%);
+  box-shadow: 0 0 35px rgba(168, 85, 247, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  animation: corePulse 2s ease-in-out infinite;
+  z-index: 2;
+}
+
+@keyframes corePulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px #c084fc); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 25px #ec4899); }
+}
+
+.cultivation-orbit {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1.5px dashed rgba(192, 132, 252, 0.5);
+  border-radius: 50%;
+  animation: soulRingRotate 6s linear infinite;
+}
+
+.cultivation-timer-box {
+  display: inline-flex;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 16px;
+}
+
+.timer-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timer-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #38bdf8;
+  font-family: monospace;
+}
+
+.timer-lbl {
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.cultivation-exp-bar {
+  background: rgba(255, 255, 255, 0.08);
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+  margin: 12px 0 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.cultivation-exp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8b5cf6, #ec4899, #fbbf24);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.6);
+}
+
+/* Bảng Xếp Hạng Hồn Sư */
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.leaderboard-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+}
+
+.leaderboard-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.85rem;
+}
+
+.leaderboard-rank-badge {
+  display: inline-flex;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.rank-1 { background: #fbbf24; color: #000; box-shadow: 0 0 10px rgba(251, 191, 36, 0.6); }
+.rank-2 { background: #cbd5e1; color: #000; }
+.rank-3 { background: #b45309; color: #fff; }
