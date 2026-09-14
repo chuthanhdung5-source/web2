@@ -6,7 +6,7 @@ from app.models import User, UserRole, AdminProfile, Subject, Semester, Schedule
 from app.models.checkin import CheckinStatus
 from app.models.session import SessionStatus
 from app.models.payment import PaymentStatus
-from app.schemas.auth import UserOut
+from app.schemas.auth import UserOut, AdminResetPasswordRequest
 from app.schemas.schedule import (
     AdminProfileOut, AdminProfileUpdate, SubjectOut, ScheduleSlotOut,
     SubjectCreate, SubjectUpdate, ScheduleSlotCreate, ScheduleSlotUpdate
@@ -50,6 +50,56 @@ def toggle_member_active(
         target_id=user.id
     )
     return user
+
+
+@router.post("/members/{user_id}/force-reset-password")
+def admin_force_reset_password(
+    user_id: int,
+    data: Optional[AdminResetPasswordRequest] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin)
+):
+    """Admin cưỡng chế đổi mật khẩu cho thành viên."""
+    from app.utils.security import hash_password
+    import secrets
+
+    user = db.query(User).filter(User.id == user_id, User.role == UserRole.member).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Thành viên không tồn tại")
+
+    new_password = (data.new_password.strip() if data and data.new_password and data.new_password.strip() else None)
+    if not new_password:
+        # Nếu Admin không nhập mật khẩu cụ thể, tạo mật khẩu ngẫu nhiên
+        new_password = f"hoc{secrets.randbelow(900000) + 100000}"
+
+    if len(new_password) < 6:
+        raise HTTPException(status_code=400, detail="Mật khẩu mới phải có ít nhất 6 ký tự")
+
+    user.password_hash = hash_password(new_password)
+
+    # Gửi thông báo cho thành viên
+    notif = Notification(
+        user_id=user.id,
+        title="🔑 Mật khẩu của bạn đã được cập nhật!",
+        message=f"Admin đã đặt lại mật khẩu mới cho tài khoản của bạn: {new_password}. Vui lòng đăng nhập và đổi lại mật khẩu nếu muốn.",
+        type="warning"
+    )
+    db.add(notif)
+    db.commit()
+
+    log_activity(
+        db, current_user, "MEMBER_PASSWORD_FORCE_RESET",
+        f"Cưỡng chế đổi mật khẩu cho {user.full_name}",
+        f"Admin {current_user.full_name} đã đổi mật khẩu mới cho thành viên @{user.username} ({user.full_name}).",
+        target_id=user.id
+    )
+
+    return {
+        "message": f"Đã cưỡng chế đổi mật khẩu cho @{user.username} thành công!",
+        "new_password": new_password,
+        "username": user.username,
+        "member_name": user.full_name
+    }
 
 
 # ===== ADMIN PROFILE =====

@@ -2,7 +2,10 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models import User, UserRole
-from app.schemas.auth import UserRegister, UserLogin, TokenResponse, UserOut, UserUpdate, PasswordChange
+from app.schemas.auth import (
+    UserRegister, UserLogin, TokenResponse, UserOut, UserUpdate,
+    PasswordChange, ForgotPasswordRequest
+)
 from app.utils.security import hash_password, verify_password, create_access_token
 from app.middleware.auth import get_current_user
 
@@ -73,3 +76,40 @@ def change_password(
     current_user.password_hash = hash_password(data.new_password)
     db.commit()
     return {"message": "Đổi mật khẩu thành công"}
+
+
+@router.post("/forgot-password")
+def forgot_password(
+    data: ForgotPasswordRequest,
+    db: Session = Depends(get_db)
+):
+    """Đặt lại mật khẩu cho người dùng khi quên mật khẩu (xác minh qua username và email đã đăng ký)."""
+    user = db.query(User).filter(
+        User.username == data.username,
+        User.email == data.email
+    ).first()
+    if not user:
+        raise HTTPException(status_code=400, detail="Tên đăng nhập hoặc Email không chính xác")
+    if not user.is_active:
+        raise HTTPException(status_code=403, detail="Tài khoản đã bị khóa, vui lòng liên hệ Admin")
+
+    if len(data.new_password) < 6:
+        raise HTTPException(status_code=400, detail="Mật khẩu mới phải có ít nhất 6 ký tự")
+
+    user.password_hash = hash_password(data.new_password)
+    db.commit()
+
+    from app.models import ActivityLog
+    log = ActivityLog(
+        user_id=user.id,
+        user_name=user.full_name,
+        user_role=user.role,
+        action_type="PASSWORD_RESET",
+        title="Khôi phục mật khẩu qua Quên mật khẩu",
+        description=f"Tài khoản @{user.username} ({user.full_name}) đã tự đặt lại mật khẩu thành công.",
+        target_id=user.id
+    )
+    db.add(log)
+    db.commit()
+
+    return {"message": "Đặt lại mật khẩu thành công! Vui lòng đăng nhập lại bằng mật khẩu mới."}

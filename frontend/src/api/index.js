@@ -6,12 +6,14 @@ export const authAPI = {
   getMe: () => api.get('/auth/me'),
   updateProfile: (data) => api.patch('/auth/me', data),
   changePassword: (data) => api.post('/auth/change-password', data),
+  forgotPassword: (data) => api.post('/auth/forgot-password', data),
 }
 
 export const adminAPI = {
   getStats: () => api.get('/admin/stats'),
   getMembers: () => api.get('/admin/members'),
   toggleMember: (id) => api.patch(`/admin/members/${id}/toggle-active`),
+  forceResetPassword: (id, data) => api.post(`/admin/members/${id}/force-reset-password`, data),
   getProfile: () => api.get('/admin/profile'),
   updateProfile: (data) => api.put('/admin/profile', data),
   uploadPhoto: (file) => {

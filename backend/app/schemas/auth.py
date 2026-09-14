@@ -58,4 +58,14 @@ class PasswordChange(BaseModel):
     new_password: str
 
 
+class ForgotPasswordRequest(BaseModel):
+    username: str
+    email: EmailStr
+    new_password: str
+
+
+class AdminResetPasswordRequest(BaseModel):
+    new_password: Optional[str] = None
+
+
 TokenResponse.model_rebuild()
