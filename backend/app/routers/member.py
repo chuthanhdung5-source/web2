@@ -293,26 +293,43 @@ def get_my_stats(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    from datetime import date
+    today = date.today()
+
     sessions = db.query(WeeklySession).filter(
         WeeklySession.assigned_member_id == current_user.id
     ).all()
+
+    # Tự động cập nhật các ca học trong quá khứ đã được approved thành completed
+    has_updated = False
+    for s in sessions:
+        if s.session_date < today and s.status == SessionStatus.approved:
+            s.status = SessionStatus.completed
+            has_updated = True
+    if has_updated:
+        db.commit()
+
     completed = [s for s in sessions if s.status == SessionStatus.completed]
     total_periods = db.query(PeriodCheckin).join(WeeklySession).filter(
         WeeklySession.assigned_member_id == current_user.id,
         PeriodCheckin.status == CheckinStatus.verified
     ).count()
 
+    user_payments = db.query(Payment).filter(Payment.member_id == current_user.id).all()
+    actual_earnings = sum(p.amount for p in user_payments if p.status in [PaymentStatus.pending, PaymentStatus.paid])
+    current_user.total_earnings = actual_earnings
+    db.commit()
+
+    pending_amount = sum(
+        p.amount for p in user_payments if p.status == PaymentStatus.pending
+    )
+
     return MemberStatsOut(
         total_sessions=len(sessions),
         completed_sessions=len(completed),
         total_periods=total_periods,
-        total_earnings=current_user.total_earnings,
-        pending_payment=sum(
-            p.amount for p in db.query(Payment).filter(
-                Payment.member_id == current_user.id,
-                Payment.status == PaymentStatus.pending
-            ).all()
-        ),
+        total_earnings=actual_earnings,
+        pending_payment=pending_amount,
         avg_rating=None,
     )
 

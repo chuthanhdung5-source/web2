@@ -515,6 +515,19 @@ def get_admin_stats(
     db: Session = Depends(get_db),
     _: User = Depends(require_admin)
 ):
+    from datetime import date
+    today = date.today()
+
+    # Tự động cập nhật các ca học trong quá khứ đã được approved thành completed
+    past_approved = db.query(WeeklySession).filter(
+        WeeklySession.session_date < today,
+        WeeklySession.status == SessionStatus.approved
+    ).all()
+    if past_approved:
+        for s in past_approved:
+            s.status = SessionStatus.completed
+        db.commit()
+
     total_members = db.query(User).filter(User.role == UserRole.member).count()
     total_sessions = db.query(WeeklySession).count()
     completed_sessions = db.query(WeeklySession).filter(
@@ -523,12 +536,20 @@ def get_admin_stats(
     pending_approval = db.query(WeeklySession).filter(
         WeeklySession.status == SessionStatus.registered
     ).count()
+    pending_checkins = db.query(PeriodCheckin).filter(
+        PeriodCheckin.status == CheckinStatus.pending,
+        PeriodCheckin.photo_url != None
+    ).count()
+
     total_paid = db.query(Payment).filter(Payment.status == PaymentStatus.paid).all()
+    total_pending = db.query(Payment).filter(Payment.status == PaymentStatus.pending).all()
+
     return {
         "total_members": total_members,
         "total_sessions": total_sessions,
         "completed_sessions": completed_sessions,
         "pending_approval": pending_approval,
+        "pending_checkins": pending_checkins,
         "total_paid_amount": sum(p.amount for p in total_paid),
         "total_pending_amount": sum(p.amount for p in total_pending),
     }

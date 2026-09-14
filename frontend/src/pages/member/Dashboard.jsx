@@ -8,16 +8,37 @@ export default function MemberDashboard() {
   const [stats, setStats] = useState(null)
   const [notifs, setNotifs] = useState([])
 
-  useEffect(() => {
+  const [loading, setLoading] = useState(false)
+
+  const loadData = (isManual = false) => {
+    if (isManual) setLoading(true)
     memberAPI.getStats().then(r => setStats(r.data)).catch(() => {})
-    memberAPI.getNotifications().then(r => setNotifs(r.data.slice(0, 5))).catch(() => {})
+    memberAPI.getNotifications()
+      .then(r => setNotifs(r.data.slice(0, 5)))
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadData()
   }, [])
 
   return (
     <div>
-      <div className="page-header">
-        <h1>👋 Xin chào, {user?.full_name}!</h1>
-        <p>Theo dõi lịch học và thu nhập của bạn</p>
+      <div className="page-header flex flex-between align-center" style={{ flexWrap: 'wrap', gap: 16 }}>
+        <div>
+          <h1>👋 Xin chào, {user?.full_name}!</h1>
+          <p>Theo dõi lịch học và thu nhập của bạn</p>
+        </div>
+        <button
+          className="btn btn-secondary btn-sm"
+          onClick={() => loadData(true)}
+          disabled={loading}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}
+        >
+          {loading ? <div className="spinner" style={{ width: 14, height: 14 }} /> : '🔄'}
+          <span>Làm mới số liệu</span>
+        </button>
       </div>
 
       {/* Earnings highlight */}
