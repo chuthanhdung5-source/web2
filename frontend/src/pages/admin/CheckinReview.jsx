@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { adminAPI } from '../../api'
 import { getImageUrl } from '../../api/client'
+import { useDouluo } from '../../context/DouluoContext'
 import toast from 'react-hot-toast'
 
 const STATUS_TABS = [
@@ -11,6 +12,7 @@ const STATUS_TABS = [
 ]
 
 export default function CheckinReview() {
+  const { spendDiamonds } = useDouluo()
   const [checkins, setCheckins] = useState([])
   const [activeTab, setActiveTab] = useState('pending')
   const [loading, setLoading] = useState(true)
@@ -28,6 +30,7 @@ export default function CheckinReview() {
 
   const handle = async (id, approve, reason = null) => {
     try {
+      spendDiamonds(20, approve ? 'Tử Cực Ma Đồng giám định ảnh chuẩn' : 'Bác bỏ ảnh check-in vi phạm')
       await adminAPI.verifyCheckin(id, approve, reason)
       toast.success(approve ? '✅ Đã xác nhận ảnh!' : '❌ Đã từ chối')
       setPreview(null)

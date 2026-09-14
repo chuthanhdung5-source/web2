@@ -2,11 +2,13 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { authAPI } from '../api'
+import { useDouluo } from '../context/DouluoContext'
 import toast from 'react-hot-toast'
 import './Auth.css'
 
 export default function Login() {
   const { login } = useAuth()
+  const { enabled, spendDiamonds } = useDouluo()
   const navigate = useNavigate()
   const [form, setForm] = useState({ username: '', password: '' })
   const [loading, setLoading] = useState(false)
@@ -21,6 +23,9 @@ export default function Login() {
     setLoading(true)
     try {
       const user = await login(form.username, form.password)
+      if (enabled) {
+        spendDiamonds(50, 'Nhập cảnh Đấu La Đại Lục')
+      }
       toast.success(`Chào mừng ${user.full_name}! 👋`)
       navigate(user.role === 'admin' ? '/admin' : '/member')
     } catch (err) {

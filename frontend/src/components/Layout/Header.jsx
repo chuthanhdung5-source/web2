@@ -1,5 +1,6 @@
 import { useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useDouluo } from '../../context/DouluoContext'
 import './Header.css'
 
 const PAGE_TITLES = {
@@ -21,6 +22,16 @@ const PAGE_TITLES = {
 export default function Header({ onToggleSidebar }) {
   const { pathname } = useLocation()
   const { user } = useAuth()
+  const {
+    enabled,
+    realm,
+    level,
+    diamonds,
+    customTitle,
+    setIsSettingsOpen,
+    setIsRechargeOpen
+  } = useDouluo()
+
   const title = Object.entries(PAGE_TITLES).find(([key]) => pathname === key)?.[1] || 'Web Học Hộ'
 
   const now = new Date()
@@ -46,8 +57,55 @@ export default function Header({ onToggleSidebar }) {
         </div>
       </div>
 
-      <div className="header-right">
-        <div className="earnings-pill">
+      <div className="header-right flex align-center gap-3">
+        {/* Chế độ Đấu La Đại Lục (nếu bật) */}
+        {enabled ? (
+          <>
+            {/* Huy hiệu Cảnh giới */}
+            <div
+              className={`douluo-badge ${realm.badge}`}
+              onClick={() => setIsSettingsOpen(true)}
+              title="Bấm để Tự Phong Cảnh Giới Đấu La"
+            >
+              <span>{realm.icon}</span>
+              <span>{customTitle || realm.name} Lv.{level}</span>
+            </div>
+
+            {/* Túi Kim Cương */}
+            <div
+              className="diamond-wallet"
+              onClick={() => setIsRechargeOpen(true)}
+              title="Kho Kim Cương (Bấm để nạp VIP 0đ)"
+            >
+              <span>💎</span>
+              <span>{diamonds.toLocaleString()}</span>
+              <span className="diamond-plus">+</span>
+            </div>
+
+            {/* Nút cài đặt Đấu La */}
+            <button
+              className="btn btn-ghost btn-sm"
+              onClick={() => setIsSettingsOpen(true)}
+              title="Cài đặt chế độ Đấu La Đại Lục"
+              style={{ padding: '6px 8px', fontSize: '1rem' }}
+            >
+              🔮
+            </button>
+          </>
+        ) : (
+          /* Nút mở lại chế độ khi đang tắt */
+          <button
+            className="btn btn-ghost btn-sm"
+            onClick={() => setIsSettingsOpen(true)}
+            title="Mở chế độ Đấu La Đại Lục (Troll VIP Mode)"
+            style={{ opacity: 0.6, fontSize: '0.9rem' }}
+          >
+            🔮 VIP Đấu La
+          </button>
+        )}
+
+        {/* Tiền lương thật */}
+        <div className="earnings-pill" title="Tổng thu nhập thực tế">
           <span>💰</span>
           <span>{(user?.total_earnings || 0).toLocaleString('vi-VN')}đ</span>
         </div>

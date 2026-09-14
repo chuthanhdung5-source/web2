@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { scheduleAPI, memberAPI } from '../../api'
 import TimetableGrid from '../../components/Schedule/TimetableGrid'
 import { useAuth } from '../../context/AuthContext'
+import { useDouluo } from '../../context/DouluoContext'
 import toast from 'react-hot-toast'
 import { format, startOfWeek, addWeeks, subWeeks } from 'date-fns'
 
@@ -9,6 +10,7 @@ const DAY_NAMES = { 2: 'Thứ 2', 3: 'Thứ 3', 4: 'Thứ 4', 5: 'Thứ 5', 6: '
 
 export default function AvailableSlots() {
   const { user } = useAuth()
+  const { spendDiamonds } = useDouluo()
   const [sessions, setSessions] = useState([])
   const [allWeeklySessions, setAllWeeklySessions] = useState([])
   const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }))
@@ -33,6 +35,7 @@ export default function AvailableSlots() {
   const register = async (sessionId) => {
     setRegistering(sessionId)
     try {
+      spendDiamonds(30, 'Thi triển Hồn Lực giữ chỗ ca học')
       await memberAPI.registerSession(sessionId)
       toast.success('✅ Đã đăng ký! Chờ admin duyệt nhé')
       load()

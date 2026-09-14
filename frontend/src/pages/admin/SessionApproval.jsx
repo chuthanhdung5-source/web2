@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import { adminAPI } from '../../api'
+import { useDouluo } from '../../context/DouluoContext'
 import toast from 'react-hot-toast'
 
 const DAY_NAMES = { 2: 'Thứ 2', 3: 'Thứ 3', 4: 'Thứ 4', 5: 'Thứ 5', 6: 'Thứ 6', 7: 'Thứ 7', 8: 'Chủ nhật' }
 
 export default function SessionApproval() {
+  const { spendDiamonds } = useDouluo()
   const [sessions, setSessions] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -20,6 +22,7 @@ export default function SessionApproval() {
 
   const handleApproveMember = async (sessionId, memberId, memberName) => {
     try {
+      spendDiamonds(100, `Hạ sắc lệnh duyệt ca cho ${memberName}`)
       await adminAPI.approveSession(sessionId, true, memberId)
       toast.success(`✅ Đã duyệt ca học cho ${memberName}!`)
       load()

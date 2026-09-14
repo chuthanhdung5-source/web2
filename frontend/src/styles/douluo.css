@@ -1,0 +1,213 @@
+/* =========================================================
+   🔮 ĐẤU LA ĐẠI LỤC - CHẾ ĐỘ VIP & CẢNH GIỚI HỒN SƯ STYLES
+   ========================================================= */
+
+/* Vòng Hồn Hoàn Xoay Quanh Avatar */
+.soul-ring-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.soul-ring {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: soulRingRotate 4s linear infinite;
+  transition: all 0.3s ease;
+}
+
+@keyframes soulRingRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(180deg) scale(1.05); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Các bậc Hồn Hoàn theo Niên Hạn */
+/* 1. Mười năm (Trắng) */
+.ring-white {
+  border: 2px dashed rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+/* 2. Trăm năm (Vàng) */
+.ring-yellow {
+  border: 2px dashed #fbbf24;
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.6), inset 0 0 6px rgba(251, 191, 36, 0.3);
+}
+
+/* 3. Nghìn năm (Tím) */
+.ring-purple {
+  border: 2px dashed #a855f7;
+  box-shadow: 0 0 16px rgba(168, 85, 247, 0.7), inset 0 0 8px rgba(168, 85, 247, 0.4);
+}
+
+/* 4. Vạn năm (Đen huyền ảo) */
+.ring-black {
+  border: 2px solid #1e1e24;
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.9), 0 0 8px rgba(139, 92, 246, 0.6);
+}
+
+/* 5. Thập Vạn năm (Đỏ rực lửa) */
+.ring-red {
+  border: 2px dashed #ef4444;
+  box-shadow: 0 0 22px rgba(239, 68, 68, 0.9), inset 0 0 10px rgba(239, 68, 68, 0.5);
+  animation: soulRingRotate 2.5s linear infinite, ringPulseRed 2s ease-in-out infinite;
+}
+
+@keyframes ringPulseRed {
+  0%, 100% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+  50% { box-shadow: 0 0 30px rgba(239, 68, 68, 1), 0 0 40px rgba(245, 158, 11, 0.6); }
+}
+
+/* 6. Thần cấp / Hoàng Kim (Vàng kim hào quang chí tôn) */
+.ring-gold {
+  border: 2.5px solid #fbbf24;
+  background: radial-gradient(circle, rgba(251,191,36,0.1) 0%, transparent 70%);
+  box-shadow: 0 0 25px rgba(251, 191, 36, 1), 0 0 35px rgba(236, 72, 153, 0.8), inset 0 0 12px rgba(251, 191, 36, 0.6);
+  animation: soulRingRotate 2s linear infinite, ringPulseGold 1.5s ease-in-out infinite;
+}
+
+@keyframes ringPulseGold {
+  0%, 100% { filter: drop-shadow(0 0 8px #fbbf24); }
+  50% { filter: drop-shadow(0 0 18px #f59e0b) drop-shadow(0 0 25px #ec4899); }
+}
+
+/* Badge Cảnh Giới Đấu La */
+.douluo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.douluo-badge:hover {
+  transform: translateY(-1px) scale(1.04);
+}
+
+.badge-douluo-white {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f1f5f9;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.badge-douluo-yellow {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+}
+
+.badge-douluo-purple {
+  background: rgba(168, 85, 247, 0.15);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.badge-douluo-black {
+  background: rgba(15, 23, 42, 0.8);
+  color: #94a3b8;
+  border: 1px solid #475569;
+}
+
+.badge-douluo-red {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.25), rgba(220, 38, 38, 0.1));
+  color: #f87171;
+  border: 1px solid #ef4444;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+}
+
+.badge-douluo-gold {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.3), rgba(236, 72, 153, 0.2));
+  color: #fde047;
+  border: 1px solid #fbbf24;
+  box-shadow: 0 0 16px rgba(251, 191, 36, 0.6);
+  text-shadow: 0 0 8px rgba(251, 191, 36, 0.6);
+}
+
+/* Túi Kim Cương 💎 */
+.diamond-wallet {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(56, 189, 248, 0.1);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #38bdf8;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.diamond-wallet:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+  transform: translateY(-1px);
+}
+
+.diamond-plus {
+  background: #38bdf8;
+  color: #0f172a;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 900;
+  margin-left: 2px;
+}
+
+/* Modal VIP Card Styles */
+.vip-tier-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.vip-tier-card:hover {
+  transform: translateY(-4px);
+  border-color: #fbbf24;
+  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.25);
+  background: rgba(251, 191, 36, 0.05);
+}
+
+.vip-tier-card.featured {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.05));
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.2);
+}
+
+.vip-badge-ribbon {
+  position: absolute;
+  top: 8px;
+  right: -24px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 28px;
+  transform: rotate(45deg);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}

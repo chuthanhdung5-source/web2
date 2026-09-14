@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useDouluo } from '../../context/DouluoContext'
 import './Sidebar.css'
 
 const ADMIN_NAV = [
@@ -39,6 +40,8 @@ export default function Sidebar({ isOpen, onClose }) {
 
   const initials = user?.full_name?.split(' ').map(w => w[0]).slice(-2).join('') || 'U'
 
+  const { enabled, realm, customTitle, setIsSettingsOpen } = useDouluo()
+
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       {/* Logo & Mobile Close */}
@@ -76,10 +79,30 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* User info */}
       <div className="sidebar-footer">
         <div className="sidebar-user">
-          <div className="avatar">{initials}</div>
+          {/* Avatar với Vòng Hồn Hoàn Đấu La */}
+          <div
+            className="soul-ring-wrapper"
+            style={{ cursor: 'pointer' }}
+            onClick={() => setIsSettingsOpen(true)}
+            title="Bấm để Tự Phong Cảnh Giới Đấu La"
+          >
+            {enabled && <div className={`soul-ring ${realm.ring}`} />}
+            <div className="avatar" style={{ position: 'relative', zIndex: 1 }}>
+              {initials}
+            </div>
+          </div>
+
           <div className="user-info">
             <div className="user-name">{user?.full_name}</div>
-            <div className="user-role">{user?.role === 'admin' ? '👑 Admin' : '🎒 Thành viên'}</div>
+            <div className="user-role" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+              {enabled ? (
+                <span style={{ color: '#c084fc', fontWeight: 600, fontSize: '0.75rem' }}>
+                  {realm.icon} {customTitle || realm.name}
+                </span>
+              ) : (
+                <span>{user?.role === 'admin' ? '👑 Admin' : '🎒 Thành viên'}</span>
+              )}
+            </div>
           </div>
         </div>
         <button className="btn btn-ghost btn-sm logout-btn" onClick={handleLogout} id="logout-btn">
