@@ -98,6 +98,7 @@ export const douluoAPI = {
   breakthrough: () => api.post('/douluo/breakthrough'),
   buyDiamonds: (vipTier, diamonds, packName) =>
     api.post('/douluo/buy-diamonds', { vip_tier: vipTier, diamonds, pack_name: packName }),
+  mineDiamonds: (clicks = 1) => api.post('/douluo/mine-diamonds', { clicks }),
   spendDiamonds: (amount, reason) => api.post('/douluo/spend', { amount, reason }),
   toggleMode: () => api.post('/douluo/toggle'),
   getLeaderboard: () => api.get('/douluo/leaderboard'),

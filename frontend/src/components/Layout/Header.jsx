@@ -30,7 +30,8 @@ export default function Header({ onToggleSidebar }) {
     customTitle,
     setIsSettingsOpen,
     setIsRechargeOpen,
-    setIsCultivationOpen
+    setIsCultivationOpen,
+    setIsMineOpen
   } = useDouluo()
 
   const title = Object.entries(PAGE_TITLES).find(([key]) => pathname === key)?.[1] || 'Web Học Hộ'
@@ -95,12 +96,12 @@ export default function Header({ onToggleSidebar }) {
             {/* Túi Kim Cương */}
             <div
               className="diamond-wallet"
-              onClick={() => setIsRechargeOpen(true)}
-              title="Kho Kim Cương (Bấm để nạp VIP 0đ)"
+              onClick={() => (isAdmin ? setIsRechargeOpen(true) : setIsMineOpen(true))}
+              title={isAdmin ? 'Kho Kim Cương (Bấm để nạp VIP 0đ)' : 'Mỏ Hồn Thạch (Bấm để gõ nhặt kim cương)'}
             >
               <span>💎</span>
               <span>{formatDiamonds(diamonds)}</span>
-              <span className="diamond-plus">+</span>
+              <span className="diamond-plus">{isAdmin ? '+' : '⛏️'}</span>
             </div>
 
             {/* Nút Cài đặt / Sắc phong */}

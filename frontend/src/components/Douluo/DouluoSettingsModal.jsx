@@ -17,7 +17,8 @@ export default function DouluoSettingsModal() {
     isSettingsOpen,
     setIsSettingsOpen,
     setIsCultivationOpen,
-    setIsRechargeOpen
+    setIsRechargeOpen,
+    setIsMineOpen
   } = useDouluo()
 
   const isAdmin = user?.role === 'admin'
@@ -276,10 +277,10 @@ export default function DouluoSettingsModal() {
                 className="btn btn-secondary flex-1"
                 onClick={() => {
                   setIsSettingsOpen(false)
-                  setIsRechargeOpen(true)
+                  setIsMineOpen(true)
                 }}
               >
-                💎 Nạp VIP 0đ
+                ⛏️ Gõ Mỏ Kim Cương
               </button>
             </div>
           </div>

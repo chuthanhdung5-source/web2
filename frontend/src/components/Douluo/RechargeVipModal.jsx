@@ -1,9 +1,12 @@
 import { useDouluo } from '../../context/DouluoContext'
+import { useAuth } from '../../context/AuthContext'
 
 export default function RechargeVipModal() {
+  const { user } = useAuth()
   const { isRechargeOpen, setIsRechargeOpen, recharge, diamonds } = useDouluo()
 
-  if (!isRechargeOpen) return null
+  // Chỉ Admin mới được mở modal nạp VIP
+  if (!isRechargeOpen || user?.role !== 'admin') return null
 
   const PACKAGES = [
     {
@@ -55,22 +58,21 @@ export default function RechargeVipModal() {
         className="modal card"
         style={{
           maxWidth: 600,
-          width: '100%',
-          margin: 20,
+          width: '92%',
           background: 'linear-gradient(135deg, rgba(20, 20, 35, 0.98), rgba(10, 10, 20, 0.99))',
           border: '1px solid rgba(251, 191, 36, 0.4)',
-          boxShadow: '0 0 40px rgba(251, 191, 36, 0.2)',
+          boxShadow: '0 0 40px rgba(251, 191, 36, 0.3)',
         }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Header Modal */}
-        <div className="flex flex-between align-center" style={{ marginBottom: 16 }}>
-          <div className="flex align-center gap-2">
-            <span style={{ fontSize: '1.75rem' }}>💎</span>
+        {/* Modal Header */}
+        <div className="flex flex-between align-center" style={{ marginBottom: 20 }}>
+          <div className="flex align-center gap-3">
+            <span style={{ fontSize: '2rem' }}>👑</span>
             <div>
-              <h2 className="h3" style={{ margin: 0, color: '#fde047' }}>Cửa Hàng Kim Cương VIP Đại Lục</h2>
+              <h2 className="h3" style={{ margin: 0, color: '#fbbf24' }}>Kho Kim Cương VIP (Admin)</h2>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Số dư hiện tại: <span style={{ color: '#38bdf8', fontWeight: 700 }}>{diamonds.toLocaleString()} 💎</span> (Khuyến mãi đặc biệt: Giá 0đ)
+                Đặc quyền cấp phát Kim Cương giả lập dành riêng cho Giáo Hoàng Admin
               </div>
             </div>
           </div>

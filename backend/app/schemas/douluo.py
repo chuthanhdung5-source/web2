@@ -41,6 +41,10 @@ class RechargeRequest(BaseModel):
     pack_name: str
 
 
+class MineRequest(BaseModel):
+    clicks: int = Field(default=1, ge=1, le=200, description="Số lần gõ nhặt kim cương")
+
+
 class SpendRequest(BaseModel):
     amount: int = Field(ge=1)
     reason: str

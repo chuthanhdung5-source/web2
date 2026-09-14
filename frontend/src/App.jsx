@@ -4,6 +4,7 @@ import { DouluoProvider } from './context/DouluoContext'
 import DouluoSettingsModal from './components/Douluo/DouluoSettingsModal'
 import RechargeVipModal from './components/Douluo/RechargeVipModal'
 import CultivationModal from './components/Douluo/CultivationModal'
+import DiamondMineModal from './components/Douluo/DiamondMineModal'
 
 // Auth pages
 import Login from './pages/Login'
@@ -99,6 +100,7 @@ export default function App() {
           <DouluoSettingsModal />
           <RechargeVipModal />
           <CultivationModal />
+          <DiamondMineModal />
         </BrowserRouter>
       </DouluoProvider>
     </AuthProvider>

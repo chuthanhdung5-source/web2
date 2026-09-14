@@ -12,6 +12,7 @@ from app.schemas.douluo import (
     CultivateRequest,
     BreakthroughOut,
     RechargeRequest,
+    MineRequest,
     SpendRequest,
     AdminPromoteRequest,
     LeaderboardItem,
@@ -223,7 +224,13 @@ def buy_diamonds(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Nạp VIP 0đ mua kim cương."""
+    """(Chỉ Admin) Nạp VIP 0đ mua kim cương số lượng lớn."""
+    if current_user.role != UserRole.admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Chỉ Admin mới có quyền nạp các gói VIP triệu Kim Cương! Thành viên vui lòng vào Mỏ Hồn Thạch để gõ nhặt kim cương nhé!",
+        )
+
     cult = get_or_create_cultivation(db, current_user)
     cult.diamonds += payload.diamonds
     if payload.vip_tier > cult.vip_tier:
@@ -244,6 +251,28 @@ def buy_diamonds(
         "message": f"Nạp thành công {payload.diamonds:,} 💎 từ gói {payload.pack_name}!",
         "diamonds": cult.diamonds,
         "vip_tier": cult.vip_tier,
+    }
+
+
+@router.post("/mine-diamonds")
+def mine_diamonds(
+    payload: MineRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Member gõ mỏ nhặt kim cương (mỗi lần bấm +10 💎)."""
+    cult = get_or_create_cultivation(db, current_user)
+    clicks = min(payload.clicks, 200)
+    earned = clicks * 10
+    cult.diamonds += earned
+    db.commit()
+    db.refresh(cult)
+
+    return {
+        "success": True,
+        "earned": earned,
+        "diamonds": cult.diamonds,
+        "message": f"Khai thác được +{earned} 💎!",
     }
 
 

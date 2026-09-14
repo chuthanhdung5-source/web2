@@ -46,6 +46,7 @@ export function DouluoProvider({ children }) {
   const [isRechargeOpen, setIsRechargeOpen] = useState(false)
   const [isCultivationOpen, setIsCultivationOpen] = useState(false)
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false)
+  const [isMineOpen, setIsMineOpen] = useState(false)
 
   // Unsynced seconds buffer for heartbeat
   const unsyncedSecondsRef = useRef(0)
@@ -186,6 +187,16 @@ export function DouluoProvider({ children }) {
     return true
   }
 
+  // Member gõ mỏ đào kim cương
+  const mineDiamonds = (clicks = 1) => {
+    const earned = clicks * 10
+    setDiamonds(prev => prev + earned)
+    douluoAPI.mineDiamonds(clicks).catch(err => {
+      console.error('Lỗi mine diamonds:', err)
+    })
+    return earned
+  }
+
   // Admin sắc phong cảnh giới (1 người hoặc ALL)
   const adminPromote = async (data) => {
     try {
@@ -216,6 +227,7 @@ export function DouluoProvider({ children }) {
         toggleEnabled,
         breakthrough,
         recharge,
+        mineDiamonds,
         spendDiamonds,
         adminPromote,
         loadStatus,
@@ -227,6 +239,8 @@ export function DouluoProvider({ children }) {
         setIsCultivationOpen,
         isLeaderboardOpen,
         setIsLeaderboardOpen,
+        isMineOpen,
+        setIsMineOpen,
       }}
     >
       {children}
