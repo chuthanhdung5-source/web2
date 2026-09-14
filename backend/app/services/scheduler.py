@@ -92,6 +92,9 @@ def auto_complete_sessions():
                         status=PaymentStatus.pending,
                     )
                     db.add(payment)
+                else:
+                    existing.periods_completed = verified_count
+                    existing.amount = verified_count * settings.PERIOD_SALARY
 
         if sessions_to_complete:
             db.commit()

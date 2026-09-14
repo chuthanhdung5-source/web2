@@ -140,6 +140,15 @@ async def startup_event():
             db.commit()
         except Exception:
             db.rollback()
+
+        # Tự động đồng bộ lại các Payment và User total_earnings theo số PeriodCheckin verified thực tế
+        try:
+            from app.routers.admin import sync_all_payments_and_earnings
+            sync_all_payments_and_earnings(db)
+            db.commit()
+        except Exception as e:
+            print(f"Error syncing payments on startup: {e}")
+            db.rollback()
     finally:
         db.close()
 

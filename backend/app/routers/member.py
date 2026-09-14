@@ -262,6 +262,24 @@ def get_earnings(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    from app.config import settings
+    # Tự động đồng bộ số tiết verified cho các payment pending của member
+    member_payments = db.query(Payment).filter(Payment.member_id == current_user.id).all()
+    has_changes = False
+    for p in member_payments:
+        v_count = db.query(PeriodCheckin).filter(
+            PeriodCheckin.weekly_session_id == p.weekly_session_id,
+            PeriodCheckin.status == CheckinStatus.verified
+        ).count()
+        if p.periods_completed != v_count:
+            p.periods_completed = v_count
+            p.amount = v_count * settings.PERIOD_SALARY
+            has_changes = True
+    if has_changes:
+        # Cập nhật lại total_earnings
+        current_user.total_earnings = sum(p.amount for p in member_payments if p.status in [PaymentStatus.pending, PaymentStatus.paid])
+        db.commit()
+
     payments = db.query(Payment).filter(Payment.member_id == current_user.id).all()
     return {
         "total_earned": sum(p.amount for p in payments if p.status == PaymentStatus.paid),

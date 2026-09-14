@@ -363,6 +363,9 @@ def verify_checkin(
     checkin.reject_reason = reject_reason if not approve else None
     checkin.verified_at = datetime.now()
 
+    # Flush ngay để trạng thái checkin được phản ánh vào DB session trước khi query tính tiền
+    db.flush()
+
     # Cập nhật payment nếu tất cả tiết đã được verify
     session = checkin.weekly_session
     if session and session.assigned_member_id:
@@ -395,9 +398,30 @@ def get_activity_logs(
     return query.order_by(ActivityLog.created_at.desc()).limit(200).all()
 
 
+def sync_all_payments_and_earnings(db: Session):
+    """Đồng bộ lại số tiết và số tiền cho tất cả Payment theo số PeriodCheckin verified thực tế."""
+    payments = db.query(Payment).all()
+    for p in payments:
+        v_count = db.query(PeriodCheckin).filter(
+            PeriodCheckin.weekly_session_id == p.weekly_session_id,
+            PeriodCheckin.status == CheckinStatus.verified
+        ).count()
+        if p.periods_completed != v_count:
+            p.periods_completed = v_count
+            p.amount = v_count * settings.PERIOD_SALARY
+
+    users = db.query(User).all()
+    for u in users:
+        total_payments = db.query(Payment).filter(
+            Payment.member_id == u.id
+        ).all()
+        u.total_earnings = sum(p.amount for p in total_payments if p.status in [PaymentStatus.pending, PaymentStatus.paid])
+
 
 def _update_payment(db: Session, session: WeeklySession, admin: User):
     """Tính lại tiền cho ca học sau khi verify checkin."""
+    db.flush()
+
     verified_count = db.query(PeriodCheckin).filter(
         PeriodCheckin.weekly_session_id == session.id,
         PeriodCheckin.status == CheckinStatus.verified
@@ -408,20 +432,21 @@ def _update_payment(db: Session, session: WeeklySession, admin: User):
         payment = Payment(
             member_id=session.assigned_member_id,
             weekly_session_id=session.id,
+            status=PaymentStatus.pending,
         )
         db.add(payment)
 
     payment.periods_completed = verified_count
     payment.amount = verified_count * settings.PERIOD_SALARY
+    db.flush()
 
     # Cập nhật total_earnings của thành viên
     member = db.query(User).filter(User.id == session.assigned_member_id).first()
     if member:
-        total = db.query(Payment).filter(
-            Payment.member_id == member.id,
-            Payment.status == PaymentStatus.pending
+        total_payments = db.query(Payment).filter(
+            Payment.member_id == member.id
         ).all()
-        member.total_earnings = sum(p.amount for p in total)
+        member.total_earnings = sum(p.amount for p in total_payments if p.status in [PaymentStatus.pending, PaymentStatus.paid])
 
 
 # ===== PAYMENT MANAGEMENT =====
@@ -431,10 +456,24 @@ def list_payments(
     db: Session = Depends(get_db),
     _: User = Depends(require_admin)
 ):
+    sync_all_payments_and_earnings(db)
+    db.commit()
+
     q = db.query(Payment)
     if status:
         q = q.filter(Payment.status == status)
     return q.order_by(Payment.created_at.desc()).all()
+
+
+@router.post("/payments/sync")
+def sync_payments_endpoint(
+    db: Session = Depends(get_db),
+    _: User = Depends(require_admin)
+):
+    """Endpoint thủ công để Admin đồng bộ lại toàn bộ payments và earnings."""
+    sync_all_payments_and_earnings(db)
+    db.commit()
+    return {"message": "Đã đồng bộ lại toàn bộ thanh toán và thu nhập thành công"}
 
 
 @router.post("/payments/{payment_id}/mark-paid")
@@ -451,9 +490,13 @@ def mark_paid(
     payment.status = PaymentStatus.paid
     payment.paid_at = datetime.now()
     payment.notes = notes
+    db.flush()
 
     if payment.member:
-        payment.member.total_earnings = (payment.member.total_earnings or 0.0) + payment.amount
+        all_payments = db.query(Payment).filter(
+            Payment.member_id == payment.member.id
+        ).all()
+        payment.member.total_earnings = sum(p.amount for p in all_payments if p.status in [PaymentStatus.pending, PaymentStatus.paid])
 
     notif = Notification(
         user_id=payment.member_id,
