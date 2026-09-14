@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
-  timeout: 30000,
+  timeout: 60000, // 60s để chờ server Cloud (Render) Cold-Start thức dậy mà không bị timeout lỗi
 })
 
 // Request interceptor — attach JWT token
@@ -19,7 +19,14 @@ api.interceptors.response.use(
   (res) => res,
   (err) => {
     const status = err.response?.status
-    if (status === 401 || (status === 403 && window.location.pathname.startsWith('/admin'))) {
+    if (status === 401) {
+      // Chỉ tự redirect khi không phải đang ở sẵn trang login
+      if (window.location.pathname !== '/login') {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        window.location.href = '/login'
+      }
+    } else if (status === 403 && window.location.pathname.startsWith('/admin')) {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.location.href = '/login'

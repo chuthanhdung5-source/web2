@@ -14,12 +14,29 @@ export function AuthProvider({ children }) {
     if (token) {
       authAPI.getMe()
         .then(res => setUser(res.data))
-        .catch(() => { localStorage.removeItem('token'); localStorage.removeItem('user') })
+        .catch(err => {
+          // CHỈ xóa token nếu server thực sự trả về 401 (token hết hạn)
+          // KHÔNG xóa token khi lỗi mạng, timeout hoặc server đang khởi động
+          if (err.response?.status === 401) {
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+            setUser(null)
+          }
+        })
         .finally(() => setLoading(false))
     } else {
       setLoading(false)
     }
   }, [])
+
+  // Keep-alive ping: Tự động gửi request mỗi 10 phút để server cloud không bị ngủ đông (Sleep) khi đang mở tab
+  useEffect(() => {
+    if (!user) return
+    const pingTimer = setInterval(() => {
+      authAPI.getMe().catch(() => {})
+    }, 10 * 60 * 1000)
+    return () => clearInterval(pingTimer)
+  }, [user])
 
   const login = async (username, password) => {
     const res = await authAPI.login({ username, password })
