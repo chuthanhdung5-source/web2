@@ -23,6 +23,7 @@ export default function PaymentManager() {
   const [filter, setFilter] = useState('pending')
   const [loading, setLoading] = useState(true)
   const [payModal, setPayModal] = useState(null)
+  const [qrImageError, setQrImageError] = useState(false)
   const [notes, setNotes] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -131,7 +132,7 @@ export default function PaymentManager() {
                       <button
                         id={`pay-${p.id}`}
                         className={`btn ${p.status === 'paid' ? 'btn-secondary btn-sm' : 'btn-success btn-sm'}`}
-                        onClick={() => setPayModal({ payment: p, member, vietQRUrl })}
+                        onClick={() => { setQrImageError(false); setPayModal({ payment: p, member, vietQRUrl }); }}
                       >
                         {p.status === 'paid' ? '👁 Xem chi tiết' : '💳 Thanh toán ngay'}
                       </button>
@@ -144,7 +145,7 @@ export default function PaymentManager() {
         </div>
       )}
 
-      {/* Payment Modal */}
+      {/* Modal Thanh toán */}
       {payModal && (
         <div className="modal-overlay" onClick={() => setPayModal(null)}>
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
@@ -164,14 +165,21 @@ export default function PaymentManager() {
 
             {/* QR Code Section */}
             <div style={{ textAlign: 'center', marginBottom: 16, background: '#fff', padding: 16, borderRadius: 12, border: '1px solid var(--border)' }}>
-              {payModal.member?.qr_code_url ? (
+              {payModal.member?.qr_code_url && !qrImageError ? (
                 <div>
                   <div style={{ fontSize: '0.8rem', color: '#333', fontWeight: 700, marginBottom: 8 }}>🖼️ MÃ QR CHUYỂN KHOẢN (DO THÀNH VIÊN TẢI LÊN)</div>
-                  <img src={getImageUrl(payModal.member.qr_code_url)} alt="Member QR" style={{ maxWidth: 220, maxHeight: 220, objectFit: 'contain' }} />
+                  <img
+                    src={getImageUrl(payModal.member.qr_code_url)}
+                    alt="Member QR"
+                    onError={() => setQrImageError(true)}
+                    style={{ maxWidth: 220, maxHeight: 220, objectFit: 'contain' }}
+                  />
                 </div>
               ) : payModal.vietQRUrl ? (
                 <div>
-                  <div style={{ fontSize: '0.8rem', color: '#333', fontWeight: 700, marginBottom: 8 }}>⚡ MÃ VIETQR TỰ ĐỘNG SINH (MỞ APP NGÂN HÀNG QUÉT)</div>
+                  <div style={{ fontSize: '0.8rem', color: '#333', fontWeight: 700, marginBottom: 8 }}>
+                    {qrImageError ? '⚡ MÃ QR TỰ ĐỘNG SINH VIETQR (DO ẢNH THÀNH VIÊN LỖI/KHÔNG TỒN TẠI)' : '⚡ MÃ VIETQR TỰ ĐỘNG SINH (MỞ APP NGÂN HÀNG QUÉT)'}
+                  </div>
                   <img src={payModal.vietQRUrl} alt="VietQR" style={{ maxWidth: 240, maxHeight: 240, objectFit: 'contain' }} />
                 </div>
               ) : (
