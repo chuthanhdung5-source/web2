@@ -23,6 +23,8 @@ origins = [
     "http://localhost:3000",
     "http://127.0.0.1:5173",
     "https://web2-tan-gamma.vercel.app",
+    "https://daulatienluoi.id.vn",
+    "https://www.daulatienluoi.id.vn",
 ]
 
 if settings.FRONTEND_URL:
