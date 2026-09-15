@@ -28,13 +28,15 @@ export default function Header({ onToggleSidebar }) {
     level,
     diamonds,
     customTitle,
+    sessionSecondsLeft,
     setIsSettingsOpen,
     setIsRechargeOpen,
     setIsCultivationOpen,
-    setIsMineOpen
+    setIsMineOpen,
+    setIsShopOpen,
   } = useDouluo()
 
-  const title = Object.entries(PAGE_TITLES).find(([key]) => pathname === key)?.[1] || 'Web Học Hộ'
+  const title = Object.entries(PAGE_TITLES).find(([key]) => pathname === key)?.[1] || 'Đấu La Đại Khảo Chi Lưới'
 
   const now = new Date()
   const timeStr = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
@@ -47,6 +49,15 @@ export default function Header({ onToggleSidebar }) {
     if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
     if (n >= 1000) return `${(n / 1000).toFixed(0)}K`
     return n
+  }
+
+  // Format đếm ngược phiên làm việc
+  const formatSessionTime = (totalSecs) => {
+    const s = Math.max(0, totalSecs || 0)
+    const h = Math.floor(s / 3600)
+    const m = Math.floor((s % 3600) / 60)
+    const sec = s % 60
+    return `${h > 0 ? h + ':' : ''}${m < 10 ? '0' : ''}${m}:${sec < 10 ? '0' : ''}${sec}`
   }
 
   return (
@@ -62,13 +73,23 @@ export default function Header({ onToggleSidebar }) {
             ☰
           </button>
         )}
-        <div>
+        <div className="header-title-box">
           <h1 className="header-title">{title}</h1>
           <span className="header-date">{dateStr}, {timeStr}</span>
         </div>
       </div>
 
       <div className="header-right">
+        {/* Đếm ngược phiên làm việc (Session Timer HUD) */}
+        <div
+          className="session-timer-badge"
+          onClick={() => setIsShopOpen(true)}
+          title="Thời gian phiên tu luyện còn lại (Bấm để gia hạn trong Tàng Bảo Các)"
+        >
+          <span className="session-icon">⏳</span>
+          <span className="session-time">{formatSessionTime(sessionSecondsLeft)}</span>
+        </div>
+
         {/* Chế độ Đấu La Đại Lục */}
         {enabled ? (
           <>
@@ -79,7 +100,17 @@ export default function Header({ onToggleSidebar }) {
               title="Động Phủ Bế Quan Tu Luyện (Tích lũy Hồn Lực theo thời gian)"
             >
               <span className="cult-icon">🧘</span>
-              <span>Bế Quan</span>
+              <span className="cult-text">Bế Quan</span>
+            </button>
+
+            {/* Tàng Bảo Các Shop */}
+            <button
+              className="btn-shop-trigger"
+              onClick={() => setIsShopOpen(true)}
+              title="Tàng Bảo Các: Mua Skin, Đặc Quyền, Gia Hạn Bằng Kim Cương"
+            >
+              <span className="shop-icon">🔮</span>
+              <span className="shop-text">Bảo Các</span>
             </button>
 
             {/* Huy hiệu Cảnh giới */}
@@ -90,7 +121,7 @@ export default function Header({ onToggleSidebar }) {
             >
               <span>{realm.icon}</span>
               <span className="realm-full-title">{customTitle || realm.name}</span>
-              <span>Lv.{level}</span>
+              <span className="realm-level-text">Lv.{level}</span>
             </div>
 
             {/* Túi Kim Cương */}
@@ -106,12 +137,11 @@ export default function Header({ onToggleSidebar }) {
 
             {/* Nút Cài đặt / Sắc phong */}
             <button
-              className="btn btn-ghost btn-sm"
+              className="btn btn-ghost btn-sm btn-settings-icon"
               onClick={() => setIsSettingsOpen(true)}
               title={isAdmin ? 'Giáo Hoàng Điện: Sắc phong Hồn Sư toàn Server' : 'Cài đặt chế độ Đấu La'}
-              style={{ padding: '4px 7px', fontSize: '0.95rem' }}
             >
-              {isAdmin ? '🔱' : '🔮'}
+              {isAdmin ? '🔱' : '⚙️'}
             </button>
           </>
         ) : (
@@ -135,4 +165,3 @@ export default function Header({ onToggleSidebar }) {
     </header>
   )
 }
-

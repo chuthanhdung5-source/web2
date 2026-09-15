@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from sqlalchemy import desc, func
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from typing import List
+import json
 
 from app.database import get_db
 from app.models.user import User, UserRole
@@ -16,6 +17,8 @@ from app.schemas.douluo import (
     SpendRequest,
     AdminPromoteRequest,
     LeaderboardItem,
+    PurchaseRequest,
+    ExtendSessionRequest,
 )
 from app.routers.auth import get_current_user
 
@@ -80,6 +83,8 @@ def get_or_create_cultivation(db: Session, user: User) -> DouluoCultivation:
             diamonds=88888,
             total_cultivate_seconds=0,
             vip_tier=0,
+            purchased_items="[]",
+            session_expiry=None,
             is_enabled=True,
             last_cultivate_at=datetime.now(timezone.utc),
         )
@@ -129,6 +134,8 @@ def get_my_cultivation(
         total_cultivate_seconds=cult.total_cultivate_seconds,
         custom_title=cult.custom_title,
         vip_tier=cult.vip_tier,
+        purchased_items=cult.purchased_items or "[]",
+        session_expiry=cult.session_expiry,
         is_enabled=cult.is_enabled,
         last_cultivate_at=cult.last_cultivate_at,
     )
@@ -306,6 +313,113 @@ def spend_diamonds(
         "diamonds": cult.diamonds,
         "spent": payload.amount,
         "reason": payload.reason,
+    }
+
+
+@router.post("/purchase")
+def purchase_privilege(
+    payload: PurchaseRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Mua đặc quyền, theme skin, huy hiệu bằng kim cương."""
+    cult = get_or_create_cultivation(db, current_user)
+
+    # Đọc danh sách đã sở hữu
+    try:
+        purchased = json.loads(cult.purchased_items or "[]")
+    except Exception:
+        purchased = []
+
+    # Nếu là vật phẩm vĩnh viễn đã mua rồi
+    if payload.item_id in purchased and not payload.item_id.startswith("consumable_"):
+        return {
+            "success": True,
+            "message": "Bạn đã sở hữu đặc quyền này rồi!",
+            "diamonds": cult.diamonds,
+            "purchased_items": cult.purchased_items,
+            "item_id": payload.item_id,
+        }
+
+    # Kiểm tra số dư kim cương
+    if cult.diamonds < payload.price:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không đủ kim cương! Cần {payload.price:,} 💎 nhưng bạn chỉ có {cult.diamonds:,} 💎. Hãy đào khoáng hoặc bế quan thêm!",
+        )
+
+    # Trừ kim cương
+    cult.diamonds -= payload.price
+
+    # Thêm vào danh sách sở hữu nếu chưa có
+    if payload.item_id not in purchased:
+        purchased.append(payload.item_id)
+        cult.purchased_items = json.dumps(purchased)
+
+    # Hiệu ứng phụ đặc biệt cho từng vật phẩm
+    if payload.item_id == "vip_badge":
+        cult.vip_tier = max(cult.vip_tier, 1)
+        if not cult.custom_title or cult.custom_title == "Hồn Sĩ Tân Thủ":
+            cult.custom_title = "Đấu La Chí Tôn"
+
+    # Ghi nhận giao dịch
+    tx = DouluoTransaction(
+        user_id=cult.user_id,
+        amount=-payload.price,
+        action_type="purchase",
+        description=f"Mua đặc quyền: {payload.item_name}",
+    )
+    db.add(tx)
+    db.commit()
+    db.refresh(cult)
+
+    return {
+        "success": True,
+        "message": f"🎉 Mua thành công {payload.item_name}!",
+        "diamonds": cult.diamonds,
+        "purchased_items": cult.purchased_items,
+        "vip_tier": cult.vip_tier,
+        "custom_title": cult.custom_title,
+        "item_id": payload.item_id,
+    }
+
+
+@router.post("/extend-session")
+def extend_session(
+    payload: ExtendSessionRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Gia hạn thời gian phiên làm việc bằng kim cương."""
+    cult = get_or_create_cultivation(db, current_user)
+
+    if cult.diamonds < payload.price:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Không đủ kim cương gia hạn! Cần {payload.price:,} 💎, hiện có {cult.diamonds:,} 💎.",
+        )
+
+    cult.diamonds -= payload.price
+    now = datetime.now(timezone.utc)
+    base_time = cult.session_expiry if (cult.session_expiry and cult.session_expiry > now) else now
+    cult.session_expiry = base_time + timedelta(minutes=payload.minutes)
+
+    tx = DouluoTransaction(
+        user_id=cult.user_id,
+        amount=-payload.price,
+        action_type="extend_session",
+        description=f"Gia hạn phiên làm việc +{payload.minutes} phút",
+    )
+    db.add(tx)
+    db.commit()
+    db.refresh(cult)
+
+    return {
+        "success": True,
+        "message": f"⏳ Đã gia hạn thành công thêm {payload.minutes} phút!",
+        "diamonds": cult.diamonds,
+        "session_expiry": cult.session_expiry,
+        "minutes_added": payload.minutes,
     }
 
 

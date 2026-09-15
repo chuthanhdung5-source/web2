@@ -15,11 +15,24 @@ class CultivationOut(BaseModel):
     total_cultivate_seconds: int
     custom_title: Optional[str] = None
     vip_tier: int
+    purchased_items: Optional[str] = "[]"
+    session_expiry: Optional[datetime] = None
     is_enabled: bool
     last_cultivate_at: Optional[datetime] = None
 
     class Config:
         from_attributes = True
+
+
+class PurchaseRequest(BaseModel):
+    item_id: str
+    item_name: str
+    price: int = Field(ge=0)
+
+
+class ExtendSessionRequest(BaseModel):
+    minutes: int = Field(default=120, ge=1)
+    price: int = Field(default=1000, ge=0)
 
 
 class CultivateRequest(BaseModel):

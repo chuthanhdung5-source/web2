@@ -12,9 +12,9 @@ from app.services.scheduler import start_scheduler
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="Web Quản Lý Học Hộ",
-    description="API quản lý hệ thống học hộ với tracking thời gian thực",
-    version="1.0.0",
+    title="Đấu La Đại Khảo Chi Lưới",
+    description="Hệ thống khảo thí & quản lý học tập tâm pháp - Đấu La Đại Khảo Chi Lưới",
+    version="2.0.0",
 )
 
 # CORS Configuration
@@ -104,6 +104,17 @@ async def startup_event():
         except Exception:
             db.rollback()
 
+        # Nâng cấp bảng douluo_cultivations (Đặc quyền, theme skin, phiên làm việc)
+        for col, col_type in [
+            ("purchased_items", "TEXT DEFAULT '[]'"),
+            ("session_expiry", "TIMESTAMP WITH TIME ZONE"),
+        ]:
+            try:
+                db.execute(text(f"ALTER TABLE douluo_cultivations ADD COLUMN IF NOT EXISTS {col} {col_type};"))
+                db.commit()
+            except Exception:
+                db.rollback()
+
         # Seed admin mặc định
         seed_default_admin(db)
         # Seed học kỳ và lịch học
@@ -160,7 +171,7 @@ async def startup_event():
 
 @app.get("/")
 def root():
-    return {"message": "Web Học Hộ API v1.0", "docs": "/docs"}
+    return {"message": "Đấu La Đại Khảo Chi Lưới API v2.0", "docs": "/docs"}
 
 
 @app.get("/health")

@@ -29,12 +29,19 @@ export default function Register() {
 
   return (
     <div className="auth-page">
-      <div className="auth-bg" />
+      <div className="auth-bg">
+        <div className="auth-orb auth-orb-1" />
+        <div className="auth-orb auth-orb-2" />
+      </div>
       <div className="auth-card" style={{ maxWidth: 460 }}>
         <div className="auth-header">
-          <div className="auth-logo">🎓</div>
-          <h1>Tạo tài khoản</h1>
-          <p>Đăng ký tài khoản người học hộ</p>
+          <div className="auth-logo-badge">
+            <span>🔮</span>
+            <span>Đấu La Tông Môn v2.0</span>
+          </div>
+          <div className="auth-logo">🔮</div>
+          <h1>Gia Nhập Hồn Sư</h1>
+          <p>Thức tỉnh Võ Hồn & Bắt đầu khảo thí tu luyện</p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
@@ -64,16 +71,15 @@ export default function Register() {
               value={form.password} onChange={set('password')} required minLength={6} />
           </div>
 
-          <button id="reg-submit" type="submit" className="btn btn-primary btn-lg"
-            style={{ width: '100%', justifyContent: 'center' }} disabled={loading}>
-            {loading ? <><span className="spinner" /> Đang tạo tài khoản...</> : '✨ Tạo tài khoản'}
+          <button id="reg-submit" type="submit" className="btn-auth-submit" disabled={loading}>
+            {loading ? <><span className="spinner" /> Đang thức tỉnh Võ Hồn...</> : '⚡ Thức Tỉnh & Gia Nhập'}
           </button>
         </form>
 
         <div className="auth-footer">
-          Đã có tài khoản?{' '}
-          <Link to="/login" style={{ color: 'var(--primary-light)', fontWeight: 600 }}>
-            Đăng nhập
+          Đã thức tỉnh Võ Hồn?{' '}
+          <Link to="/login" style={{ color: '#c084fc', fontWeight: 700 }}>
+            Nhập cảnh Tiên Môn
           </Link>
         </div>
       </div>

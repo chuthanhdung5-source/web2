@@ -17,6 +17,8 @@ class DouluoCultivation(Base):
     last_cultivate_at = Column(DateTime(timezone=True), server_default=func.now())
     custom_title = Column(String(100), nullable=True)
     vip_tier = Column(Integer, default=0, nullable=False)
+    purchased_items = Column(Text, default="[]", nullable=False)
+    session_expiry = Column(DateTime(timezone=True), nullable=True)
     is_enabled = Column(Boolean, default=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())

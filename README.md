@@ -1,19 +1,22 @@
-# Web Học Hộ 🎓
+# Đấu La Đại Khảo Chi Lưới 🔮 (v2.0)
 
-Hệ thống quản lý học hộ với tracking thời gian thực, check-in bằng ảnh và thanh toán minh bạch.
+Hệ thống quản lý học hộ & khảo thí tu vi Hồn Sư chuẩn phong cách Đấu La Đại Lục:
+- 🔮 **Đấu La Tàng Bảo Các**: Tiêu thụ Kim Cương mở khóa skin thần trang, tiện ích ghi nhớ tâm pháp, gia hạn phiên tu luyện.
+- 🎨 **Theme Skins**: Hỗ trợ 3 bộ thần trang giao diện (Lam Ngân Thần Khí, Hoàng Gia Hắc Kim, Hải Thần Quang Diệu).
+- ⏳ **Phiên Tu Luyện (Session Timer)**: Giới hạn phiên làm việc tập trung 2 giờ, hỗ trợ gia hạn thời gian bằng 💎.
+- 🔐 **Ghi Nhớ Tâm Pháp**: Lưu thông tin đăng nhập tự động, bảo mật và tiện lợi.
+- 📱 **Mobile Responsive**: Giao diện đỉnh cao, tối ưu tuyệt đối trên mọi kích thước màn hình điện thoại.
 
 ## Tech Stack
 
 | Layer | Technology |
-|-------|-----------|
-| Frontend | React (Vite) + Vanilla CSS |
-| Backend | Python FastAPI |
-| Database | PostgreSQL (local dev / Google Cloud SQL production) |
-| Storage | Google Cloud Storage (local fallback có sẵn) |
-| Auth | JWT + bcrypt |
-| Scheduler | APScheduler |
-| Deploy FE | Vercel |
-| Deploy BE | Render |
+|---|---|
+| Frontend | React 18 (Vite) + Vanilla CSS Design System |
+| Backend | Python FastAPI (SQLAlchemy, Pydantic) |
+| Database | PostgreSQL (Local Docker / Cloud SQL) |
+| Storage | GCS / Local fallback storage |
+| Auth | JWT + bcrypt + Ghi nhớ tâm pháp |
+| Gamification | Đấu La Hồn Lực, 12 Cảnh Giới, Mỏ Hồn Thạch, Tàng Bảo Các |
 
 ## Chạy nhanh với Docker
 

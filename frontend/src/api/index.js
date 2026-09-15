@@ -100,6 +100,10 @@ export const douluoAPI = {
     api.post('/douluo/buy-diamonds', { vip_tier: vipTier, diamonds, pack_name: packName }),
   mineDiamonds: (clicks = 1) => api.post('/douluo/mine-diamonds', { clicks }),
   spendDiamonds: (amount, reason) => api.post('/douluo/spend', { amount, reason }),
+  purchasePrivilege: (itemId, itemName, price) =>
+    api.post('/douluo/purchase', { item_id: itemId, item_name: itemName, price }),
+  extendSession: (minutes, price) =>
+    api.post('/douluo/extend-session', { minutes, price }),
   toggleMode: () => api.post('/douluo/toggle'),
   getLeaderboard: () => api.get('/douluo/leaderboard'),
   adminPromote: (data) => api.post('/douluo/admin/promote', data),

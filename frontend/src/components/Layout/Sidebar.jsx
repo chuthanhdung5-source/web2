@@ -47,10 +47,10 @@ export default function Sidebar({ isOpen, onClose }) {
       {/* Logo & Mobile Close */}
       <div className="sidebar-logo flex-between">
         <div className="flex align-center gap-3">
-          <div className="logo-icon">🎓</div>
+          <div className="logo-icon">🔮</div>
           <div>
-            <div className="logo-title">Web Học Hộ</div>
-            <div className="logo-badge">{user?.role === 'admin' ? 'Admin' : 'Thành viên'}</div>
+            <div className="logo-title">Đấu La Khảo Lưới</div>
+            <div className="logo-badge">{user?.role === 'admin' ? 'Giáo Hoàng' : 'Hồn Sư'}</div>
           </div>
         </div>
         {onClose && (
