@@ -245,7 +245,7 @@ export default function ScheduleManager() {
   return (
     <div>
       {/* Header */}
-      <div className="page-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16 }}>
+      <div className="page-header flex flex-between align-center" style={{ flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
         <div>
           <h1>📅 Quản Lý Thời Khóa Biểu & Tiết Học</h1>
           <p>Quản lý lịch học mẫu, chỉnh sửa tiết học, môn học và phân công thành viên</p>
@@ -276,13 +276,13 @@ export default function ScheduleManager() {
 
       {/* Week Selector Bar (Active in grid & table modes) */}
       {viewMode !== 'manage' && (
-        <div className="flex flex-between" style={{ marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
-          <div className="flex gap-3 align-center">
+        <div className="flex flex-between align-center" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
+          <div className="flex gap-2 align-center" style={{ flexWrap: 'wrap' }}>
             <button className="btn btn-secondary btn-sm" onClick={() => setWeekStart(w => subWeeks(w, 1))}>← Tuần trước</button>
-            <span style={{ fontWeight: 600, fontSize: '0.9rem', minWidth: 160, textAlign: 'center' }}>Tuần {weekLabel}</span>
+            <span style={{ fontWeight: 600, fontSize: '0.85rem', textAlign: 'center', padding: '0 4px' }}>Tuần {weekLabel}</span>
             <button className="btn btn-secondary btn-sm" onClick={() => setWeekStart(w => addWeeks(w, 1))}>Tuần sau →</button>
           </div>
-          <button id="generate-week" className="btn btn-primary" onClick={generateWeek} disabled={generating}>
+          <button id="generate-week" className="btn btn-primary btn-sm" onClick={generateWeek} disabled={generating}>
             {generating ? '⏳ Đang tạo...' : '⚡ Tạo ca tuần này từ lịch mẫu'}
           </button>
         </div>

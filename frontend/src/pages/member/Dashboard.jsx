@@ -43,31 +43,32 @@ export default function MemberDashboard() {
 
       {/* Earnings highlight */}
       <div className="card" style={{
-        background: 'linear-gradient(135deg, rgba(124,106,245,0.15), rgba(98,84,212,0.08))',
+        background: 'linear-gradient(135deg, rgba(124,106,245,0.12), rgba(98,84,212,0.06))',
         border: '1px solid rgba(124,106,245,0.2)',
-        marginBottom: 24
+        marginBottom: 16,
+        padding: '16px 18px'
       }}>
-        <div className="flex flex-between" style={{ flexWrap: 'wrap', gap: 16 }}>
+        <div className="flex flex-between align-center" style={{ flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <div className="label" style={{ marginBottom: 4 }}>💰 Tổng thu nhập</div>
-            <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent-green)' }}>
+            <div className="label" style={{ marginBottom: 2 }}>💰 Tổng thu nhập</div>
+            <div style={{ fontSize: '1.65rem', fontWeight: 800, color: 'var(--accent-green)' }}>
               {(stats?.total_earnings || 0).toLocaleString('vi-VN')}đ
             </div>
-            <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: 4 }}>
-              Chờ nhận: <span style={{ color: 'var(--accent)' }}>{(stats?.pending_payment || 0).toLocaleString('vi-VN')}đ</span>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 2 }}>
+              Chờ nhận: <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{(stats?.pending_payment || 0).toLocaleString('vi-VN')}đ</span>
             </div>
           </div>
-          <div className="flex gap-6" style={{ flexWrap: 'wrap' }}>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', fontWeight: 800 }}>{stats?.total_periods || 0}</div>
+          <div className="flex gap-4 member-stats-row" style={{ flexWrap: 'wrap' }}>
+            <div className="member-mini-stat">
+              <div className="member-mini-val">{stats?.total_periods || 0}</div>
               <div className="label">Tiết đã học</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', fontWeight: 800 }}>{stats?.total_sessions || 0}</div>
+            <div className="member-mini-stat">
+              <div className="member-mini-val">{stats?.total_sessions || 0}</div>
               <div className="label">Tổng ca</div>
             </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '2rem', fontWeight: 800 }}>{stats?.completed_sessions || 0}</div>
+            <div className="member-mini-stat">
+              <div className="member-mini-val">{stats?.completed_sessions || 0}</div>
               <div className="label">Ca hoàn thành</div>
             </div>
           </div>
@@ -75,18 +76,18 @@ export default function MemberDashboard() {
       </div>
 
       {/* Quick actions */}
-      <div className="grid grid-2" style={{ marginBottom: 24 }}>
-        <Link to="/member/slots" className="card card-interactive" style={{ textDecoration: 'none' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 8 }}>📋</div>
-          <h3 className="h3">Đăng ký ca học</h3>
-          <p style={{ color: 'var(--text-secondary)', marginTop: 4, fontSize: '0.875rem' }}>
-            Xem và đăng ký các ca học trống trong tuần
+      <div className="grid grid-2" style={{ marginBottom: 16 }}>
+        <Link to="/member/slots" className="card card-interactive quick-action-card" style={{ textDecoration: 'none' }}>
+          <div className="quick-action-icon">📋</div>
+          <h3 className="h4">Đăng ký ca học</h3>
+          <p className="body-xs" style={{ color: 'var(--text-secondary)', marginTop: 2 }}>
+            Xem và đăng ký ca học trống trong tuần
           </p>
         </Link>
-        <Link to="/member/schedule" className="card card-interactive" style={{ textDecoration: 'none' }}>
-          <div style={{ fontSize: '2rem', marginBottom: 8 }}>📅</div>
-          <h3 className="h3">Lịch của tôi</h3>
-          <p style={{ color: 'var(--text-secondary)', marginTop: 4, fontSize: '0.875rem' }}>
+        <Link to="/member/schedule" className="card card-interactive quick-action-card" style={{ textDecoration: 'none' }}>
+          <div className="quick-action-icon">📅</div>
+          <h3 className="h4">Lịch của tôi</h3>
+          <p className="body-xs" style={{ color: 'var(--text-secondary)', marginTop: 2 }}>
             Xem lịch và nộp ảnh check-in
           </p>
         </Link>
