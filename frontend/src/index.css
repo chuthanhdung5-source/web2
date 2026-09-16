@@ -1,11 +1,11 @@
 :root {
   --bg: transparent;
-  --bg-secondary: rgba(18, 12, 34, 0.65);
-  --surface: rgba(18, 12, 34, 0.6);
-  --surface-hover: rgba(28, 18, 52, 0.75);
-  --surface-elevated: rgba(24, 14, 46, 0.85);
-  --border: rgba(212, 175, 55, 0.22);
-  --border-strong: rgba(212, 175, 55, 0.45);
+  --bg-secondary: rgba(18, 12, 34, 0.85);
+  --surface: rgba(16, 11, 28, 0.94);
+  --surface-hover: rgba(26, 18, 46, 0.96);
+  --surface-elevated: rgba(22, 15, 38, 0.97);
+  --border: rgba(212, 175, 55, 0.35);
+  --border-strong: rgba(245, 158, 11, 0.65);
 
   --primary: #7c6af5;
   --primary-dark: #6254d4;
