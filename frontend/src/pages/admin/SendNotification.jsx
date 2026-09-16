@@ -46,7 +46,7 @@ export default function SendNotification() {
       <div className="card card-elevated" style={{ padding: 24 }}>
         <form onSubmit={handleSubmit}>
           <div className="form-group" style={{ marginBottom: 16 }}>
-            <label className="form-label" style={{ fontWeight: 700 }}>📌 Tiêu đề hịch văn / thần niệm:</label>
+            <label className="form-label" style={{ fontWeight: 700 }}>📌 Tiêu đề hịch văn:</label>
             <input
               type="text"
               className="form-control"

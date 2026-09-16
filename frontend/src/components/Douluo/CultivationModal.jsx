@@ -166,7 +166,7 @@ export default function CultivationModal() {
                   <thead>
                     <tr>
                       <th style={{ width: 45 }}>Thứ Vị</th>
-                      <th>Tu Giả / Đạo Hiệu</th>
+                      <th>Tu Giả</th>
                       <th>Cảnh Giới</th>
                       <th style={{ textAlign: 'right' }}>Thời Gian Bế Quan</th>
                     </tr>

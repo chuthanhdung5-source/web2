@@ -83,7 +83,7 @@ export default function TimetableGrid({
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: isCompact ? 760 : 900, textAlign: 'center' }}>
           <thead>
             <tr style={{ background: 'var(--surface-hover)', borderBottom: '2px solid var(--border)' }}>
-              <th style={{ padding: thPadding, width: isCompact ? 80 : 105, fontSize: isCompact ? '0.75rem' : '0.85rem' }}>Khắc / Canh Giờ</th>
+              <th style={{ padding: thPadding, width: isCompact ? 80 : 105, fontSize: isCompact ? '0.75rem' : '0.85rem' }}>Khắc Thời</th>
               {DAYS.map(d => (
                 <th key={d.num} style={{ padding: thPadding, fontSize: isCompact ? '0.8rem' : '0.9rem', width: '13%' }}>
                   {d.label}

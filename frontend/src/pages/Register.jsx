@@ -46,13 +46,13 @@ export default function Register() {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label className="form-label">Đạo Hiệu / Chân Tên</label>
-            <input id="reg-name" className="form-input" type="text" placeholder="Đường Tam / Tiêu Viêm"
+            <label className="form-label">Đạo Hiệu</label>
+            <input id="reg-name" className="form-input" type="text" placeholder="Đường Tam"
               value={form.full_name} onChange={set('full_name')} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Đạo Tịch Đăng Nhập</label>
-            <input id="reg-username" className="form-input" type="text" placeholder="username"
+            <label className="form-label">Đạo Tịch</label>
+            <input id="reg-username" className="form-input" type="text" placeholder="Nhập Đạo Tịch"
               value={form.username} onChange={set('username')} required />
           </div>
           <div className="form-group">
@@ -66,7 +66,7 @@ export default function Register() {
               value={form.phone} onChange={set('phone')} />
           </div>
           <div className="form-group">
-            <label className="form-label">Khẩu Quyết Tâm Pháp</label>
+            <label className="form-label">Khẩu Quyết</label>
             <input id="reg-password" className="form-input" type="password" placeholder="••••••••"
               value={form.password} onChange={set('password')} required minLength={6} />
           </div>

@@ -64,7 +64,7 @@ export default function MySchedule() {
 
           {past.length > 0 && (
             <div>
-              <h2 className="h3" style={{ marginBottom: 16, color: 'var(--text-secondary)' }}>✅ Đã Viên Mãn / Qua Thời Khắc</h2>
+              <h2 className="h3" style={{ marginBottom: 16, color: 'var(--text-secondary)' }}>✅ Đã Viên Mãn</h2>
               <div className="grid grid-2">
                 {past.map(s => <SessionCard key={s.id} session={s} onCancel={cancel} cancelling={cancelling} past />)}
               </div>

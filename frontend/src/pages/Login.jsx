@@ -115,15 +115,12 @@ export default function Login() {
           </div>
 
           <h1 className="shrine-title">Đấu La Đại Khảo Chi Lưới</h1>
-          <p className="shrine-subtitle">Hệ thống Khảo Thí & Tu Vi Hồn Sư</p>
         </div>
 
         <div className="celestial-dual-formation">
           <div className="celestial-portal-sphere sphere-ice">
             <div className="portal-crest-icon">❄️</div>
-            <h2 className="portal-heading ice">THIÊN PHÚ</h2>
-            <div className="portal-subheading ice">Đạo Tịch</div>
-            <div className="portal-field-label">Tên Hồn Sư</div>
+            <h2 className="portal-heading ice">ĐẠO TỊCH</h2>
 
             <div className="celestial-input-tablet tablet-ice">
               <span className="tablet-icon-left">📜</span>
@@ -131,7 +128,7 @@ export default function Login() {
                 id="login-username"
                 className="celestial-raw-input"
                 type="text"
-                placeholder="Nhập tên đăng nhập..."
+                placeholder="Nhập Đạo Tịch..."
                 value={form.username}
                 onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))}
                 required
@@ -178,9 +175,7 @@ export default function Login() {
 
           <div className="celestial-portal-sphere sphere-fire">
             <div className="portal-crest-icon">🔥</div>
-            <h2 className="portal-heading fire">TÂM TÍNH</h2>
-            <div className="portal-subheading fire">Khẩu Quyết</div>
-            <div className="portal-field-label">Mật Khẩu Tâm Pháp</div>
+            <h2 className="portal-heading fire">KHẨU QUYẾT</h2>
 
             <div className="celestial-input-tablet tablet-fire">
               <span className="tablet-icon-left">🔑</span>
@@ -211,7 +206,7 @@ export default function Login() {
                 setShowForgot(true)
               }}
             >
-              Quên tâm pháp?
+              Quên khẩu quyết?
             </button>
           </div>
         </div>
@@ -229,23 +224,23 @@ export default function Login() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex flex-between align-center" style={{ marginBottom: 16 }}>
-              <h2 className="h3">🔑 Tìm Lại Tâm Pháp</h2>
+              <h2 className="h3">🔑 Khắc Lại Khẩu Quyết</h2>
               <button className="btn btn-ghost btn-sm" onClick={() => setShowForgot(false)}>
                 ✕
               </button>
             </div>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: 16 }}>
-              Xác minh tên Hồn Sư và thư tín đã đăng ký để tự lập lại tâm pháp mới.
+              Xác minh Đạo Tịch và Linh Thư để tự thiết lập lại Khẩu Quyết mới.
             </p>
 
             <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
               <div className="form-group">
-                <label className="form-label">Tên đăng nhập</label>
+                <label className="form-label">Đạo Tịch</label>
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="Nhập tên đăng nhập của bạn"
+                  placeholder="Nhập Đạo Tịch"
                   value={forgotForm.username}
                   onChange={(e) => setForgotForm((f) => ({ ...f, username: e.target.value }))}
                   required
@@ -254,7 +249,7 @@ export default function Login() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Email đã đăng ký</label>
+                <label className="form-label">Linh Thư</label>
                 <input
                   type="email"
                   className="form-input"
@@ -266,7 +261,7 @@ export default function Login() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Mật khẩu mới</label>
+                <label className="form-label">Khẩu quyết mới</label>
                 <input
                   type="password"
                   className="form-input"
@@ -278,11 +273,11 @@ export default function Login() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">Xác nhận mật khẩu mới</label>
+                <label className="form-label">Xác nhận khẩu quyết mới</label>
                 <input
                   type="password"
                   className="form-input"
-                  placeholder="Nhập lại mật khẩu mới"
+                  placeholder="Nhập lại khẩu quyết mới"
                   value={forgotForm.confirm_password}
                   onChange={(e) => setForgotForm((f) => ({ ...f, confirm_password: e.target.value }))}
                   required

@@ -105,7 +105,7 @@ export default function ProfileSettings() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div className="form-group">
-              <label className="form-label">Đạo Hiệu / Họ và Tên</label>
+              <label className="form-label">Đạo Hiệu</label>
               <input id="profile-name" className="form-input" value={form.full_name} onChange={set('full_name')} required />
             </div>
             <div className="form-group">
@@ -117,7 +117,7 @@ export default function ProfileSettings() {
               <input id="profile-phone" className="form-input" type="tel" value={form.phone} onChange={set('phone')} />
             </div>
             <div className="form-group">
-              <label className="form-label">Danh Xưng Tông Môn</label>
+              <label className="form-label">Đạo Tịch</label>
               <input className="form-input" value={user?.username} disabled style={{ opacity: 0.5 }} />
             </div>
           </div>

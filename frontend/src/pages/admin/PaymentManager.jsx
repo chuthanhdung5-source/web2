@@ -180,14 +180,14 @@ export default function PaymentManager() {
                   <img src={payModal.vietQRUrl} alt="VietQR" style={{ maxWidth: 240, maxHeight: 240, objectFit: 'contain' }} />
                 </div>
               ) : (
-                <div style={{ color: 'var(--accent-red)', padding: 16 }}>⚠️ Đệ tử này chưa nộp Thần Phù hoặc STK Tiên Trang.</div>
+                <div style={{ color: 'var(--accent-red)', padding: 16 }}>⚠️ Đệ tử này chưa nộp Thần Phù Tiên Trang.</div>
               )}
             </div>
 
             {payModal.member?.bank_account_no && (
               <div style={{ fontSize: '0.875rem', display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
                 <div>🏦 Tiên Trang: <strong>{payModal.member.bank_name}</strong></div>
-                <div>🔢 Số tài khoản / Thần phù: <strong>{payModal.member.bank_account_no}</strong></div>
+                <div>🔢 Số tài khoản Tiên Trang: <strong>{payModal.member.bank_account_no}</strong></div>
                 <div>👤 Danh xưng thụ hưởng: <strong>{payModal.member.bank_account_name}</strong></div>
               </div>
             )}

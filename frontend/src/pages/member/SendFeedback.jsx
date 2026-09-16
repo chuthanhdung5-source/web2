@@ -57,7 +57,7 @@ export default function SendFeedback() {
 
       <div className="grid grid-2" style={{ gap: 24 }}>
         <div className="card card-elevated" style={{ padding: 24 }}>
-          <h2 className="h3" style={{ marginBottom: 16 }}>✍️ Soạn Thảo Biểu Sớ / Thỉnh Nguyện</h2>
+          <h2 className="h3" style={{ marginBottom: 16 }}>✍️ Soạn Thảo Biểu Sớ</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group" style={{ marginBottom: 16 }}>
               <label className="form-label" style={{ fontWeight: 700 }}>Thuộc tính biểu sớ:</label>
@@ -67,9 +67,9 @@ export default function SendFeedback() {
                 onChange={(e) => setFeedbackType(e.target.value)}
               >
                 <option value="general">💬 Thần niệm vấn đáp</option>
-                <option value="bug">🐛 Báo cáo dị biến trận pháp / Giao diện</option>
-                <option value="payment_issue">💰 Thắc mắc Bổng Lộc / Linh thạch nhận</option>
-                <option value="schedule_issue">📅 Thắc mắc Khảo Kỳ / Chuẩn phê tràng</option>
+                <option value="bug">🐛 Báo cáo dị biến trận pháp</option>
+                <option value="payment_issue">💰 Thắc mắc Bổng Lộc</option>
+                <option value="schedule_issue">📅 Thắc mắc Khảo Kỳ</option>
                 <option value="suggestion">💡 Hiến kế diệu pháp mới</option>
               </select>
             </div>

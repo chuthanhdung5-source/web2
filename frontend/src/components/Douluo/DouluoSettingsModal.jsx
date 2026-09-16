@@ -178,7 +178,7 @@ export default function DouluoSettingsModal() {
               <div className="flex-between" style={{ fontSize: '0.8rem', marginBottom: 4 }}>
                 <span style={{ color: '#e2e8f0' }}>Phong tặng Cấp Độ:</span>
                 <span style={{ color: '#38bdf8', fontWeight: 800 }}>
-                  Cấp {promoteLevel} ({previewRealm.name})
+                  Cấp {promoteLevel} • {previewRealm.name}
                 </span>
               </div>
               <input
@@ -191,7 +191,6 @@ export default function DouluoSettingsModal() {
               />
             </div>
 
-            {/* Kim cương ban thưởng */}
             <div>
               <label style={{ fontSize: '0.8rem', color: '#e2e8f0', display: 'block', marginBottom: 4 }}>
                 💎 Ban thưởng thêm Kim Cương:
@@ -206,10 +205,9 @@ export default function DouluoSettingsModal() {
               />
             </div>
 
-            {/* Phong Hào */}
             <div>
               <label style={{ fontSize: '0.8rem', color: '#e2e8f0', display: 'block', marginBottom: 4 }}>
-                📜 Ban tặng Phong Hào / Danh Hiệu:
+                📜 Ban tặng Phong Hào:
               </label>
               <input
                 type="text"

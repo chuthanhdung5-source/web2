@@ -156,11 +156,11 @@ export default function DiamondMineModal() {
             boxShadow: '0 4px 15px rgba(56, 189, 248, 0.4)',
           }}
         >
-          ⛏️ Gõ Mỏ Khai Thác (+10 💎 / click)
+          ⛏️ Khai Thác Tiên Mỏ (+10 💎)
         </button>
 
         <p style={{ color: '#64748b', fontSize: '0.75rem', marginTop: 14, lineHeight: 1.4 }}>
-          💡 <b>Mẹo Đấu La</b>: Member tích cóp kim cương bằng cách gõ mỏ để có lộ phí khi đăng nhập và giữ chỗ ca học. Gói nạp VIP triệu kim cương chỉ dành riêng cho Giáo Hoàng Admin!
+          💡 <b>Mẹo Đấu La</b>: Đệ tử tích cóp kim cương bằng cách khai thác mỏ để có lộ phí khi đổi sắc diện và giữ tràng hộ đạo. Gói bổng lộc triệu kim cương thuộc thẩm quyền của Giáo Hoàng!
         </p>
       </div>
 

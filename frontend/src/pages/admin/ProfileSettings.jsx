@@ -85,7 +85,7 @@ export default function ProfileSettings() {
             <h3 style={{ marginBottom: 16 }}>Căn Bản Đạo Tịch</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div className="form-group">
-                <label className="form-label">Đạo Hiệu / Chân Tên</label>
+                <label className="form-label">Đạo Hiệu</label>
                 <input className="form-input" value={form.full_name || ''} onChange={set('full_name')} />
               </div>
               <div className="form-group">
@@ -115,11 +115,11 @@ export default function ProfileSettings() {
                 <input className="form-input" value={form.cohort || ''} onChange={set('cohort')} />
               </div>
               <div className="form-group">
-                <label className="form-label">Tiên Viện / Đại Phái</label>
+                <label className="form-label">Tiên Viện</label>
                 <input className="form-input" value={form.university || ''} onChange={set('university')} />
               </div>
               <div className="form-group">
-                <label className="form-label">Đường Khẩu / Viện Hệ</label>
+                <label className="form-label">Đường Khẩu</label>
                 <input className="form-input" value={form.faculty || ''} onChange={set('faculty')} />
               </div>
               <div className="form-group">

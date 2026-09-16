@@ -176,7 +176,7 @@ export default function MemberList() {
           <table className="table">
             <thead>
               <tr>
-                <th>Đệ Tử / Đạo Hiệu</th>
+                <th>Đệ Tử</th>
                 <th>Truyền Tin</th>
                 <th>Tiên Trang Thần Phù</th>
                 <th>Tổng Bổng Lộc Linh Thạch</th>
@@ -345,7 +345,7 @@ export default function MemberList() {
                   <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
                     <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
                       <span>🥋 Cảnh Giới Tu Vi & Hồn Hoàn:</span>
-                      <span style={{ color: '#38bdf8', fontWeight: 800 }}>Cấp {editLevel} / 100 ({currentRealm.name})</span>
+                      <span style={{ color: '#38bdf8', fontWeight: 800 }}>Cấp {editLevel} / 100 • {currentRealm.name}</span>
                     </div>
                     <div className="flex gap-3 align-center">
                       <input
@@ -383,7 +383,7 @@ export default function MemberList() {
 
                   <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
                     <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: 10 }}>
-                      💎 Tiên Tinh / Kim Cương Sở Hữu:
+                      💎 Kim Cương Sở Hữu:
                     </div>
                     <div className="flex gap-2">
                       <input

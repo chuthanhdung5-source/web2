@@ -45,10 +45,10 @@ export default function AdminInfo() {
         <div className="card">
           <h3 className="h3" style={{ marginBottom: 16 }}>📋 Ngọc Giản Thân Phận</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <InfoRow icon="🏰" label="Tiên Viện / Tông Môn" value={info.university} />
+            <InfoRow icon="🏰" label="Tiên Viện" value={info.university} />
             <InfoRow icon="📜" label="Đạo Pháp Tu Tập" value={info.program} />
             <InfoRow icon="📅" label="Niên Khóa Truyền Thừa" value={info.cohort} />
-            <InfoRow icon="🏛️" label="Đường Khẩu / Sơn Phái" value={info.faculty} />
+            <InfoRow icon="🏛️" label="Đường Khẩu" value={info.faculty} />
             <InfoRow icon="👥" label="Pháp Tràng Đạo Hội" value={info.class_name} />
             <InfoRow icon="🎂" label="Ngày Giáng Thế" value={info.date_of_birth ? new Date(info.date_of_birth).toLocaleDateString('vi-VN') : null} />
           </div>

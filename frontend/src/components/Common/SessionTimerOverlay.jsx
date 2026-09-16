@@ -118,7 +118,7 @@ export default function SessionTimerOverlay() {
             }}
             onClick={dismissSessionWarning}
           >
-            Bỏ qua / Vẫn tiếp tục
+            Vẫn tiếp tục
           </button>
         </div>
       </div>
