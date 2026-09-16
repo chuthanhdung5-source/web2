@@ -29,29 +29,25 @@ router = APIRouter(prefix="/douluo", tags=["Đấu La Đại Lục"])
 
 def get_realm_by_level(level: int) -> str:
     if level <= 10:
-        return "Hồn Sĩ"
+        return "Tọa Sơn Bàn Cuối"
     elif level <= 20:
-        return "Hồn Sư"
+        return "Trụ Thạch Núp Lùm"
     elif level <= 30:
-        return "Đại Hồn Sư"
+        return "Hư Ảo Gật Đầu"
     elif level <= 40:
-        return "Hồn Tôn"
+        return 'Biến Âm Hô "CÓ!"'
     elif level <= 50:
-        return "Hồn Tông"
+        return "Thần Bút Ký Hộ"
     elif level <= 60:
-        return "Hồn Vương"
+        return "Thiền Định Ngủ Mở Mắt"
     elif level <= 70:
-        return "Hồn Đế"
+        return "Nghịch Chuyển Bàn Đầu"
     elif level <= 80:
-        return "Hồn Thánh"
-    elif level <= 90:
-        return "Hồn Đấu La"
-    elif level <= 98:
-        return "Phong Hào Đấu La"
-    elif level == 99:
-        return "Cực Hạn Đấu La"
+        return "Lăng Ba Chuồn Cửa"
+    elif level <= 99:
+        return "Vạn Ca Học Hộ Đấu La"
     else:
-        return "Tu La Thần Vương"
+        return "Núp Lùm Chi Thần"
 
 
 def get_exp_needed(level: int) -> int:
@@ -80,7 +76,7 @@ def get_or_create_cultivation(db: Session, user: User) -> DouluoCultivation:
         cult = DouluoCultivation(
             user_id=user.id,
             level=1,
-            realm_name="Hồn Sĩ",
+            realm_name="Tọa Sơn Bàn Cuối",
             exp=0,
             diamonds=88888,
             total_cultivate_seconds=0,
@@ -101,20 +97,22 @@ def get_my_cultivation(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Lấy trạng thái tu vi, cảnh giới và số kim cương hiện tại."""
     cult = get_or_create_cultivation(db, current_user)
     
-    # Tính EXP offline tự động nếu có thời gian gián đoạn (tối đa 8 giờ offline)
+    expected_realm = get_realm_by_level(cult.level)
+    if cult.realm_name != expected_realm:
+        cult.realm_name = expected_realm
+        db.commit()
+        db.refresh(cult)
+
     now = datetime.now(timezone.utc)
     if cult.last_cultivate_at:
-        # Chuyển đổi timestamp nếu cần
         last_time = cult.last_cultivate_at
         if last_time.tzinfo is None:
             last_time = last_time.replace(tzinfo=timezone.utc)
         
         diff_seconds = int((now - last_time).total_seconds())
-        if 5 <= diff_seconds <= 28800:  # từ 5 giây tới 8 tiếng
-            # Hệ số VIP
+        if 5 <= diff_seconds <= 28800:
             multiplier = 1.0 + (cult.vip_tier * 0.5)
             earned_exp = int(diff_seconds * multiplier)
             cult.exp += earned_exp
@@ -153,7 +151,6 @@ def cultivate_heartbeat(
     cult = get_or_create_cultivation(db, current_user)
     now = datetime.now(timezone.utc)
 
-    # Tối đa gửi lên 300 giây mỗi lần ping
     seconds = min(payload.seconds, 300)
     multiplier = 1.0 + (cult.vip_tier * 0.5)
     earned_exp = int(seconds * multiplier)
@@ -180,14 +177,13 @@ def breakthrough(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """Đột phá cảnh giới khi tích lũy đủ EXP."""
     cult = get_or_create_cultivation(db, current_user)
     if cult.level >= 100:
         return BreakthroughOut(
             success=False,
             new_level=100,
-            new_realm="Tu La Thần Vương",
-            message="Đã đạt cảnh giới Thần Cấp tối thượng, không thể đột phá thêm!",
+            new_realm="Núp Lùm Chi Thần",
+            message="Đã đạt cảnh giới Núp Lùm Chi Thần tối thượng, không thể đột phá thêm!",
             exp=cult.exp,
             exp_needed=999999999,
         )
@@ -203,7 +199,6 @@ def breakthrough(
     cult.level += 1
     cult.realm_name = get_realm_by_level(cult.level)
 
-    # Thưởng kim cương khi đột phá
     reward_diamonds = cult.level * 1000
     cult.diamonds += reward_diamonds
 
@@ -294,7 +289,6 @@ def spend_diamonds(
     """Trừ kim cương ảo khi thao tác trên web."""
     cult = get_or_create_cultivation(db, current_user)
 
-    # Nếu không đủ tiền, viện trợ thêm 50k kim cương thay vì chặn
     if cult.diamonds < payload.amount:
         cult.diamonds += 50000
 
@@ -327,13 +321,11 @@ def purchase_privilege(
     """Mua đặc quyền, theme skin, huy hiệu bằng kim cương."""
     cult = get_or_create_cultivation(db, current_user)
 
-    # Đọc danh sách đã sở hữu
     try:
         purchased = json.loads(cult.purchased_items or "[]")
     except Exception:
         purchased = []
 
-    # Nếu là vật phẩm vĩnh viễn đã mua rồi
     if payload.item_id in purchased and not payload.item_id.startswith("consumable_"):
         return {
             "success": True,
@@ -343,28 +335,23 @@ def purchase_privilege(
             "item_id": payload.item_id,
         }
 
-    # Kiểm tra số dư kim cương
     if cult.diamonds < payload.price:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Không đủ kim cương! Cần {payload.price:,} 💎 nhưng bạn chỉ có {cult.diamonds:,} 💎. Hãy đào khoáng hoặc bế quan thêm!",
         )
 
-    # Trừ kim cương
     cult.diamonds -= payload.price
 
-    # Thêm vào danh sách sở hữu nếu chưa có
     if payload.item_id not in purchased:
         purchased.append(payload.item_id)
         cult.purchased_items = json.dumps(purchased)
 
-    # Hiệu ứng phụ đặc biệt cho từng vật phẩm
     if payload.item_id == "vip_badge":
         cult.vip_tier = max(cult.vip_tier, 1)
-        if not cult.custom_title or cult.custom_title == "Hồn Sĩ Tân Thủ":
-            cult.custom_title = "Đấu La Chí Tôn"
+        if not cult.custom_title or cult.custom_title in ["Hồn Sĩ Tân Thủ", "Tân Thủ Hộ Đạo"]:
+            cult.custom_title = "Vô Ảnh Chí Tôn"
 
-    # Ghi nhận giao dịch
     tx = DouluoTransaction(
         user_id=cult.user_id,
         amount=-payload.price,
@@ -488,7 +475,6 @@ def admin_promote(
 
     targets = []
     if payload.target_type == "all":
-        # Tất cả users
         all_users = db.query(User).filter(User.is_active == True).all()
         for u in all_users:
             targets.append(get_or_create_cultivation(db, u))

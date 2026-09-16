@@ -10,7 +10,7 @@ class DouluoCultivation(Base):
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False, index=True)
     level = Column(Integer, default=1, nullable=False)
-    realm_name = Column(String(50), default="Hồn Sĩ", nullable=False)
+    realm_name = Column(String(50), default="Tọa Sơn Bàn Cuối", nullable=False)
     exp = Column(BigInteger, default=0, nullable=False)
     diamonds = Column(BigInteger, default=88888, nullable=False)
     total_cultivate_seconds = Column(BigInteger, default=0, nullable=False)
@@ -23,7 +23,6 @@ class DouluoCultivation(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
-    # Relationship
     user = relationship("User", backref="douluo_cultivation")
 
 
@@ -32,10 +31,9 @@ class DouluoTransaction(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    amount = Column(BigInteger, nullable=False)  # Dương (+) hoặc Âm (-)
-    action_type = Column(String(50), nullable=False)  # recharge, spend, cultivate_reward, admin_promote
+    amount = Column(BigInteger, nullable=False)
+    action_type = Column(String(50), nullable=False)
     description = Column(String(255), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    # Relationship
     user = relationship("User", backref="douluo_transactions")

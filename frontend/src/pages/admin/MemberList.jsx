@@ -5,11 +5,11 @@ import { useAuth } from '../../context/AuthContext'
 import toast from 'react-hot-toast'
 
 const VIP_TIERS = [
-  { value: 0, label: 'VIP 0 - Phổ Thông Tu Giả' },
-  { value: 1, label: 'VIP 1 - Đồng Cấp (Hồn Vương Hộ Đạo)' },
-  { value: 2, label: 'VIP 2 - Ngân Cấp (Hồn Thánh Trấn Phái)' },
-  { value: 3, label: 'VIP 3 - Kim Cấp (Phong Hào Trưởng Lão)' },
-  { value: 4, label: 'VIP 4 - Chí Tôn Vô Thượng (Thần Vương Giáo Hoàng)' }
+  { value: 0, label: 'VIP 0 - Phổ Thông Hộ Đạo (Đệ Tử Bàn Cuối)' },
+  { value: 1, label: 'VIP 1 - Đồng Cấp (Cao Thủ Núp Lùm)' },
+  { value: 2, label: 'VIP 2 - Ngân Cấp (Chân Nhân Bàn Đầu)' },
+  { value: 3, label: 'VIP 3 - Kim Cấp (Vạn Ca Đấu La)' },
+  { value: 4, label: 'VIP 4 - Chí Tôn Vô Thượng (Núp Lùm Chi Thần)' }
 ]
 
 export default function MemberList() {
@@ -537,12 +537,12 @@ export default function MemberList() {
                       <input
                         type="text"
                         className="form-input"
-                        placeholder="VD: Hộ Đạo Đấu La, Tu La Thần..."
+                        placeholder="VD: Cao Thủ Núp Lùm, Vạn Ca Đấu La..."
                         value={editTitle}
                         onChange={e => setEditTitle(e.target.value)}
                       />
                       <div className="flex gap-2" style={{ marginTop: 6, flexWrap: 'wrap' }}>
-                        {['Hộ Đạo Đấu La', 'Hải Thần Chi Quang', 'Tu La Thần Vương'].map(t => (
+                        {['Bàn Cuối Chân Nhân', 'Cao Thủ Núp Lùm', 'Vạn Ca Đấu La', 'Núp Lùm Chi Thần'].map(t => (
                           <button
                             key={t}
                             type="button"

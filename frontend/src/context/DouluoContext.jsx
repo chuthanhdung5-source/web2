@@ -4,18 +4,16 @@ import { useAuth } from './AuthContext'
 import toast from 'react-hot-toast'
 
 export const DOULUO_REALMS = [
-  { minLevel: 1, maxLevel: 10, name: 'Hồn Sĩ', ring: 'ring-white', badge: 'badge-douluo-white', icon: '🥋', ringName: 'Hồn Hoàn 10 năm (Trắng)' },
-  { minLevel: 11, maxLevel: 20, name: 'Hồn Sư', ring: 'ring-yellow', badge: 'badge-douluo-yellow', icon: '⚡', ringName: 'Hồn Hoàn 100 năm (Vàng)' },
-  { minLevel: 21, maxLevel: 30, name: 'Đại Hồn Sư', ring: 'ring-yellow', badge: 'badge-douluo-yellow', icon: '⚔️', ringName: 'Hồn Hoàn 100 năm (Vàng)' },
-  { minLevel: 31, maxLevel: 40, name: 'Hồn Tôn', ring: 'ring-purple', badge: 'badge-douluo-purple', icon: '🛡️', ringName: 'Hồn Hoàn 1.000 năm (Tím)' },
-  { minLevel: 41, maxLevel: 50, name: 'Hồn Tông', ring: 'ring-purple', badge: 'badge-douluo-purple', icon: '🔮', ringName: 'Hồn Hoàn 1.000 năm (Tím)' },
-  { minLevel: 51, maxLevel: 60, name: 'Hồn Vương', ring: 'ring-black', badge: 'badge-douluo-black', icon: '👑', ringName: 'Hồn Hoàn 10.000 năm (Đen)' },
-  { minLevel: 61, maxLevel: 70, name: 'Hồn Đế', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🐉', ringName: 'Hồn Hoàn 10.000 năm (Đen)' },
-  { minLevel: 71, maxLevel: 80, name: 'Hồn Thánh', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🌟', ringName: 'Hồn Hoàn 10.000 năm (Đen)' },
-  { minLevel: 81, maxLevel: 90, name: 'Hồn Đấu La', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🌪️', ringName: 'Hồn Hoàn 10.000 năm (Đen)' },
-  { minLevel: 91, maxLevel: 98, name: 'Phong Hào Đấu La', ring: 'ring-red', badge: 'badge-douluo-red', icon: '🌌', ringName: 'Hồn Hoàn 100.000 năm (Đỏ)' },
-  { minLevel: 99, maxLevel: 99, name: 'Cực Hạn Đấu La', ring: 'ring-red', badge: 'badge-douluo-red', icon: '🪐', ringName: 'Hồn Hoàn Thần Khí (Đỏ Kim)' },
-  { minLevel: 100, maxLevel: 999, name: 'Tu La Thần Vương', ring: 'ring-gold', badge: 'badge-douluo-gold', icon: '🔱', ringName: 'Hồn Hoàn Triệu Năm (Hoàng Kim)' },
+  { minLevel: 1, maxLevel: 10, name: 'Tọa Sơn Bàn Cuối', ring: 'ring-white', badge: 'badge-douluo-white', icon: '🎒', ringName: 'Hồn Hoàn Bàn Cuối (Trắng 10 Năm)' },
+  { minLevel: 11, maxLevel: 20, name: 'Trụ Thạch Núp Lùm', ring: 'ring-yellow', badge: 'badge-douluo-yellow', icon: '🏛️', ringName: 'Hồn Hoàn Góc Cột (Vàng 100 Năm)' },
+  { minLevel: 21, maxLevel: 30, name: 'Hư Ảo Gật Đầu', ring: 'ring-yellow', badge: 'badge-douluo-yellow', icon: '👀', ringName: 'Hồn Hoàn Thao Túng (Vàng Đậm)' },
+  { minLevel: 31, maxLevel: 40, name: 'Biến Âm Hô "CÓ!"', ring: 'ring-purple', badge: 'badge-douluo-purple', icon: '🗣️', ringName: 'Hồn Hoàn Giả Giọng (Tím 1.000 Năm)' },
+  { minLevel: 41, maxLevel: 50, name: 'Thần Bút Ký Hộ', ring: 'ring-purple', badge: 'badge-douluo-purple', icon: '✍️', ringName: 'Hồn Hoàn Phù Bút (Tím Cực Phẩm)' },
+  { minLevel: 51, maxLevel: 60, name: 'Thiền Định Ngủ Mở Mắt', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🧘', ringName: 'Hồn Hoàn Nhập Định (Đen 10.000 Năm)' },
+  { minLevel: 61, maxLevel: 70, name: 'Nghịch Chuyển Bàn Đầu', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🧠', ringName: 'Hồn Hoàn Tâm Lý Chiến (Hắc Sắc Vạn Năm)' },
+  { minLevel: 71, maxLevel: 80, name: 'Lăng Ba Chuồn Cửa', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🚪', ringName: 'Hồn Hoàn Thân Pháp (Hắc Kim Trấn Phái)' },
+  { minLevel: 81, maxLevel: 99, name: 'Vạn Ca Học Hộ Đấu La', ring: 'ring-red', badge: 'badge-douluo-red', icon: '⚡', ringName: 'Hồn Hoàn Phân Thân (Đỏ 100.000 Năm)' },
+  { minLevel: 100, maxLevel: 999, name: 'Núp Lùm Chi Thần', ring: 'ring-gold', badge: 'badge-douluo-gold', icon: '👑', ringName: 'Hồn Hoàn Chí Tôn Vô Ảnh (Hoàng Kim Triệu Năm)' },
 ]
 
 export const getRealmInfo = (level) => {
@@ -101,7 +99,7 @@ export function DouluoProvider({ children }) {
 
   const [enabled, setEnabled] = useState(true)
   const [level, setLevel] = useState(1)
-  const [realmName, setRealmName] = useState('Hồn Sĩ')
+  const [realmName, setRealmName] = useState('Tọa Sơn Bàn Cuối')
   const [exp, setExp] = useState(0)
   const [expNeeded, setExpNeeded] = useState(60)
   const [diamonds, setDiamonds] = useState(88888)
