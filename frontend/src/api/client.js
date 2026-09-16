@@ -7,7 +7,7 @@ const api = axios.create({
 
 // Request interceptor — attach JWT token
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token')
+  const token = sessionStorage.getItem('token') || localStorage.getItem('token')
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -22,11 +22,15 @@ api.interceptors.response.use(
     if (status === 401) {
       // Chỉ tự redirect khi không phải đang ở sẵn trang login
       if (window.location.pathname !== '/login') {
+        sessionStorage.removeItem('token')
+        sessionStorage.removeItem('user')
         localStorage.removeItem('token')
         localStorage.removeItem('user')
         window.location.href = '/login'
       }
     } else if (status === 403 && window.location.pathname.startsWith('/admin')) {
+      sessionStorage.removeItem('token')
+      sessionStorage.removeItem('user')
       localStorage.removeItem('token')
       localStorage.removeItem('user')
       window.location.href = '/login'

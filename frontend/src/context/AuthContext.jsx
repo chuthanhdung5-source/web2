@@ -5,21 +5,23 @@ const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
-    try { return JSON.parse(localStorage.getItem('user')) } catch { return null }
+    try { return JSON.parse(sessionStorage.getItem('user')) } catch { return null }
   })
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
+    // Xóa token tự động đăng nhập cũ ở localStorage để luôn hiện lại trang đăng nhập khi mở trang mới
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+
+    const token = sessionStorage.getItem('token')
     if (token) {
       authAPI.getMe()
         .then(res => setUser(res.data))
         .catch(err => {
-          // CHỈ xóa token nếu server thực sự trả về 401 (token hết hạn)
-          // KHÔNG xóa token khi lỗi mạng, timeout hoặc server đang khởi động
           if (err.response?.status === 401) {
-            localStorage.removeItem('token')
-            localStorage.removeItem('user')
+            sessionStorage.removeItem('token')
+            sessionStorage.removeItem('user')
             setUser(null)
           }
         })
@@ -41,22 +43,22 @@ export function AuthProvider({ children }) {
   const login = async (username, password) => {
     const res = await authAPI.login({ username, password })
     const { access_token, user: userData } = res.data
-    localStorage.setItem('token', access_token)
-    localStorage.setItem('user', JSON.stringify(userData))
+    sessionStorage.setItem('token', access_token)
+    sessionStorage.setItem('user', JSON.stringify(userData))
     setUser(userData)
     return userData
   }
 
   const logout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
+    sessionStorage.removeItem('token')
+    sessionStorage.removeItem('user')
     setUser(null)
   }
 
   const refreshUser = async () => {
     const res = await authAPI.getMe()
     setUser(res.data)
-    localStorage.setItem('user', JSON.stringify(res.data))
+    sessionStorage.setItem('user', JSON.stringify(res.data))
   }
 
   return (

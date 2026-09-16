@@ -14,9 +14,8 @@ export default function Login() {
   const [form, setForm] = useState({ username: '', password: '' })
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-  const [rememberMe, setRememberMe] = useState(false)
+  const [rememberMe, setRememberMe] = useState(true)
 
-  // Check saved credentials on mount
   useEffect(() => {
     try {
       const saved = localStorage.getItem('douluo_remembered_creds')
@@ -27,12 +26,9 @@ export default function Login() {
           setRememberMe(true)
         }
       }
-    } catch {
-      // ignore parse errors
-    }
+    } catch {}
   }, [])
 
-  // Forgot password modal state
   const [showForgot, setShowForgot] = useState(false)
   const [forgotForm, setForgotForm] = useState({ username: '', email: '', new_password: '', confirm_password: '' })
   const [forgotLoading, setForgotLoading] = useState(false)
@@ -43,17 +39,10 @@ export default function Login() {
     try {
       const user = await login(form.username, form.password)
 
-      // Handle remember password privilege
-      if (rememberMe) {
-        try {
-          const encoded = btoa(JSON.stringify({ username: form.username, password: form.password }))
-          localStorage.setItem('douluo_remembered_creds', encoded)
-        } catch {
-          // ignore
-        }
-      } else {
-        localStorage.removeItem('douluo_remembered_creds')
-      }
+      try {
+        const encoded = btoa(JSON.stringify({ username: form.username, password: form.password }))
+        localStorage.setItem('douluo_remembered_creds', encoded)
+      } catch {}
 
       if (enabled) {
         spendDiamonds(50, 'Nhập cảnh Đấu La Đại Khảo Chi Lưới')
@@ -109,32 +98,38 @@ export default function Login() {
 
   return (
     <div className="auth-page">
-      <div className="auth-bg">
-        <div className="auth-orb auth-orb-1" />
-        <div className="auth-orb auth-orb-2" />
-      </div>
+      <div className="auth-overlay-backdrop" />
+      <div className="celestial-particles" />
 
-      <div className="auth-card">
-        <div className="auth-header">
-          <div className="auth-logo-badge">
-            <span>🔮</span>
-            <span>Đấu La Tông Môn v2.0</span>
+      <form onSubmit={handleSubmit} className="auth-realm-container">
+        <div className="celestial-header-shrine">
+          <div className="shrine-top-badge">
+            <span>✦</span>
+            <span>ĐẤU LA TÔNG MÔN v2.0</span>
+            <span>✦</span>
           </div>
 
-          <div className="auth-logo">🔮</div>
+          <div className="shrine-orb-core">
+            <div className="shrine-orb-glow" />
+            <div className="shrine-orb-ring" />
+          </div>
 
-          <h1>Đấu La Đại Khảo Chi Lưới</h1>
-          <p>Hệ thống Khảo Thí & Tu Vi Hồn Sư</p>
+          <h1 className="shrine-title">Đấu La Đại Khảo Chi Lưới</h1>
+          <p className="shrine-subtitle">Hệ thống Khảo Thí & Tu Vi Hồn Sư</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label className="form-label">Tên Hồn Sư (Username)</label>
-            <div className="input-with-icon">
-              <span className="input-icon-prefix">👤</span>
+        <div className="celestial-dual-formation">
+          <div className="celestial-portal-sphere sphere-ice">
+            <div className="portal-crest-icon">❄️</div>
+            <h2 className="portal-heading ice">THIÊN PHÚ</h2>
+            <div className="portal-subheading ice">(Tài Khoản)</div>
+            <div className="portal-field-label">Tên Hồn Sư (Username)</div>
+
+            <div className="celestial-input-tablet tablet-ice">
+              <span className="tablet-icon-left">📜</span>
               <input
                 id="login-username"
-                className="form-input"
+                className="celestial-raw-input"
                 type="text"
                 placeholder="Nhập tên đăng nhập..."
                 value={form.username}
@@ -142,29 +137,56 @@ export default function Login() {
                 required
                 autoFocus
               />
+              <span className="tablet-icon-right">🛡️</span>
             </div>
           </div>
 
-          <div className="form-group">
-            <div className="flex flex-between align-center" style={{ marginBottom: 6 }}>
-              <label className="form-label" style={{ marginBottom: 0 }}>Mật Khẩu Tâm Pháp</label>
-              <button
-                type="button"
-                className="forgot-link btn btn-ghost btn-sm"
-                style={{ padding: '0 4px', fontSize: '0.8rem' }}
-                onClick={() => {
-                  setForgotForm((prev) => ({ ...prev, username: form.username }))
-                  setShowForgot(true)
-                }}
-              >
-                Quên tâm pháp?
-              </button>
+          <div className="celestial-center-nexus">
+            <div className="taiji-core-vortex">
+              <div className="taiji-swirl-left" />
+              <div className="taiji-swirl-right" />
+              <div className="taiji-jewel-gem">🔮</div>
             </div>
-            <div className="input-with-icon">
-              <span className="input-icon-prefix">🔑</span>
+
+            <div className="celestial-action-podium">
+              <div className="podium-halo-ring" />
+              <button
+                id="login-submit"
+                type="submit"
+                className="btn-celestial-enter"
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <span className="spinner" style={{ width: 18, height: 18 }} />
+                    <span>Đang Vận Chuyển...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>🔱</span>
+                    <span>NHẬP CẢNH TIÊN MÔN</span>
+                    <span>🔱</span>
+                  </>
+                )}
+              </button>
+
+              <div className="podium-axiom-quote">
+                Hài hòa song tu - Thiếu một bất thành
+              </div>
+            </div>
+          </div>
+
+          <div className="celestial-portal-sphere sphere-fire">
+            <div className="portal-crest-icon">🔥</div>
+            <h2 className="portal-heading fire">TÂM TÍNH</h2>
+            <div className="portal-subheading fire">(Mật Khẩu)</div>
+            <div className="portal-field-label">Mật Khẩu Tâm Pháp</div>
+
+            <div className="celestial-input-tablet tablet-fire">
+              <span className="tablet-icon-left">🔑</span>
               <input
                 id="login-password"
-                className="form-input"
+                className="celestial-raw-input"
                 type={showPassword ? 'text' : 'password'}
                 placeholder="••••••••"
                 value={form.password}
@@ -173,76 +195,32 @@ export default function Login() {
               />
               <button
                 type="button"
-                className="password-toggle-btn"
+                className="tablet-icon-right"
+                style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                 onClick={() => setShowPassword(!showPassword)}
-                title={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
               >
                 {showPassword ? '👁️' : '🔒'}
               </button>
             </div>
-          </div>
 
-          {/* Ghi nhớ tâm pháp (Lưu mật khẩu) */}
-          <div className="remember-row">
-            <label className="remember-label">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={(e) => setRememberMe(e.target.checked)}
-              />
-              <span>Ghi nhớ tâm pháp (Lưu mật khẩu)</span>
-            </label>
-            <span className="remember-badge-locked" title="Đặc quyền lưu thông tin">
-              🔐 500 💎
-            </span>
-          </div>
-
-          <button
-            id="login-submit"
-            type="submit"
-            className="btn-auth-submit"
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <span className="spinner" /> Đang vận chuyển hồn lực...
-              </>
-            ) : (
-              <>⚡ Nhập Cảnh Tiên Môn</>
-            )}
-          </button>
-        </form>
-
-        {/* Quick Fill Test Accounts */}
-        <div className="quick-fill-box">
-          <p className="quick-fill-title">⚡ Điền Nhanh Tài Khoản Thử Nghiệm</p>
-          <div className="quick-fill-buttons">
             <button
               type="button"
-              className="btn-quick-fill"
-              onClick={() => handleQuickFill('admin')}
+              className="forgot-pw-button"
+              onClick={() => {
+                setForgotForm((prev) => ({ ...prev, username: form.username }))
+                setShowForgot(true)
+              }}
             >
-              👑 Admin Giáo Hoàng
-            </button>
-            <button
-              type="button"
-              className="btn-quick-fill"
-              onClick={() => handleQuickFill('member')}
-            >
-              🥋 Hồn Sư Member
+              Quên tâm pháp?
             </button>
           </div>
         </div>
 
-        <div className="auth-footer" style={{ marginTop: 18 }}>
-          Chưa thức tỉnh Võ Hồn?{' '}
-          <Link to="/register" style={{ color: '#c084fc', fontWeight: 700 }}>
-            Gia nhập ngay
-          </Link>
+        <div className="celestial-footer-link">
+          Chưa thức tỉnh Võ Hồn? <Link to="/register">Gia nhập ngay</Link>
         </div>
-      </div>
+      </form>
 
-      {/* Modal Quên mật khẩu */}
       {showForgot && (
         <div className="modal-backdrop" onClick={() => setShowForgot(false)}>
           <div

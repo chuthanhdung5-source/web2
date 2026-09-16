@@ -8,14 +8,25 @@ export default function AppLayout() {
   const [isDesktopCollapsed, setIsDesktopCollapsed] = useState(false)
 
   const toggleSidebar = () => {
-    if (window.innerWidth <= 768) {
-      setIsMobileOpen(prev => !prev)
+    if (window.innerWidth <= 1024) {
+      setIsMobileOpen(prev => {
+        const next = !prev
+        if (next) {
+          document.body.style.overflow = 'hidden'
+        } else {
+          document.body.style.overflow = ''
+        }
+        return next
+      })
     } else {
       setIsDesktopCollapsed(prev => !prev)
     }
   }
 
-  const closeMobileSidebar = () => setIsMobileOpen(false)
+  const closeMobileSidebar = () => {
+    setIsMobileOpen(false)
+    document.body.style.overflow = ''
+  }
 
   return (
     <div className={`app-layout ${isDesktopCollapsed ? 'desktop-collapsed' : ''}`}>
