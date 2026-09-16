@@ -2,7 +2,7 @@
   position: fixed;
   top: 0; left: 0; bottom: 0;
   width: var(--sidebar-width);
-  background: linear-gradient(180deg, rgba(17, 12, 28, 0.96) 0%, rgba(10, 7, 18, 0.98) 100%);
+  background: linear-gradient(180deg, rgba(17, 12, 28, 0.78) 0%, rgba(10, 7, 18, 0.88) 100%);
   backdrop-filter: blur(16px);
   border-right: 1px solid rgba(212, 175, 55, 0.25);
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.7);

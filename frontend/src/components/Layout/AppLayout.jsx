@@ -30,7 +30,6 @@ export default function AppLayout() {
 
   return (
     <div className={`app-layout ${isDesktopCollapsed ? 'desktop-collapsed' : ''}`}>
-      {/* Mobile backdrop */}
       {isMobileOpen && (
         <div className="sidebar-backdrop" onClick={closeMobileSidebar} />
       )}

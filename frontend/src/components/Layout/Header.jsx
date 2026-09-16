@@ -80,7 +80,6 @@ export default function Header({ onToggleSidebar }) {
       </div>
 
       <div className="header-right">
-        {/* Đếm ngược phiên làm việc (Session Timer HUD) */}
         <div
           className="session-timer-badge"
           onClick={() => setIsShopOpen(true)}
@@ -90,10 +89,8 @@ export default function Header({ onToggleSidebar }) {
           <span className="session-time">{formatSessionTime(sessionSecondsLeft)}</span>
         </div>
 
-        {/* Chế độ Đấu La Đại Lục */}
         {enabled ? (
           <>
-            {/* Nút Động Phủ Bế Quan Tu Luyện */}
             <button
               className="btn-cultivate-pulse"
               onClick={() => setIsCultivationOpen(true)}
@@ -103,7 +100,6 @@ export default function Header({ onToggleSidebar }) {
               <span className="cult-text">Bế Quan</span>
             </button>
 
-            {/* Tàng Bảo Các Shop */}
             <button
               className="btn-shop-trigger"
               onClick={() => setIsShopOpen(true)}
@@ -113,7 +109,6 @@ export default function Header({ onToggleSidebar }) {
               <span className="shop-text">Bảo Các</span>
             </button>
 
-            {/* Huy hiệu Cảnh giới */}
             <div
               className={`douluo-badge ${realm.badge}`}
               onClick={() => (isAdmin ? setIsSettingsOpen(true) : setIsCultivationOpen(true))}
@@ -124,7 +119,6 @@ export default function Header({ onToggleSidebar }) {
               <span className="realm-level-text">Lv.{level}</span>
             </div>
 
-            {/* Túi Kim Cương */}
             <div
               className="diamond-wallet"
               onClick={() => (isAdmin ? setIsRechargeOpen(true) : setIsMineOpen(true))}
@@ -135,7 +129,6 @@ export default function Header({ onToggleSidebar }) {
               <span className="diamond-plus">{isAdmin ? '+' : '⛏️'}</span>
             </div>
 
-            {/* Nút Cài đặt / Sắc phong */}
             <button
               className="btn btn-ghost btn-sm btn-settings-icon"
               onClick={() => setIsSettingsOpen(true)}
@@ -145,7 +138,6 @@ export default function Header({ onToggleSidebar }) {
             </button>
           </>
         ) : (
-          /* Nút mở lại chế độ khi đang tắt */
           <button
             className="btn btn-ghost btn-sm"
             onClick={() => setIsSettingsOpen(true)}
@@ -156,7 +148,6 @@ export default function Header({ onToggleSidebar }) {
           </button>
         )}
 
-        {/* Tiền lương thật */}
         <div className="earnings-pill" title="Tổng thu nhập thực tế">
           <span>💰</span>
           <span>{(user?.total_earnings || 0).toLocaleString('vi-VN')}đ</span>

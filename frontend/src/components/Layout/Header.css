@@ -4,7 +4,7 @@
   left: var(--sidebar-width);
   right: 0;
   height: var(--header-height);
-  background: linear-gradient(90deg, rgba(16, 12, 26, 0.95) 0%, rgba(22, 14, 38, 0.95) 50%, rgba(16, 12, 26, 0.95) 100%);
+  background: linear-gradient(90deg, rgba(16, 12, 26, 0.72) 0%, rgba(22, 14, 38, 0.78) 50%, rgba(16, 12, 26, 0.72) 100%);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid rgba(212, 175, 55, 0.28);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
