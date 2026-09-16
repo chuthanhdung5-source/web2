@@ -82,53 +82,54 @@
   --content-max: 1200px;
 }
 
-/* --- Theme Skins (Khai Mở Tàng Bảo Các) --- */
 [data-theme="skin-huyen-ao"] {
   --bg: #031420;
   --bg-secondary: #072235;
-  --surface: #0a2d45;
-  --surface-hover: #0e3b5a;
-  --surface-elevated: #0f4062;
-  --border: rgba(6, 182, 212, 0.18);
-  --border-strong: rgba(6, 182, 212, 0.35);
+  --surface: rgba(10, 45, 69, 0.7);
+  --surface-hover: rgba(14, 59, 90, 0.85);
+  --surface-elevated: rgba(15, 64, 98, 0.9);
+  --border: rgba(6, 182, 212, 0.28);
+  --border-strong: rgba(6, 182, 212, 0.6);
   --primary: #06b6d4;
   --primary-dark: #0891b2;
   --primary-light: #67e8f9;
-  --primary-glow: rgba(6, 182, 212, 0.28);
-  --shadow-glow: 0 0 24px rgba(6, 182, 212, 0.35);
+  --primary-glow: rgba(6, 182, 212, 0.45);
+  --shadow-glow: 0 0 30px rgba(6, 182, 212, 0.5);
+  --celestial-tint: radial-gradient(circle at 50% 20%, rgba(6, 182, 212, 0.18), transparent 70%);
 }
 
 [data-theme="skin-hoang-gia"] {
-  --bg: #120e06;
-  --bg-secondary: #1c170a;
-  --surface: #28200f;
-  --surface-hover: #362c16;
-  --surface-elevated: #3f331a;
-  --border: rgba(245, 158, 11, 0.22);
-  --border-strong: rgba(245, 158, 11, 0.42);
+  --bg: #150f04;
+  --bg-secondary: #221a08;
+  --surface: rgba(40, 32, 15, 0.75);
+  --surface-hover: rgba(54, 44, 22, 0.88);
+  --surface-elevated: rgba(63, 51, 26, 0.92);
+  --border: rgba(245, 158, 11, 0.35);
+  --border-strong: rgba(245, 158, 11, 0.65);
   --primary: #f59e0b;
   --primary-dark: #d97706;
   --primary-light: #fcd34d;
-  --primary-glow: rgba(245, 158, 11, 0.3);
-  --shadow-glow: 0 0 24px rgba(245, 158, 11, 0.35);
+  --primary-glow: rgba(245, 158, 11, 0.45);
+  --shadow-glow: 0 0 30px rgba(245, 158, 11, 0.5);
+  --celestial-tint: radial-gradient(circle at 50% 20%, rgba(245, 158, 11, 0.22), transparent 70%);
 }
 
 [data-theme="skin-than-thanh"] {
-  --bg: #140b1c;
-  --bg-secondary: #1f102b;
-  --surface: #2c163d;
-  --surface-hover: #3b1d52;
-  --surface-elevated: #44215f;
-  --border: rgba(236, 72, 153, 0.22);
-  --border-strong: rgba(236, 72, 153, 0.45);
+  --bg: #180a22;
+  --bg-secondary: #251035;
+  --surface: rgba(44, 22, 61, 0.75);
+  --surface-hover: rgba(59, 29, 82, 0.88);
+  --surface-elevated: rgba(68, 33, 95, 0.92);
+  --border: rgba(236, 72, 153, 0.35);
+  --border-strong: rgba(236, 72, 153, 0.65);
   --primary: #ec4899;
   --primary-dark: #db2777;
   --primary-light: #f472b6;
-  --primary-glow: rgba(236, 72, 153, 0.3);
-  --shadow-glow: 0 0 24px rgba(236, 72, 153, 0.35);
+  --primary-glow: rgba(236, 72, 153, 0.45);
+  --shadow-glow: 0 0 30px rgba(236, 72, 153, 0.5);
+  --celestial-tint: radial-gradient(circle at 50% 20%, rgba(236, 72, 153, 0.22), transparent 70%);
 }
 
-/* --- Reset & Base --- */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -145,7 +146,16 @@ html {
 
 body {
   font-family: var(--font);
-  background: var(--bg);
+  background-color: #0c0814;
+  background-image: 
+    var(--celestial-tint, radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15), transparent 60%)),
+    url('/douluo_bg.jpg'),
+    radial-gradient(ellipse at 80% 20%, rgba(234, 179, 8, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(59, 130, 246, 0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #120c1e 0%, #08050e 100%);
+  background-attachment: fixed;
+  background-size: cover, cover, auto, auto, auto;
+  background-position: center;
   color: var(--text-primary);
   line-height: 1.6;
   min-height: 100vh;

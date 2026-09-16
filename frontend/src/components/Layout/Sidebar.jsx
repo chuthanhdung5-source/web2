@@ -4,27 +4,26 @@ import { useDouluo } from '../../context/DouluoContext'
 import './Sidebar.css'
 
 const ADMIN_NAV = [
-  { to: '/admin', icon: '⊞', label: 'Dashboard', end: true },
-  { to: '/admin/schedule', icon: '📅', label: 'Thời khóa biểu' },
-  { to: '/admin/sessions', icon: '✅', label: 'Duyệt ca học' },
-  { to: '/admin/checkins', icon: '📸', label: 'Xem ảnh check-in' },
-  { to: '/admin/notifications/send', icon: '📢', label: 'Gửi thông báo' },
-  { to: '/admin/feedbacks', icon: '💬', label: 'Góp ý & Feedback' },
-  { to: '/admin/activity-logs', icon: '📜', label: 'Lịch sử hoạt động' },
-  { to: '/admin/members', icon: '👥', label: 'Thành viên' },
-  { to: '/admin/payments', icon: '💰', label: 'Thanh toán' },
-  { to: '/admin/profile', icon: '👤', label: 'Hồ sơ SV' },
+  { to: '/admin', icon: '⊞', label: 'Dashboard', end: true, badgeIcon: '📜' },
+  { to: '/admin/schedule', icon: '📅', label: 'Thời khóa biểu', badgeIcon: '🟢' },
+  { to: '/admin/sessions', icon: '✅', label: 'Duyệt ca học', badgeIcon: '🗡️' },
+  { to: '/admin/checkins', icon: '📸', label: 'Xem ảnh check-in', badgeIcon: '🐉' },
+  { to: '/admin/notifications/send', icon: '📢', label: 'Gửi thông báo', badgeIcon: '🐉' },
+  { to: '/admin/feedbacks', icon: '💬', label: 'Góp ý & Feedback', badgeIcon: '🐉' },
+  { to: '/admin/activity-logs', icon: '📜', label: 'Lịch sử hoạt động', badgeIcon: '🐉' },
+  { to: '/admin/members', icon: '👥', label: 'Thành viên', badgeIcon: '🐉' },
+  { to: '/admin/payments', icon: '💰', label: 'Thanh toán', badgeIcon: '🐉' },
+  { to: '/admin/profile', icon: '👤', label: 'Hồ sơ SV', badgeIcon: '🐉' },
 ]
 
-
 const MEMBER_NAV = [
-  { to: '/member', icon: '⊞', label: 'Dashboard', end: true },
-  { to: '/member/slots', icon: '📋', label: 'Đăng ký ca học' },
-  { to: '/member/schedule', icon: '📅', label: 'Lịch của tôi' },
-  { to: '/member/earnings', icon: '💰', label: 'Thu nhập' },
-  { to: '/member/feedback', icon: '💬', label: 'Gửi góp ý Admin' },
-  { to: '/member/admin-info', icon: '🎓', label: 'Thông tin SV' },
-  { to: '/member/profile', icon: '👤', label: 'Hồ sơ' },
+  { to: '/member', icon: '⊞', label: 'Dashboard', end: true, badgeIcon: '📜' },
+  { to: '/member/slots', icon: '📋', label: 'Đăng ký ca học', badgeIcon: '🗡️' },
+  { to: '/member/schedule', icon: '📅', label: 'Lịch của tôi', badgeIcon: '🟢' },
+  { to: '/member/earnings', icon: '💰', label: 'Thu nhập', badgeIcon: '🪙' },
+  { to: '/member/feedback', icon: '💬', label: 'Gửi góp ý Admin', badgeIcon: '🐉' },
+  { to: '/member/admin-info', icon: '🎓', label: 'Thông tin SV', badgeIcon: '🐉' },
+  { to: '/member/profile', icon: '👤', label: 'Hồ sơ', badgeIcon: '🐉' },
 ]
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -39,18 +38,16 @@ export default function Sidebar({ isOpen, onClose }) {
   }
 
   const initials = user?.full_name?.split(' ').map(w => w[0]).slice(-2).join('') || 'U'
-
   const { enabled, realm, customTitle, setIsSettingsOpen } = useDouluo()
 
   return (
     <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
-      {/* Logo & Mobile Close */}
       <div className="sidebar-logo flex-between">
         <div className="flex align-center gap-3">
           <div className="logo-icon">🔮</div>
           <div>
             <div className="logo-title">Đấu La Khảo Lưới</div>
-            <div className="logo-badge">{user?.role === 'admin' ? 'Giáo Hoàng' : 'Hồn Sư'}</div>
+            <div className="logo-badge">{user?.role === 'admin' ? 'GIÁO HOÀNG' : 'HỒN SƯ'}</div>
           </div>
         </div>
         {onClose && (
@@ -60,7 +57,6 @@ export default function Sidebar({ isOpen, onClose }) {
         )}
       </div>
 
-      {/* Nav */}
       <nav className="sidebar-nav">
         {nav.map(item => (
           <NavLink
@@ -70,33 +66,35 @@ export default function Sidebar({ isOpen, onClose }) {
             onClick={() => onClose && onClose()}
             className={({ isActive }) => `sidebar-link ${isActive ? 'active' : ''}`}
           >
-            <span className="nav-icon">{item.icon}</span>
-            <span>{item.label}</span>
+            <div className="flex align-center gap-2">
+              <span className="nav-icon">{item.icon}</span>
+              <span className="nav-label">{item.label}</span>
+            </div>
+            <span className="nav-dragon-wing">{item.badgeIcon}</span>
           </NavLink>
         ))}
       </nav>
 
-      {/* User info */}
       <div className="sidebar-footer">
         <div className="sidebar-user">
-          {/* Avatar với Vòng Hồn Hoàn Đấu La */}
           <div
             className="soul-ring-wrapper"
             style={{ cursor: 'pointer' }}
             onClick={() => setIsSettingsOpen(true)}
             title="Bấm để Tự Phong Cảnh Giới Đấu La"
           >
+            <div className="blazing-sun-ring" />
             {enabled && <div className={`soul-ring ${realm.ring}`} />}
-            <div className="avatar" style={{ position: 'relative', zIndex: 1 }}>
+            <div className="avatar" style={{ position: 'relative', zIndex: 2 }}>
               {initials}
             </div>
           </div>
 
           <div className="user-info">
-            <div className="user-name">{user?.full_name}</div>
-            <div className="user-role" style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div className="user-name">{user?.full_name || 'Quản Trị Viên'}</div>
+            <div className="user-role">
               {enabled ? (
-                <span style={{ color: '#c084fc', fontWeight: 600, fontSize: '0.75rem' }}>
+                <span className="user-realm-tag">
                   {realm.icon} {customTitle || realm.name}
                 </span>
               ) : (
@@ -112,4 +110,3 @@ export default function Sidebar({ isOpen, onClose }) {
     </aside>
   )
 }
-
