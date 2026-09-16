@@ -40,11 +40,11 @@ export default function PaymentManager() {
     setSubmitting(true)
     try {
       await adminAPI.markPaid(id, notes)
-      toast.success('💰 Đã xác nhận chuyển khoản thành công!')
+      toast.success('💰 Đã xác nhận xuất ngân khố ban bổng lộc thành công!')
       setPayModal(null)
       setNotes('')
       load(filter)
-    } catch { toast.error('Có lỗi xảy ra khi xác nhận thanh toán') }
+    } catch { toast.error('Có lỗi xảy ra khi xuất ngân khố') }
     finally { setSubmitting(false) }
   }
 
@@ -53,17 +53,16 @@ export default function PaymentManager() {
   return (
     <div>
       <div className="page-header">
-        <h1>💰 Quản lý thanh toán</h1>
-        <p>Tổng tiền ({filter === 'pending' ? 'Chờ thanh toán' : 'Đã thanh toán'}): <strong style={{ color: 'var(--accent-green)', fontSize: '1.25rem' }}>{totalAmount.toLocaleString('vi-VN')}đ</strong></p>
+        <h1>💰 Quản Lý Bổng Lộc Linh Thạch Ngân Khố</h1>
+        <p>Tổng quỹ ({filter === 'pending' ? 'Chờ ban bổng lộc' : 'Đã xuất ngân khố'}): <strong style={{ color: 'var(--accent-green)', fontSize: '1.25rem' }}>{totalAmount.toLocaleString('vi-VN')}đ</strong></p>
       </div>
 
-      {/* Filter tabs */}
       <div className="flex gap-3" style={{ marginBottom: 24 }}>
         {['pending', 'paid'].map(s => (
           <button key={s} id={`filter-${s}`}
             className={`btn ${filter === s ? 'btn-primary' : 'btn-secondary'}`}
             onClick={() => setFilter(s)}>
-            {s === 'pending' ? '⏳ Chờ thanh toán' : '✅ Đã thanh toán'}
+            {s === 'pending' ? '⏳ Chờ Ban Bổng Lộc' : '✅ Đã Xuất Ngân Khố'}
           </button>
         ))}
       </div>
@@ -71,19 +70,19 @@ export default function PaymentManager() {
       {loading ? (
         <div className="flex-center" style={{ height: 200 }}><div className="spinner" style={{ width: 32, height: 32 }} /></div>
       ) : payments.length === 0 ? (
-        <div className="empty-state"><div className="icon">💸</div><h3>Không có dữ liệu thanh toán</h3></div>
+        <div className="empty-state"><div className="icon">💸</div><h3>Không có dữ liệu bổng lộc ngân khố</h3></div>
       ) : (
         <div className="table-wrapper">
           <table>
             <thead>
               <tr>
-                <th>Thành viên</th>
-                <th>Thông tin Ngân hàng / STK</th>
-                <th>Ca học</th>
-                <th>Số tiết</th>
-                <th>Số tiền</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
+                <th>Chư Vị Tu Giả</th>
+                <th>Tiên Trang Thần Phù (STK)</th>
+                <th>Tràng Hộ Đạo</th>
+                <th>Thời Khắc</th>
+                <th>Linh Thạch Quy Đổi</th>
+                <th>Trạng Thái</th>
+                <th>Thao Tác</th>
               </tr>
             </thead>
             <tbody>
@@ -108,7 +107,7 @@ export default function PaymentManager() {
                           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{member.bank_account_name}</div>
                         </div>
                       ) : (
-                        <span style={{ fontSize: '0.8rem', color: 'var(--accent-red)' }}>⚠️ Chưa nộp STK</span>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--accent-red)' }}>⚠️ Chưa nộp Tiên Trang</span>
                       )}
                     </td>
 
@@ -119,12 +118,12 @@ export default function PaymentManager() {
                       </div>
                     </td>
 
-                    <td style={{ fontWeight: 700, textAlign: 'center' }}>{p.periods_completed} tiết</td>
+                    <td style={{ fontWeight: 700, textAlign: 'center' }}>{p.periods_completed} khắc</td>
                     <td className="money" style={{ fontSize: '1rem', fontWeight: 800 }}>{p.amount.toLocaleString('vi-VN')}đ</td>
 
                     <td>
                       <span className={`badge ${p.status === 'paid' ? 'badge-verified' : 'badge-pending'}`}>
-                        {p.status === 'paid' ? '✅ Đã trả' : '⏳ Chờ trả'}
+                        {p.status === 'paid' ? '✅ Đã Xuất Khố' : '⏳ Chờ Giải Ngân'}
                       </span>
                     </td>
 
@@ -134,7 +133,7 @@ export default function PaymentManager() {
                         className={`btn ${p.status === 'paid' ? 'btn-secondary btn-sm' : 'btn-success btn-sm'}`}
                         onClick={() => { setQrImageError(false); setPayModal({ payment: p, member, vietQRUrl }); }}
                       >
-                        {p.status === 'paid' ? '👁 Xem chi tiết' : '💳 Thanh toán ngay'}
+                        {p.status === 'paid' ? '👁 Xem chi tiết' : '💳 Xuất Ngân Khố Ngay'}
                       </button>
                     </td>
                   </tr>
@@ -145,29 +144,27 @@ export default function PaymentManager() {
         </div>
       )}
 
-      {/* Modal Thanh toán */}
       {payModal && (
         <div className="modal-overlay" onClick={() => setPayModal(null)}>
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 520 }}>
-            <h3 style={{ marginBottom: 16 }}>💳 Thanh toán tiền đi học hộ</h3>
+            <h3 style={{ marginBottom: 16 }}>💳 Phát Bổng Lộc Hộ Đạo Tu Chân</h3>
 
             <div style={{ background: 'var(--surface-hover)', padding: 16, borderRadius: 8, marginBottom: 16 }}>
               <div style={{ fontSize: '0.9rem', marginBottom: 4 }}>
-                👤 Người nhận: <strong>{payModal.member?.full_name}</strong> (@{payModal.member?.username})
+                👤 Đệ tử nhận bổng lộc: <strong>{payModal.member?.full_name}</strong> (@{payModal.member?.username})
               </div>
               <div style={{ fontSize: '0.9rem', marginBottom: 4 }}>
-                📚 Môn học: <strong>{payModal.payment?.weekly_session?.schedule_slot?.subject?.name}</strong> ({payModal.payment?.periods_completed} tiết)
+                📚 Pháp môn hoàn tất: <strong>{payModal.payment?.weekly_session?.schedule_slot?.subject?.name}</strong> ({payModal.payment?.periods_completed} khắc)
               </div>
               <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--accent-green)', marginTop: 8 }}>
-                💰 Số tiền cần chuyển: {payModal.payment?.amount.toLocaleString('vi-VN')}đ
+                💰 Số lượng linh thạch quy đổi: {payModal.payment?.amount.toLocaleString('vi-VN')}đ
               </div>
             </div>
 
-            {/* QR Code Section */}
             <div style={{ textAlign: 'center', marginBottom: 16, background: '#fff', padding: 16, borderRadius: 12, border: '1px solid var(--border)' }}>
               {payModal.member?.qr_code_url && !qrImageError ? (
                 <div>
-                  <div style={{ fontSize: '0.8rem', color: '#333', fontWeight: 700, marginBottom: 8 }}>🖼️ MÃ QR CHUYỂN KHOẢN (DO THÀNH VIÊN TẢI LÊN)</div>
+                  <div style={{ fontSize: '0.8rem', color: '#333', fontWeight: 700, marginBottom: 8 }}>🖼️ THẦN PHÙ TIÊN TRANG (ĐỆ TỬ TẾ XUẤT)</div>
                   <img
                     src={getImageUrl(payModal.member.qr_code_url)}
                     alt="Member QR"
@@ -178,40 +175,39 @@ export default function PaymentManager() {
               ) : payModal.vietQRUrl ? (
                 <div>
                   <div style={{ fontSize: '0.8rem', color: '#333', fontWeight: 700, marginBottom: 8 }}>
-                    {qrImageError ? '⚡ MÃ QR TỰ ĐỘNG SINH VIETQR (DO ẢNH THÀNH VIÊN LỖI/KHÔNG TỒN TẠI)' : '⚡ MÃ VIETQR TỰ ĐỘNG SINH (MỞ APP NGÂN HÀNG QUÉT)'}
+                    {qrImageError ? '⚡ THẦN PHÙ TỰ ĐỘNG SINH (DO ẢNH ĐỆ TỬ LỖI HOẶC TRỐNG)' : '⚡ THẦN PHÙ VIETQR TỰ ĐỘNG KHAI MỞ (QUÉT APP TIÊN TRANG)'}
                   </div>
                   <img src={payModal.vietQRUrl} alt="VietQR" style={{ maxWidth: 240, maxHeight: 240, objectFit: 'contain' }} />
                 </div>
               ) : (
-                <div style={{ color: 'var(--accent-red)', padding: 16 }}>⚠️ Thành viên này chưa nộp Mã QR hoặc STK Ngân hàng.</div>
+                <div style={{ color: 'var(--accent-red)', padding: 16 }}>⚠️ Đệ tử này chưa nộp Thần Phù hoặc STK Tiên Trang.</div>
               )}
             </div>
 
-            {/* Bank details breakdown */}
             {payModal.member?.bank_account_no && (
               <div style={{ fontSize: '0.875rem', display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 16 }}>
-                <div>🏦 Ngân hàng: <strong>{payModal.member.bank_name}</strong></div>
-                <div>🔢 Số tài khoản / Ví: <strong>{payModal.member.bank_account_no}</strong></div>
-                <div>👤 Chủ tài khoản: <strong>{payModal.member.bank_account_name}</strong></div>
+                <div>🏦 Tiên Trang: <strong>{payModal.member.bank_name}</strong></div>
+                <div>🔢 Số tài khoản / Thần phù: <strong>{payModal.member.bank_account_no}</strong></div>
+                <div>👤 Danh xưng thụ hưởng: <strong>{payModal.member.bank_account_name}</strong></div>
               </div>
             )}
 
             {payModal.payment?.status === 'pending' && (
               <div className="form-group" style={{ marginBottom: 16 }}>
-                <label className="form-label">Ghi chú thanh toán (không bắt buộc)</label>
-                <input className="form-input" placeholder="Ví dụ: Đã chuyển qua MB Bank lúc 09:00" value={notes} onChange={e => setNotes(e.target.value)} />
+                <label className="form-label">Chiếu chỉ giải ngân (không bắt buộc)</label>
+                <input className="form-input" placeholder="Ví dụ: Đã truyền tống qua MB Bank canh ba" value={notes} onChange={e => setNotes(e.target.value)} />
               </div>
             )}
 
             <div className="flex gap-3" style={{ justifyContent: 'flex-end' }}>
-              <button className="btn btn-secondary" onClick={() => setPayModal(null)}>Đóng</button>
+              <button className="btn btn-secondary" onClick={() => setPayModal(null)}>Thu Hồi</button>
               {payModal.payment?.status === 'pending' && (
                 <button
                   className="btn btn-success"
                   disabled={submitting}
                   onClick={() => markPaid(payModal.payment.id)}
                 >
-                  {submitting ? '⏳ Đang lưu...' : '✅ Xác nhận đã chuyển khoản'}
+                  {submitting ? '⏳ Đang truyền tống...' : '✅ Xác Nhận Đã Xuất Ngân Khố'}
                 </button>
               )}
             </div>

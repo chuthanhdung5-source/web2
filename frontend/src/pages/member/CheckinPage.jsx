@@ -11,9 +11,6 @@ const PERIOD_TIMES = {
   10: '15:50–16:40', 11: '16:45–17:35', 12: '17:40–18:30',
 }
 
-const STATUS_ICON = { pending: '⏳', verified: '✅', rejected: '❌', missed: '🚫' }
-const STATUS_CLS = { pending: 'badge-pending', verified: 'badge-verified', rejected: 'badge-rejected', missed: 'badge-missed' }
-
 export default function CheckinPage() {
   const { sessionId } = useParams()
   const navigate = useNavigate()
@@ -36,10 +33,10 @@ export default function CheckinPage() {
     setUploading(checkinId)
     try {
       await memberAPI.uploadCheckin(checkinId, file)
-      toast.success(`📸 Đã nộp ảnh tiết ${checkins.find(c => c.id === checkinId)?.period_number}!`)
+      toast.success(`📸 Đã tế xuất pháp ảnh khắc ${checkins.find(c => c.id === checkinId)?.period_number}!`)
       load()
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi upload ảnh')
+      toast.error(err.response?.data?.detail || 'Lỗi tế xuất pháp ảnh')
     } finally {
       setUploading(null)
     }
@@ -61,17 +58,16 @@ export default function CheckinPage() {
     <div>
       <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div>
-          <h1>📸 Check-in ca học</h1>
-          <p>Nộp ảnh xác nhận cho từng tiết — {verified}/{total} tiết đã xác nhận</p>
+          <h1>📸 Tế Xuất Thần Ảnh Điểm Danh Nhập Trận</h1>
+          <p>Tế xuất pháp ảnh xác thực từng khắc thí luyện — {verified}/{total} khắc đã viên mãn</p>
         </div>
-        <button className="btn btn-secondary btn-sm" onClick={() => navigate('/member/schedule')}>← Quay lại</button>
+        <button className="btn btn-secondary btn-sm" onClick={() => navigate('/member/schedule')}>← Trở Về Đạo Lộ</button>
       </div>
 
-      {/* Progress bar */}
       <div style={{ marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6, fontSize: '0.875rem' }}>
-          <span>Tiến độ check-in</span>
-          <span style={{ fontWeight: 600 }}>{verified}/{total} tiết</span>
+          <span>Tiến độ điểm danh hộ đạo</span>
+          <span style={{ fontWeight: 600 }}>{verified}/{total} khắc</span>
         </div>
         <div style={{ height: 8, background: 'var(--surface-hover)', borderRadius: 4, overflow: 'hidden' }}>
           <div style={{
@@ -90,15 +86,15 @@ export default function CheckinPage() {
           const canUpload = c.status !== 'verified' && c.status !== 'missed'
           const hasPhoto = Boolean(c.photo_url || preview[c.id])
 
-          let statusBadge = { label: 'Chưa nộp', icon: '📷', cls: 'badge-open' }
+          let statusBadge = { label: 'Chưa Tế Xuất', icon: '📷', cls: 'badge-open' }
           if (c.status === 'verified') {
-            statusBadge = { label: 'Đã xác nhận', icon: '✅', cls: 'badge-verified' }
+            statusBadge = { label: 'Đã Viên Mãn', icon: '✅', cls: 'badge-verified' }
           } else if (c.status === 'rejected') {
-            statusBadge = { label: 'Bị từ chối', icon: '❌', cls: 'badge-rejected' }
+            statusBadge = { label: 'Bị Bác Bỏ', icon: '❌', cls: 'badge-rejected' }
           } else if (c.status === 'missed') {
-            statusBadge = { label: 'Bỏ tiết', icon: '🚫', cls: 'badge-missed' }
+            statusBadge = { label: 'Thất Khắc', icon: '🚫', cls: 'badge-missed' }
           } else if (hasPhoto) {
-            statusBadge = { label: 'Chờ xác nhận', icon: '⏳', cls: 'badge-registered' }
+            statusBadge = { label: 'Chờ Thẩm Định', icon: '⏳', cls: 'badge-registered' }
           }
 
           return (
@@ -108,18 +104,17 @@ export default function CheckinPage() {
             }}>
               <div className="flex flex-between" style={{ marginBottom: 12 }}>
                 <div>
-                  <div style={{ fontWeight: 800, fontSize: '1.25rem' }}>Tiết {c.period_number}</div>
+                  <div style={{ fontWeight: 800, fontSize: '1.25rem' }}>Khắc {c.period_number}</div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{PERIOD_TIMES[c.period_number]}</div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
                   <span className={`badge ${statusBadge.cls}`}>
                     {statusBadge.icon} {statusBadge.label}
                   </span>
-                  {isActive && <span style={{ fontSize: '0.7rem', color: 'var(--primary-light)', fontWeight: 600 }}>🔴 ĐANG HỌC</span>}
+                  {isActive && <span style={{ fontSize: '0.7rem', color: 'var(--primary-light)', fontWeight: 600 }}>🔴 ĐANG TRỰC TRẬN</span>}
                 </div>
               </div>
 
-              {/* Photo preview */}
               {(c.photo_url || preview[c.id]) && (
                 <img
                   src={preview[c.id] || getImageUrl(c.photo_url)}
@@ -130,13 +125,13 @@ export default function CheckinPage() {
 
               {c.reject_reason && (
                 <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 6, padding: '8px 12px', marginBottom: 12, fontSize: '0.8rem', color: 'var(--accent-red)' }}>
-                  ❌ Lý do từ chối: {c.reject_reason}
+                  ❌ Cớ do bác bỏ: {c.reject_reason}
                 </div>
               )}
 
               {c.deadline && (
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 12 }}>
-                  ⏱ Deadline: {new Date(c.deadline).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
+                  ⏱ Hạn định phong ấn: {new Date(c.deadline).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
                 </div>
               )}
 
@@ -146,16 +141,16 @@ export default function CheckinPage() {
                   className={`btn ${c.status === 'rejected' ? 'btn-danger' : isActive ? 'btn-primary' : 'btn-secondary'}`}
                   style={{
                     width: '100%',
-                    justify: 'center',
+                    justifyContent: 'center',
                     cursor: 'pointer',
                     background: c.status === 'rejected' ? 'var(--accent-red)' : undefined,
                     color: c.status === 'rejected' ? '#fff' : undefined,
                   }}
                 >
                   {uploading === c.id ? (
-                    <><span className="spinner" /> Đang upload...</>
+                    <><span className="spinner" /> Đang truyền tống pháp ảnh...</>
                   ) : (
-                    <>{c.status === 'rejected' ? '🔄 Upload lại ảnh bị từ chối' : c.photo_url ? '🔄 Nộp lại ảnh' : '📷 Chụp/Chọn ảnh'}</>
+                    <>{c.status === 'rejected' ? '🔄 Tế xuất lại pháp ảnh bị bác bỏ' : c.photo_url ? '🔄 Tế xuất lại thần ảnh' : '📷 Tế Xuất Pháp Ảnh'}</>
                   )}
                   <input
                     type="file"
@@ -175,7 +170,7 @@ export default function CheckinPage() {
       {checkins.length === 0 && (
         <div className="empty-state">
           <div className="icon">📭</div>
-          <h3>Không có tiết nào để check-in</h3>
+          <h3>Không có thời khắc nào để điểm danh</h3>
         </div>
       )}
     </div>

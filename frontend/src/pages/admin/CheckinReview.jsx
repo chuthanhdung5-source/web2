@@ -5,10 +5,10 @@ import { useDouluo } from '../../context/DouluoContext'
 import toast from 'react-hot-toast'
 
 const STATUS_TABS = [
-  { key: 'pending', label: '⏳ Chờ duyệt' },
-  { key: 'verified', label: '🟢 Đã xác nhận' },
-  { key: 'rejected', label: '🔴 Đã từ chối' },
-  { key: 'all', label: '📋 Tất cả ảnh' },
+  { key: 'pending', label: '⏳ Đang Chờ Giám Định' },
+  { key: 'verified', label: '🟢 Đã Thẩm Định Hợp Quy' },
+  { key: 'rejected', label: '🔴 Bác Bỏ Bất Toàn' },
+  { key: 'all', label: '📋 Toàn Bộ Pháp Ảnh' },
 ]
 
 export default function CheckinReview() {
@@ -22,7 +22,7 @@ export default function CheckinReview() {
     setLoading(true)
     adminAPI.getCheckins(activeTab)
       .then(r => setCheckins(r.data))
-      .catch(() => toast.error('Lỗi tải danh sách ảnh check-in'))
+      .catch(() => toast.error('Lỗi tải danh sách pháp ảnh'))
       .finally(() => setLoading(false))
   }
 
@@ -30,25 +30,25 @@ export default function CheckinReview() {
 
   const handle = async (id, approve, reason = null) => {
     try {
-      spendDiamonds(20, approve ? 'Tử Cực Ma Đồng giám định ảnh chuẩn' : 'Bác bỏ ảnh check-in vi phạm')
+      spendDiamonds(20, approve ? 'Tử Cực Ma Đồng giám định pháp ảnh chuẩn' : 'Bác bỏ pháp ảnh bất toàn')
       await adminAPI.verifyCheckin(id, approve, reason)
-      toast.success(approve ? '✅ Đã xác nhận ảnh!' : '❌ Đã từ chối')
+      toast.success(approve ? '✅ Đã thẩm định pháp ảnh hợp quy!' : '❌ Đã bác bỏ pháp ảnh')
       setPreview(null)
       load()
     } catch {
-      toast.error('Có lỗi xảy ra khi xác nhận')
+      toast.error('Có lỗi xảy ra khi thẩm định')
     }
   }
 
   const getStatusBadge = (status) => {
     switch (status) {
       case 'verified':
-        return <span className="badge badge-verified">🟢 Đã xác nhận</span>
+        return <span className="badge badge-verified">🟢 Đã Thẩm Định</span>
       case 'rejected':
-        return <span className="badge badge-rejected">🔴 Đã từ chối</span>
+        return <span className="badge badge-rejected">🔴 Bác Bỏ</span>
       case 'pending':
       default:
-        return <span className="badge badge-pending">⏳ Chờ duyệt</span>
+        return <span className="badge badge-pending">⏳ Chờ Giám Định</span>
     }
   }
 
@@ -56,11 +56,10 @@ export default function CheckinReview() {
     <div>
       <div className="page-header flex flex-between align-center" style={{ flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1>📸 Quản lý & Xem lại ảnh Check-in</h1>
-          <p>Xem lại toàn bộ ảnh điểm danh đã duyệt, chờ duyệt hoặc từ chối</p>
+          <h1>📸 Linh Kính Giám Định Thần Ảnh Khảo Thí</h1>
+          <p>Soi chiếu toàn bộ pháp ảnh điểm danh nhập trận của chư vị đệ tử</p>
         </div>
 
-        {/* Status Filter Tabs */}
         <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
           {STATUS_TABS.map(tab => (
             <button
@@ -79,8 +78,8 @@ export default function CheckinReview() {
       ) : checkins.length === 0 ? (
         <div className="empty-state">
           <div className="icon">📭</div>
-          <h3>Không có ảnh nào trong mục này</h3>
-          <p>Thử đổi tab lọc khác để xem danh sách ảnh check-in</p>
+          <h3>Không có pháp ảnh nào trong giới vực này</h3>
+          <p>Thử đổi phân loại khác để tra cứu thần ảnh khảo thí</p>
         </div>
       ) : (
         <div className="grid grid-3">
@@ -104,7 +103,7 @@ export default function CheckinReview() {
               </div>
 
               <div style={{ fontWeight: 800, fontSize: '0.95rem', marginBottom: 4, color: 'var(--text-primary)' }}>
-                {c.subject_name} — Tiết {c.period_number}
+                {c.subject_name} — Khắc {c.period_number}
               </div>
 
               <div style={{ fontSize: '0.8rem', color: 'var(--primary-light)', fontWeight: 600, marginBottom: 4 }}>
@@ -112,25 +111,25 @@ export default function CheckinReview() {
               </div>
 
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 2 }}>
-                🗓️ Ngày: {c.session_date} | 🏫 Phòng: {c.classroom}
+                🗓️ Ngày: {c.session_date} | 🏰 Đạo Trường: {c.classroom}
               </div>
 
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                ⏰ Nộp lúc: {c.submitted_at ? new Date(c.submitted_at).toLocaleString('vi-VN') : 'Chưa nộp'}
+                ⏰ Tế xuất lúc: {c.submitted_at ? new Date(c.submitted_at).toLocaleString('vi-VN') : 'Chưa nộp'}
               </div>
 
               {c.reject_reason && (
                 <div style={{ fontSize: '0.75rem', color: 'var(--accent-red)', marginTop: 4, fontStyle: 'italic' }}>
-                  ⚠️ Lý do từ chối: {c.reject_reason}
+                  ⚠️ Cớ do bác bỏ: {c.reject_reason}
                 </div>
               )}
 
               {c.status === 'pending' && (
                 <div className="flex gap-2" style={{ marginTop: 12 }}>
                   <button id={`verify-${c.id}`} className="btn btn-success btn-sm flex-1"
-                    onClick={e => { e.stopPropagation(); handle(c.id, true) }}>✅ OK</button>
+                    onClick={e => { e.stopPropagation(); handle(c.id, true) }}>✅ Hợp Quy</button>
                   <button id={`reject-${c.id}`} className="btn btn-danger btn-sm flex-1"
-                    onClick={e => { e.stopPropagation(); handle(c.id, false, 'Ảnh không hợp lệ') }}>❌ Từ chối</button>
+                    onClick={e => { e.stopPropagation(); handle(c.id, false, 'Pháp ảnh bất toàn, mờ nhạt') }}>❌ Bác Bỏ</button>
                 </div>
               )}
             </div>
@@ -138,23 +137,22 @@ export default function CheckinReview() {
         </div>
       )}
 
-      {/* Preview Modal Lightbox */}
       {preview && (
         <div className="modal-overlay" onClick={() => setPreview(null)}>
           <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: 650 }}>
             <div className="flex flex-between align-center" style={{ marginBottom: 12 }}>
-              <h3 style={{ margin: 0 }}>📸 Chi tiết Ảnh Check-in — Tiết {preview.period_number}</h3>
+              <h3 style={{ margin: 0 }}>📸 Chi Tiết Pháp Ảnh Khảo Thí — Khắc {preview.period_number}</h3>
               {getStatusBadge(preview.status)}
             </div>
 
             <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: 12 }}>
-              <strong>Môn:</strong> {preview.subject_name} ({preview.subject_code}) &nbsp;|&nbsp;
-              <strong> Thường lượng:</strong> {preview.session_date} &nbsp;|&nbsp;
-              <strong> Phòng:</strong> {preview.classroom}
+              <strong>Pháp Môn:</strong> {preview.subject_name} ({preview.subject_code}) &nbsp;|&nbsp;
+              <strong> Khảo Kỳ:</strong> {preview.session_date} &nbsp;|&nbsp;
+              <strong> Đạo Trường:</strong> {preview.classroom}
             </div>
 
             <div style={{ fontSize: '0.85rem', color: 'var(--primary-light)', fontWeight: 600, marginBottom: 12 }}>
-              👤 Người thực hiện: {preview.member_name} (@{preview.member_username})
+              👤 Đệ tử chấp sự: {preview.member_name} (@{preview.member_username})
             </div>
 
             {preview.photo_url ? (
@@ -165,28 +163,28 @@ export default function CheckinReview() {
               />
             ) : (
               <div style={{ padding: 40, textAlign: 'center', background: 'var(--surface-hover)', borderRadius: 8, marginBottom: 16, color: 'var(--text-muted)' }}>
-                Chưa có ảnh upload
+                Chưa tế xuất pháp ảnh
               </div>
             )}
 
             <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: 16, display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <div>⏰ Nộp lúc: {preview.submitted_at ? new Date(preview.submitted_at).toLocaleString('vi-VN') : '--'}</div>
-              <div>⏳ Thời hạn (Deadline): {preview.deadline ? new Date(preview.deadline).toLocaleString('vi-VN') : '--'}</div>
+              <div>⏰ Tế xuất lúc: {preview.submitted_at ? new Date(preview.submitted_at).toLocaleString('vi-VN') : '--'}</div>
+              <div>⏳ Hạn định phong ấn: {preview.deadline ? new Date(preview.deadline).toLocaleString('vi-VN') : '--'}</div>
               {preview.verified_at && (
                 <div>✅ Đã xử lý lúc: {new Date(preview.verified_at).toLocaleString('vi-VN')}</div>
               )}
               {preview.reject_reason && (
-                <div style={{ color: 'var(--accent-red)', fontWeight: 600 }}>❌ Lý do từ chối: {preview.reject_reason}</div>
+                <div style={{ color: 'var(--accent-red)', fontWeight: 600 }}>❌ Cớ do bác bỏ: {preview.reject_reason}</div>
               )}
             </div>
 
             <div className="flex gap-3" style={{ justifyContent: 'flex-end' }}>
-              <button className="btn btn-secondary" onClick={() => setPreview(null)}>Đóng</button>
+              <button className="btn btn-secondary" onClick={() => setPreview(null)}>Thu Lại</button>
               {preview.status !== 'rejected' && (
-                <button className="btn btn-danger" onClick={() => handle(preview.id, false, 'Ảnh không hợp lệ')}>❌ Từ chối</button>
+                <button className="btn btn-danger" onClick={() => handle(preview.id, false, 'Pháp ảnh bất toàn, mờ nhạt')}>❌ Bác Bỏ Thần Ảnh</button>
               )}
               {preview.status !== 'verified' && (
-                <button className="btn btn-success" onClick={() => handle(preview.id, true)}>✅ Xác nhận OK</button>
+                <button className="btn btn-success" onClick={() => handle(preview.id, true)}>✅ Chuẩn Định Hợp Quy</button>
               )}
             </div>
           </div>

@@ -3,9 +3,9 @@ import { adminAPI } from '../../api'
 import toast from 'react-hot-toast'
 
 const ROLE_FILTERS = [
-  { key: 'all', label: '📋 Tất cả Roles' },
-  { key: 'admin', label: '👑 Admin' },
-  { key: 'member', label: '🎒 Thành viên' },
+  { key: 'all', label: '📋 Toàn Thể Tu Giả' },
+  { key: 'admin', label: '👑 Giáo Hoàng' },
+  { key: 'member', label: '🎒 Đệ Tử' },
 ]
 
 export default function ActivityLogs() {
@@ -17,7 +17,7 @@ export default function ActivityLogs() {
     setLoading(true)
     adminAPI.getActivityLogs(roleFilter)
       .then(r => setLogs(r.data))
-      .catch(() => toast.error('Lỗi tải nhật ký hoạt động'))
+      .catch(() => toast.error('Lỗi tải linh ký hoạt động'))
       .finally(() => setLoading(false))
   }
 
@@ -26,21 +26,21 @@ export default function ActivityLogs() {
   const getActionBadge = (type) => {
     switch (type) {
       case 'CHECKIN_VERIFY':
-        return <span className="badge badge-verified">✅ Xác nhận ảnh</span>
+        return <span className="badge badge-verified">✅ Thẩm định hợp quy</span>
       case 'CHECKIN_REJECT':
-        return <span className="badge badge-rejected">❌ Từ chối ảnh</span>
+        return <span className="badge badge-rejected">❌ Bác bỏ pháp ảnh</span>
       case 'SESSION_APPROVE':
-        return <span className="badge badge-approved">✅ Duyệt ca học</span>
+        return <span className="badge badge-approved">✅ Chuẩn phê tràng</span>
       case 'SESSION_REJECT':
-        return <span className="badge badge-rejected">❌ Từ chối ca học</span>
+        return <span className="badge badge-rejected">❌ Bác bỏ thỉnh mệnh</span>
       case 'SESSION_ASSIGN':
-        return <span className="badge badge-completed">👑 Phân công</span>
+        return <span className="badge badge-completed">👑 Ban sắc lệnh</span>
       case 'SESSION_REGISTER':
-        return <span className="badge badge-registered">📝 Đăng ký ca</span>
+        return <span className="badge badge-registered">📝 Lĩnh nhận tràng</span>
       case 'PHOTO_UPLOAD':
-        return <span className="badge badge-open">📸 Nộp ảnh</span>
+        return <span className="badge badge-open">📸 Tế xuất pháp ảnh</span>
       case 'MEMBER_TOGGLE_ACTIVE':
-        return <span className="badge badge-pending">⚙️ Đổi trạng thái</span>
+        return <span className="badge badge-pending">⚙️ Chuyển trạng thái</span>
       default:
         return <span className="badge badge-pending">📌 {type}</span>
     }
@@ -50,11 +50,10 @@ export default function ActivityLogs() {
     <div>
       <div className="page-header flex flex-between align-center" style={{ flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1>📜 Lịch sử Hoạt động (Audit Logs)</h1>
-          <p>Theo dõi chi tiết tất cả hành động và thao tác của các Role trong hệ thống</p>
+          <h1>📜 Tông Môn Linh Ký Vạn Tượng</h1>
+          <p>Ghi chép tường tận vạn sự biến thiên, hành vi của chư vị tu giả trong tiên môn</p>
         </div>
 
-        {/* Filters */}
         <div className="flex gap-2">
           {ROLE_FILTERS.map(f => (
             <button
@@ -73,20 +72,20 @@ export default function ActivityLogs() {
       ) : logs.length === 0 ? (
         <div className="empty-state">
           <div className="icon">📭</div>
-          <h3>Chưa có nhật ký hoạt động nào</h3>
-          <p>Các hành động thực hiện trong hệ thống sẽ được tự động ghi lại tại đây</p>
+          <h3>Chưa có trang linh ký nào</h3>
+          <p>Mọi hành động cử chỉ trong tông môn sẽ tự động lưu lại tại đây</p>
         </div>
       ) : (
         <div className="table-wrapper">
           <table>
             <thead>
               <tr>
-                <th>Thời gian</th>
-                <th>Người thực hiện</th>
-                <th>Role</th>
-                <th>Hành động</th>
-                <th>Tiêu đề</th>
-                <th>Chi tiết mô tả</th>
+                <th>Thời Khắc</th>
+                <th>Tu Giả Thực Hiện</th>
+                <th>Thân Phận</th>
+                <th>Hành Vi</th>
+                <th>Tiêu Đề</th>
+                <th>Mô Tả Tường Tận</th>
               </tr>
             </thead>
             <tbody>
@@ -96,7 +95,7 @@ export default function ActivityLogs() {
                     {log.created_at ? new Date(log.created_at).toLocaleString('vi-VN') : '--'}
                   </td>
                   <td>
-                    <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{log.user_name || 'Hệ thống'}</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>{log.user_name || 'Trận Pháp'}</div>
                   </td>
                   <td>
                     <span style={{
@@ -107,7 +106,7 @@ export default function ActivityLogs() {
                       background: log.user_role === 'admin' ? 'rgba(124,106,245,0.15)' : 'rgba(59,130,246,0.15)',
                       color: log.user_role === 'admin' ? 'var(--primary-light)' : 'var(--accent-blue)'
                     }}>
-                      {log.user_role === 'admin' ? '👑 Admin' : '🎒 Thành viên'}
+                      {log.user_role === 'admin' ? '👑 Giáo Hoàng' : '🎒 Đệ Tử'}
                     </span>
                   </td>
                   <td>{getActionBadge(log.action_type)}</td>

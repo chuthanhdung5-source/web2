@@ -4,12 +4,12 @@ import { memberAPI } from '../../api'
 import toast from 'react-hot-toast'
 
 const STATUS_INFO = {
-  open: { label: 'Trống', cls: 'badge-open' },
-  registered: { label: 'Chờ duyệt', cls: 'badge-registered' },
-  approved: { label: 'Đã duyệt', cls: 'badge-approved' },
-  completed: { label: 'Hoàn thành', cls: 'badge-completed' },
-  cancelled: { label: 'Đã hủy', cls: 'badge-cancelled' },
-  in_progress: { label: 'Đang học', cls: 'badge-approved' },
+  open: { label: 'Bỏ Ngỏ', cls: 'badge-open' },
+  registered: { label: 'Chờ Phê', cls: 'badge-registered' },
+  approved: { label: 'Đã Ban Lệnh', cls: 'badge-approved' },
+  completed: { label: 'Viên Mãn', cls: 'badge-completed' },
+  cancelled: { label: 'Thu Hồi', cls: 'badge-cancelled' },
+  in_progress: { label: 'Đang Nhập Trận', cls: 'badge-approved' },
 }
 
 export default function MySchedule() {
@@ -23,13 +23,13 @@ export default function MySchedule() {
   useEffect(load, [])
 
   const cancel = async (id) => {
-    if (!confirm('Bạn có chắc muốn hủy đăng ký ca này?')) return
+    if (!confirm('Đạo hữu có chắc muốn thu hồi thỉnh mệnh tràng hộ đạo này?')) return
     setCancelling(id)
     try {
       await memberAPI.cancelRegistration(id)
-      toast.success('Đã hủy đăng ký')
+      toast.success('Đã thu hồi thỉnh mệnh tràng hộ đạo')
       load()
-    } catch (err) { toast.error(err.response?.data?.detail || 'Lỗi') }
+    } catch (err) { toast.error(err.response?.data?.detail || 'Lỗi thu hồi') }
     finally { setCancelling(null) }
   }
 
@@ -41,21 +41,21 @@ export default function MySchedule() {
   return (
     <div>
       <div className="page-header">
-        <h1>📅 Lịch của tôi</h1>
-        <p>Tổng {sessions.length} ca học, {upcoming.length} sắp diễn ra</p>
+        <h1>📅 Lịch Trình Hộ Đạo Bản Thân</h1>
+        <p>Tổng {sessions.length} tràng hộ đạo, {upcoming.length} tràng sắp khai mở</p>
       </div>
 
       {sessions.length === 0 ? (
         <div className="empty-state">
           <div className="icon">📭</div>
-          <h3>Chưa có ca học nào</h3>
-          <p><Link to="/member/slots" style={{ color: 'var(--primary-light)' }}>Đăng ký ca học ngay →</Link></p>
+          <h3>Chưa có đạo tràng nào</h3>
+          <p><Link to="/member/slots" style={{ color: 'var(--primary-light)' }}>Lĩnh nhận khảo nghiệm ngay →</Link></p>
         </div>
       ) : (
         <>
           {upcoming.length > 0 && (
             <div style={{ marginBottom: 32 }}>
-              <h2 className="h3" style={{ marginBottom: 16 }}>⏳ Sắp diễn ra</h2>
+              <h2 className="h3" style={{ marginBottom: 16 }}>⏳ Sắp Khai Mở Khảo Kỳ</h2>
               <div className="grid grid-2">
                 {upcoming.map(s => <SessionCard key={s.id} session={s} onCancel={cancel} cancelling={cancelling} />)}
               </div>
@@ -64,7 +64,7 @@ export default function MySchedule() {
 
           {past.length > 0 && (
             <div>
-              <h2 className="h3" style={{ marginBottom: 16, color: 'var(--text-secondary)' }}>✅ Đã qua</h2>
+              <h2 className="h3" style={{ marginBottom: 16, color: 'var(--text-secondary)' }}>✅ Đã Viên Mãn / Qua Thời Khắc</h2>
               <div className="grid grid-2">
                 {past.map(s => <SessionCard key={s.id} session={s} onCancel={cancel} cancelling={cancelling} past />)}
               </div>
@@ -92,32 +92,32 @@ function SessionCard({ session: s, onCancel, cancelling, past }) {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
           <span className={`badge ${info.cls}`}>{info.label}</span>
-          {isToday && <span style={{ fontSize: '0.7rem', color: 'var(--accent)', fontWeight: 600 }}>🔥 HÔM NAY</span>}
+          {isToday && <span style={{ fontSize: '0.7rem', color: 'var(--accent)', fontWeight: 600 }}>🔥 HÔM NAY NHẬP TRẬN</span>}
         </div>
       </div>
 
       <div style={{ fontSize: '0.875rem', display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 12 }}>
         <div>📅 {new Date(s.session_date).toLocaleDateString('vi-VN', { weekday: 'long', day: 'numeric', month: 'long' })}</div>
-        <div>⏰ Tiết {s.schedule_slot?.start_period}–{s.schedule_slot?.end_period} ({s.schedule_slot?.start_time} – {s.schedule_slot?.end_time})</div>
-        <div>🏫 {s.schedule_slot?.classroom}</div>
+        <div>⏰ Khắc {s.schedule_slot?.start_period}–{s.schedule_slot?.end_period} ({s.schedule_slot?.start_time} – {s.schedule_slot?.end_time})</div>
+        <div>🏰 Đạo Trường: {s.schedule_slot?.classroom}</div>
       </div>
 
       <div className="flex gap-2">
         {s.status === 'approved' && (
           <Link to={`/member/checkin/${s.id}`} className="btn btn-primary btn-sm">
-            📸 Check-in
+            📸 Điểm Danh Nhập Trận
           </Link>
         )}
         {s.status === 'registered' && (
           <button className="btn btn-danger btn-sm"
             disabled={cancelling === s.id}
             onClick={() => onCancel(s.id)}>
-            {cancelling === s.id ? '⏳' : '❌ Hủy'}
+            {cancelling === s.id ? '⏳' : '❌ Thu Hồi Thỉnh Mệnh'}
           </button>
         )}
         {s.status === 'completed' && (
           <Link to={`/member/checkin/${s.id}`} className="btn btn-secondary btn-sm">
-            👁 Xem ảnh
+            👁 Chiêm Nghiệm Thần Ảnh
           </Link>
         )}
       </div>

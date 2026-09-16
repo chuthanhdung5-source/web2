@@ -4,26 +4,26 @@ import { useDouluo } from '../../context/DouluoContext'
 import './Sidebar.css'
 
 const ADMIN_NAV = [
-  { to: '/admin', icon: '⊞', label: 'Dashboard', end: true, badgeIcon: '📜' },
-  { to: '/admin/schedule', icon: '📅', label: 'Thời khóa biểu', badgeIcon: '🟢' },
-  { to: '/admin/sessions', icon: '✅', label: 'Duyệt ca học', badgeIcon: '🗡️' },
-  { to: '/admin/checkins', icon: '📸', label: 'Xem ảnh check-in', badgeIcon: '🐉' },
-  { to: '/admin/notifications/send', icon: '📢', label: 'Gửi thông báo', badgeIcon: '🐉' },
-  { to: '/admin/feedbacks', icon: '💬', label: 'Góp ý & Feedback', badgeIcon: '🐉' },
-  { to: '/admin/activity-logs', icon: '📜', label: 'Lịch sử hoạt động', badgeIcon: '🐉' },
-  { to: '/admin/members', icon: '👥', label: 'Thành viên', badgeIcon: '🐉' },
-  { to: '/admin/payments', icon: '💰', label: 'Thanh toán', badgeIcon: '🐉' },
-  { to: '/admin/profile', icon: '👤', label: 'Hồ sơ SV', badgeIcon: '🐉' },
+  { to: '/admin', icon: '🏛️', label: 'Tông Môn Điện', end: true, badgeIcon: '📜' },
+  { to: '/admin/schedule', icon: '📅', label: 'Lịch Khảo Thí Trực Trận', badgeIcon: '🟢' },
+  { to: '/admin/sessions', icon: '✅', label: 'Chuẩn Phê Thí Luyện', badgeIcon: '🗡️' },
+  { to: '/admin/checkins', icon: '📸', label: 'Linh Ảnh Khảo Thí', badgeIcon: '🐉' },
+  { to: '/admin/notifications/send', icon: '📢', label: 'Truyền Hịch Tông Môn', badgeIcon: '🐉' },
+  { to: '/admin/feedbacks', icon: '💬', label: 'Thần Niệm Đệ Tử', badgeIcon: '🐉' },
+  { to: '/admin/activity-logs', icon: '📜', label: 'Tông Môn Linh Ký', badgeIcon: '🐉' },
+  { to: '/admin/members', icon: '👥', label: 'Chư Vị Tu Giả', badgeIcon: '🐉' },
+  { to: '/admin/payments', icon: '💰', label: 'Bổng Lộc Linh Thạch', badgeIcon: '🐉' },
+  { to: '/admin/profile', icon: '👤', label: 'Ngọc Giản Thân Phận', badgeIcon: '🐉' },
 ]
 
 const MEMBER_NAV = [
-  { to: '/member', icon: '⊞', label: 'Dashboard', end: true, badgeIcon: '📜' },
-  { to: '/member/slots', icon: '📋', label: 'Đăng ký ca học', badgeIcon: '🗡️' },
-  { to: '/member/schedule', icon: '📅', label: 'Lịch của tôi', badgeIcon: '🟢' },
-  { to: '/member/earnings', icon: '💰', label: 'Thu nhập', badgeIcon: '🪙' },
-  { to: '/member/feedback', icon: '💬', label: 'Gửi góp ý Admin', badgeIcon: '🐉' },
-  { to: '/member/admin-info', icon: '🎓', label: 'Thông tin SV', badgeIcon: '🐉' },
-  { to: '/member/profile', icon: '👤', label: 'Hồ sơ', badgeIcon: '🐉' },
+  { to: '/member', icon: '🏛️', label: 'Động Phủ Tu Luyện', end: true, badgeIcon: '📜' },
+  { to: '/member/slots', icon: '📋', label: 'Lĩnh Nhận Khảo Nghiệm', badgeIcon: '🗡️' },
+  { to: '/member/schedule', icon: '📅', label: 'Lịch Trình Hộ Đạo', badgeIcon: '🟢' },
+  { to: '/member/earnings', icon: '💰', label: 'Linh Thạch Thu Hoạch', badgeIcon: '🪙' },
+  { to: '/member/feedback', icon: '💬', label: 'Thượng Thư Giáo Hoàng', badgeIcon: '🐉' },
+  { to: '/member/admin-info', icon: '🎓', label: 'Môn Quy Tiên Tông', badgeIcon: '🐉' },
+  { to: '/member/profile', icon: '👤', label: 'Đạo Lộ Cá Nhân', badgeIcon: '🐉' },
 ]
 
 export default function Sidebar({ isOpen, onClose }) {
@@ -47,7 +47,7 @@ export default function Sidebar({ isOpen, onClose }) {
           <div className="logo-icon">🔮</div>
           <div>
             <div className="logo-title">Đấu La Khảo Lưới</div>
-            <div className="logo-badge">{user?.role === 'admin' ? 'GIÁO HOÀNG' : 'HỒN SƯ'}</div>
+            <div className="logo-badge">{user?.role === 'admin' ? 'GIÁO HOÀNG TÔNG CHỦ' : 'ĐỆ TỬ CHÂN TRUYỀN'}</div>
           </div>
         </div>
         {onClose && (
@@ -98,13 +98,13 @@ export default function Sidebar({ isOpen, onClose }) {
                   {realm.icon} {customTitle || realm.name}
                 </span>
               ) : (
-                <span>{user?.role === 'admin' ? '👑 Admin' : '🎒 Thành viên'}</span>
+                <span>{user?.role === 'admin' ? '👑 Giáo Hoàng' : '🎒 Đệ Tử'}</span>
               )}
             </div>
           </div>
         </div>
         <button className="btn btn-ghost btn-sm logout-btn" onClick={handleLogout} id="logout-btn">
-          ⏻ Đăng xuất
+          ⏻ Rời Khỏi Tiên Môn
         </button>
       </div>
     </aside>

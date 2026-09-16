@@ -3,11 +3,11 @@ import { adminAPI } from '../../api'
 import toast from 'react-hot-toast'
 
 const TYPE_MAP = {
-  general: { label: '💬 Góp ý chung', cls: 'badge-open' },
-  bug: { label: '🐛 Báo lỗi hệ thống', cls: 'badge-rejected' },
-  suggestion: { label: '💡 Đề xuất tính năng', cls: 'badge-registered' },
-  payment_issue: { label: '💰 Vấn đề thanh toán', cls: 'badge-warning' },
-  schedule_issue: { label: '📅 Vấn đề lịch học', cls: 'badge-verified' },
+  general: { label: '💬 Thần niệm vấn đáp', cls: 'badge-open' },
+  bug: { label: '🐛 Dị biến trận pháp', cls: 'badge-rejected' },
+  suggestion: { label: '💡 Hiến kế tu chân', cls: 'badge-registered' },
+  payment_issue: { label: '💰 Dị nghị bổng lộc', cls: 'badge-warning' },
+  schedule_issue: { label: '📅 Dị nghị khảo kỳ', cls: 'badge-verified' },
 }
 
 export default function FeedbackManager() {
@@ -23,7 +23,7 @@ export default function FeedbackManager() {
     setLoading(true)
     adminAPI.getFeedbacks(statusFilter)
       .then(r => setFeedbacks(r.data))
-      .catch(() => toast.error('Lỗi tải danh sách góp ý'))
+      .catch(() => toast.error('Lỗi tải danh sách thỉnh nguyện'))
       .finally(() => setLoading(false))
   }
 
@@ -32,19 +32,19 @@ export default function FeedbackManager() {
   const handleReplySubmit = async (e) => {
     e.preventDefault()
     if (!replyText.trim()) {
-      toast.error('Vui lòng nhập nội dung phản hồi!')
+      toast.error('Vui lòng nhập nội dung truyền âm khai thị!')
       return
     }
 
     setSubmitting(true)
     try {
       await adminAPI.replyFeedback(replyModal.id, replyText.trim(), replyStatus)
-      toast.success('✅ Đã gửi phản hồi cho thành viên!')
+      toast.success('✅ Đã truyền âm khai thị cho đệ tử!')
       setReplyModal(null)
       setReplyText('')
       loadFeedbacks()
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi gửi phản hồi')
+      toast.error(err.response?.data?.detail || 'Lỗi truyền âm khai thị')
     } finally {
       setSubmitting(false)
     }
@@ -54,17 +54,16 @@ export default function FeedbackManager() {
     <div>
       <div className="page-header flex flex-between align-center" style={{ flexWrap: 'wrap', gap: 16 }}>
         <div>
-          <h1>💬 Phản Hồi & Góp Ý Từ Thành Viên</h1>
-          <p>Xem danh sách thắc mắc, báo lỗi và ý kiến đóng góp từ các thành viên trong hệ thống</p>
+          <h1>💬 Thần Niệm Đệ Tử & Thư Thỉnh Nguyện</h1>
+          <p>Xem danh sách thỉnh nguyện, báo cáo dị biến và hiến kế từ chư vị đệ tử</p>
         </div>
 
-        {/* Status Filters */}
         <div className="flex gap-2">
           {[
-            { key: 'all', label: '📋 Tất cả' },
-            { key: 'pending', label: '⏳ Chờ trả lời' },
-            { key: 'replied', label: '💬 Đã trả lời' },
-            { key: 'resolved', label: '✅ Đã xử lý xong' },
+            { key: 'all', label: '📋 Toàn Bộ' },
+            { key: 'pending', label: '⏳ Chờ Khai Thị' },
+            { key: 'replied', label: '💬 Đã Khai Thị' },
+            { key: 'resolved', label: '✅ Viên Mãn Xong' },
           ].map(f => (
             <button
               key={f.key}
@@ -82,8 +81,8 @@ export default function FeedbackManager() {
       ) : feedbacks.length === 0 ? (
         <div className="empty-state">
           <div className="icon">📭</div>
-          <h3>Chưa có góp ý nào</h3>
-          <p>Ý kiến từ thành viên gửi tới sẽ xuất hiện tại đây</p>
+          <h3>Chưa có bức thư thỉnh nguyện nào</h3>
+          <p>Thần niệm từ môn hạ gửi tới sẽ xuất hiện tại đây</p>
         </div>
       ) : (
         <div className="grid grid-2" style={{ gap: 16 }}>
@@ -98,7 +97,7 @@ export default function FeedbackManager() {
                 <div className="flex flex-between align-center" style={{ marginBottom: 10 }}>
                   <span className={`badge ${typeInfo.cls}`}>{typeInfo.label}</span>
                   <span className={`badge ${isPending ? 'badge-registered' : f.status === 'resolved' ? 'badge-verified' : 'badge-approved'}`}>
-                    {isPending ? '⏳ Chờ trả lời' : f.status === 'resolved' ? '✅ Đã xong' : '💬 Đã phản hồi'}
+                    {isPending ? '⏳ Chờ Khai Thị' : f.status === 'resolved' ? '✅ Đã Xong' : '💬 Đã Khai Thị'}
                   </span>
                 </div>
 
@@ -129,7 +128,7 @@ export default function FeedbackManager() {
                     marginBottom: 12
                   }}>
                     <div style={{ fontWeight: 700, color: 'var(--primary-light)', marginBottom: 4 }}>
-                      👑 Phản hồi từ Admin ({f.replied_at ? new Date(f.replied_at).toLocaleString('vi-VN') : ''}):
+                      👑 Lời khai thị của Giáo Hoàng ({f.replied_at ? new Date(f.replied_at).toLocaleString('vi-VN') : ''}):
                     </div>
                     <div style={{ color: 'var(--text-primary)', whiteSpace: 'pre-wrap' }}>{f.admin_reply}</div>
                   </div>
@@ -144,7 +143,7 @@ export default function FeedbackManager() {
                     setReplyStatus(f.status === 'resolved' ? 'resolved' : 'replied')
                   }}
                 >
-                  {isPending ? '💬 Phản hồi ngay' : '✏️ Chỉnh sửa phản hồi'}
+                  {isPending ? '💬 Khai thị ngay' : '✏️ Chỉnh sửa lời khai thị'}
                 </button>
               </div>
             )
@@ -152,7 +151,6 @@ export default function FeedbackManager() {
         </div>
       )}
 
-      {/* Reply Modal */}
       {replyModal && (
         <div style={{
           position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)',
@@ -160,33 +158,33 @@ export default function FeedbackManager() {
         }}>
           <div className="card card-elevated" style={{ width: '100%', maxWidth: 550, padding: 24 }}>
             <div className="flex flex-between align-center" style={{ marginBottom: 16 }}>
-              <h2 className="h3">💬 Phản hồi cho: {replyModal.user_name}</h2>
+              <h2 className="h3">💬 Lời Khai Thị Cho: {replyModal.user_name}</h2>
               <button className="btn btn-ghost btn-sm" onClick={() => setReplyModal(null)}>✕</button>
             </div>
 
             <div style={{ background: 'var(--surface-hover)', borderRadius: 8, padding: 12, marginBottom: 16, fontSize: '0.85rem' }}>
-              <strong>Vấn đề ({replyModal.title}):</strong> {replyModal.content}
+              <strong>Nội dung thỉnh nguyện ({replyModal.title}):</strong> {replyModal.content}
             </div>
 
             <form onSubmit={handleReplySubmit}>
               <div className="form-group" style={{ marginBottom: 16 }}>
-                <label className="form-label" style={{ fontWeight: 700 }}>Trạng thái xử lý:</label>
+                <label className="form-label" style={{ fontWeight: 700 }}>Trạng thái định đoạt:</label>
                 <select
                   className="form-control"
                   value={replyStatus}
                   onChange={(e) => setReplyStatus(e.target.value)}
                 >
-                  <option value="replied">💬 Đã phản hồi (Replied)</option>
-                  <option value="resolved">✅ Đã giải quyết xong (Resolved)</option>
+                  <option value="replied">💬 Đã truyền âm khai thị (Replied)</option>
+                  <option value="resolved">✅ Đã giải quyết viên mãn (Resolved)</option>
                 </select>
               </div>
 
               <div className="form-group" style={{ marginBottom: 20 }}>
-                <label className="form-label" style={{ fontWeight: 700 }}>Nội dung phản hồi từ Admin:</label>
+                <label className="form-label" style={{ fontWeight: 700 }}>Khẩu dụ khai thị từ Giáo Hoàng:</label>
                 <textarea
                   className="form-control"
                   rows={4}
-                  placeholder="Nhập nội dung phản hồi tới thành viên..."
+                  placeholder="Khắc ghi lời chỉ bảo tới đệ tử môn hạ..."
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   required
@@ -195,10 +193,10 @@ export default function FeedbackManager() {
 
               <div className="flex gap-2">
                 <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setReplyModal(null)}>
-                  Hủy
+                  Thu Hồi
                 </button>
                 <button type="submit" className="btn btn-primary" style={{ flex: 1 }} disabled={submitting}>
-                  {submitting ? '⏳ Đang gửi...' : '🚀 Gửi Phản Hồi'}
+                  {submitting ? '⏳ Đang truyền âm...' : '🚀 Phát Xuất Lời Khai Thị'}
                 </button>
               </div>
             </form>

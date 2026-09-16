@@ -25,8 +25,8 @@ export default function ProfileSettings() {
     try {
       const res = await adminAPI.updateProfile(form)
       setProfile(res.data)
-      toast.success('✅ Đã lưu hồ sơ!')
-    } catch { toast.error('Lỗi khi lưu') }
+      toast.success('✅ Đã khắc ghi Ngọc Giản Thân Phận!')
+    } catch { toast.error('Khắc ghi thất bại!') }
     finally { setSaving(false) }
   }
 
@@ -35,8 +35,8 @@ export default function ProfileSettings() {
     try {
       const res = await adminAPI.uploadPhoto(photoFile)
       setProfile(p => ({ ...p, photo_url: res.data.photo_url }))
-      toast.success('📸 Đã cập nhật ảnh!')
-    } catch { toast.error('Lỗi upload ảnh') }
+      toast.success('📸 Đã khắc sâu Thần Ảnh!')
+    } catch { toast.error('Truyền thâu thất bại!') }
   }
 
   const onFileChange = (e) => {
@@ -51,12 +51,11 @@ export default function ProfileSettings() {
   return (
     <div>
       <div className="page-header">
-        <h1>🎓 Hồ sơ sinh viên</h1>
-        <p>Thông tin này sẽ hiển thị cho tất cả thành viên</p>
+        <h1>🎓 Ngọc Giản Thân Phận Đồng Môn Cần Hộ Đạo</h1>
+        <p>Thông tức chân thân sẽ hiển thị cho chư vị tu giả hộ đạo quan sát</p>
       </div>
 
       <div className="grid grid-2" style={{ gap: 24 }}>
-        {/* Photo upload */}
         <div className="card" style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: 24 }}>
           <div>
             {(photoPreview || profile?.photo_url) ? (
@@ -69,74 +68,73 @@ export default function ProfileSettings() {
             )}
           </div>
           <div>
-            <h3 style={{ marginBottom: 8 }}>{profile?.full_name || 'Admin'}</h3>
+            <h3 style={{ marginBottom: 8 }}>{profile?.full_name || 'Đồng Môn'}</h3>
             <label className="btn btn-secondary btn-sm" style={{ cursor: 'pointer' }}>
-              📷 Chọn ảnh <input type="file" accept="image/*" style={{ display: 'none' }} onChange={onFileChange} />
+              📷 Khắc Họa Thần Ảnh <input type="file" accept="image/*" style={{ display: 'none' }} onChange={onFileChange} />
             </label>
             {photoFile && (
               <button className="btn btn-primary btn-sm" style={{ marginLeft: 8 }} onClick={uploadPhoto}>
-                ⬆️ Upload
+                ⬆️ Truyền Thâu Ảnh
               </button>
             )}
           </div>
         </div>
 
-        {/* Form */}
         <form onSubmit={save} style={{ display: 'contents' }}>
           <div className="card">
-            <h3 style={{ marginBottom: 16 }}>Thông tin cơ bản</h3>
+            <h3 style={{ marginBottom: 16 }}>Căn Bản Đạo Tịch</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div className="form-group">
-                <label className="form-label">Họ và tên</label>
+                <label className="form-label">Đạo Hiệu / Chân Tên</label>
                 <input className="form-input" value={form.full_name || ''} onChange={set('full_name')} />
               </div>
               <div className="form-group">
-                <label className="form-label">Mã sinh viên</label>
+                <label className="form-label">Mã Đạo Tịch (Mã SV)</label>
                 <input className="form-input" value={form.student_id || ''} onChange={set('student_id')} placeholder="23028..." />
               </div>
               <div className="form-group">
-                <label className="form-label">Ngày sinh</label>
+                <label className="form-label">Ngày Giáng Thế (Sinh Thần)</label>
                 <input className="form-input" type="date" value={form.date_of_birth || ''} onChange={set('date_of_birth')} />
               </div>
               <div className="form-group">
-                <label className="form-label">CCCD/CMND</label>
+                <label className="form-label">Đạo Phù Định Danh (CCCD)</label>
                 <input className="form-input" value={form.id_card || ''} onChange={set('id_card')} placeholder="0123..." />
               </div>
             </div>
           </div>
 
           <div className="card">
-            <h3 style={{ marginBottom: 16 }}>Thông tin trường</h3>
+            <h3 style={{ marginBottom: 16 }}>Tiên Tông & Sơn Môn</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div className="form-group">
-                <label className="form-label">Chương trình đào tạo</label>
+                <label className="form-label">Đạo Pháp Tu Tập (Chuyên Ngành)</label>
                 <input className="form-input" value={form.program || ''} onChange={set('program')} />
               </div>
               <div className="form-group">
-                <label className="form-label">Khóa</label>
+                <label className="form-label">Niên Khóa Truyền Thừa</label>
                 <input className="form-input" value={form.cohort || ''} onChange={set('cohort')} />
               </div>
               <div className="form-group">
-                <label className="form-label">Trường</label>
+                <label className="form-label">Tiên Viện / Đại Phái</label>
                 <input className="form-input" value={form.university || ''} onChange={set('university')} />
               </div>
               <div className="form-group">
-                <label className="form-label">Khoa</label>
+                <label className="form-label">Đường Khẩu / Viện Hệ</label>
                 <input className="form-input" value={form.faculty || ''} onChange={set('faculty')} />
               </div>
               <div className="form-group">
-                <label className="form-label">Lớp</label>
+                <label className="form-label">Pháp Tràng Đạo Lữ (Lớp Học)</label>
                 <input className="form-input" value={form.class_name || ''} onChange={set('class_name')} />
               </div>
             </div>
           </div>
 
           <div className="card" style={{ gridColumn: '1 / -1' }}>
-            <h3 style={{ marginBottom: 16 }}>Ghi chú cho thành viên</h3>
+            <h3 style={{ marginBottom: 16 }}>Mật Lệnh Căn Dặn Chư Vị Hộ Đạo</h3>
             <textarea className="form-input" rows={4} value={form.notes || ''} onChange={set('notes')}
-              placeholder="Nhập hướng dẫn, lưu ý cho người học hộ..." />
+              placeholder="Nhập khẩu quyết, pháp chỉ lưu ý khi thay mặt nhập trận hộ đạo..." />
             <button type="submit" id="save-profile" className="btn btn-primary" style={{ marginTop: 16 }} disabled={saving}>
-              {saving ? '⏳ Đang lưu...' : '💾 Lưu hồ sơ'}
+              {saving ? '⏳ Đang truyền thức lưu ấn...' : '💾 Khắc Ghi Ngọc Giản'}
             </button>
           </div>
         </form>

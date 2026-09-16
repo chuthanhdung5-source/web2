@@ -19,11 +19,10 @@ export default function Earnings() {
   return (
     <div>
       <div className="page-header">
-        <h1>💰 Thu nhập</h1>
-        <p>Thống kê tiết học và tiền lương của bạn</p>
+        <h1>💰 Bổng Lộc Linh Thạch Thu Hoạch</h1>
+        <p>Thống kê thời khắc hộ đạo và linh thạch bổng lộc tích lũy của đạo hữu</p>
       </div>
 
-      {/* Payment info warning banner */}
       {!hasPaymentInfo && (
         <div style={{
           background: 'rgba(245,158,11,0.15)',
@@ -38,53 +37,51 @@ export default function Earnings() {
           gap: 12
         }}>
           <div>
-            <strong>⚠️ Bạn chưa cài đặt tài khoản nhận tiền!</strong>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Vui lòng bổ sung Số tài khoản hoặc Mã QR để Admin chuyển khoản chính xác cho bạn.</div>
+            <strong>⚠️ Đạo hữu chưa thiết lập Thần Phù Tiên Trang (STK)!</strong>
+            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Vui lòng bổ sung Số tài khoản Tiên Trang hoặc Thần Phù QR để Ngân Khố chuyển bổng lộc chính xác.</div>
           </div>
-          <Link to="/member/profile" className="btn btn-primary btn-sm">💳 Cài đặt ngay →</Link>
+          <Link to="/member/profile" className="btn btn-primary btn-sm">💳 Thiết Lập Ngay →</Link>
         </div>
       )}
 
-      {/* Summary */}
       <div className="grid grid-2" style={{ marginBottom: 24 }}>
         <div className="card" style={{ background: 'linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.05))', borderColor: 'rgba(16,185,129,0.2)' }}>
-          <div className="label">✅ Đã nhận</div>
+          <div className="label">✅ Linh Thạch Đã Thu Về</div>
           <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent-green)', marginTop: 8 }}>
             {(data?.total_earned || 0).toLocaleString('vi-VN')}đ
           </div>
         </div>
         <div className="card" style={{ background: 'linear-gradient(135deg, rgba(245,158,11,0.15), rgba(245,158,11,0.05))', borderColor: 'rgba(245,158,11,0.2)' }}>
-          <div className="label">⏳ Chờ nhận</div>
+          <div className="label">⏳ Linh Thạch Chờ Ngân Khố Giải Ngân</div>
           <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--accent)', marginTop: 8 }}>
             {(data?.pending || 0).toLocaleString('vi-VN')}đ
           </div>
         </div>
       </div>
 
-      {/* Payment history */}
       <div>
-        <h2 className="h3" style={{ marginBottom: 16 }}>📋 Lịch sử thanh toán</h2>
+        <h2 className="h3" style={{ marginBottom: 16 }}>📋 Linh Ký Bổng Lộc Đã Nhận</h2>
         {(!data?.payments || data.payments.length === 0) ? (
           <div className="empty-state">
             <div className="icon">💸</div>
-            <h3>Chưa có dữ liệu thanh toán</h3>
+            <h3>Chưa có dữ liệu bổng lộc</h3>
           </div>
         ) : (
           <div className="table-wrapper">
             <table>
               <thead>
-                <tr><th>Ca học</th><th>Ngày</th><th>Số tiết</th><th>Số tiền</th><th>Trạng thái</th></tr>
+                <tr><th>Tràng Hộ Đạo</th><th>Khảo Kỳ</th><th>Thời Khắc</th><th>Linh Thạch (VNĐ)</th><th>Trạng Thái</th></tr>
               </thead>
               <tbody>
                 {data.payments.map(p => (
                   <tr key={p.id}>
                     <td style={{ fontWeight: 600 }}>{p.weekly_session?.schedule_slot?.subject?.name || '—'}</td>
                     <td>{p.weekly_session?.session_date ? new Date(p.weekly_session.session_date).toLocaleDateString('vi-VN') : '—'}</td>
-                    <td style={{ textAlign: 'center', fontWeight: 700 }}>{p.periods_completed}</td>
+                    <td style={{ textAlign: 'center', fontWeight: 700 }}>{p.periods_completed} khắc</td>
                     <td className="money">{p.amount.toLocaleString('vi-VN')}đ</td>
                     <td>
                       <span className={`badge ${p.status === 'paid' ? 'badge-verified' : 'badge-pending'}`}>
-                        {p.status === 'paid' ? '✅ Đã nhận' : '⏳ Chờ nhận'}
+                        {p.status === 'paid' ? '✅ Đã Thu Về' : '⏳ Chờ Giải Ngân'}
                       </span>
                     </td>
                   </tr>

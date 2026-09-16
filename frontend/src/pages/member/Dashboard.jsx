@@ -28,10 +28,10 @@ export default function MemberDashboard() {
         <div className="dragon-ornament dragon-left">🐉</div>
         <div className="banner-content">
           <h1 className="imperial-title">
-            <span className="sparkle">✨</span> Xin chào, {user?.full_name || 'Đồng Môn'}! <span className="sparkle">✨</span>
+            <span className="sparkle">✨</span> Đạo Huynh {user?.full_name || 'Đồng Môn'} Vạn Sự Cát Tường! <span className="sparkle">✨</span>
           </h1>
           <p className="imperial-subtitle">
-            Hồn Sư Bảng: Theo dõi công vụ lịch học và tích lũy linh thạch thu nhập
+            Động Phủ Tu Vi: Theo dõi đạo vụ hộ đạo và tích lũy bổng lộc linh thạch
           </p>
         </div>
         <div className="dragon-ornament dragon-right">🐉</div>
@@ -44,7 +44,7 @@ export default function MemberDashboard() {
           disabled={loading}
         >
           {loading ? <div className="spinner" style={{ width: 14, height: 14 }} /> : '📜'}
-          <span>Làm mới số liệu</span>
+          <span>Truyền Thông Linh Ký</span>
         </button>
       </div>
 
@@ -58,26 +58,26 @@ export default function MemberDashboard() {
       }}>
         <div className="flex flex-between align-center" style={{ flexWrap: 'wrap', gap: 12 }}>
           <div>
-            <div className="label" style={{ marginBottom: 2, color: '#facc15', fontWeight: 700 }}>💰 TỔNG LINH THẠCH THU NHẬP</div>
+            <div className="label" style={{ marginBottom: 2, color: '#facc15', fontWeight: 700 }}>💰 TỔNG BỔNG LỘC LINH THẠCH</div>
             <div style={{ fontSize: '1.65rem', fontWeight: 900, color: '#34d399', textShadow: '0 0 12px rgba(52, 211, 153, 0.45)' }}>
               {(stats?.total_earnings || 0).toLocaleString('vi-VN')}đ
             </div>
             <div style={{ fontSize: '0.8rem', color: '#cbd5e1', marginTop: 2 }}>
-              Chờ giải ngân: <span style={{ color: '#fbbf24', fontWeight: 700 }}>{(stats?.pending_payment || 0).toLocaleString('vi-VN')}đ</span>
+              Đang chờ giải ngân: <span style={{ color: '#fbbf24', fontWeight: 700 }}>{(stats?.pending_payment || 0).toLocaleString('vi-VN')}đ</span>
             </div>
           </div>
           <div className="flex gap-3 member-stats-row" style={{ flexWrap: 'wrap' }}>
             <div className="member-mini-stat" style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '6px 12px', borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
               <div className="member-mini-val" style={{ color: '#38bdf8', fontWeight: 800, fontSize: '1.2rem' }}>{stats?.total_periods || 0}</div>
-              <div className="label" style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Tiết đã học</div>
+              <div className="label" style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Canh Giờ Hộ Đạo</div>
             </div>
             <div className="member-mini-stat" style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '6px 12px', borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
               <div className="member-mini-val" style={{ color: '#c084fc', fontWeight: 800, fontSize: '1.2rem' }}>{stats?.total_sessions || 0}</div>
-              <div className="label" style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Tổng ca nhận</div>
+              <div className="label" style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Tràng Đã Lĩnh Nhận</div>
             </div>
             <div className="member-mini-stat" style={{ background: 'rgba(255, 255, 255, 0.04)', padding: '6px 12px', borderRadius: 10, border: '1px solid rgba(255, 255, 255, 0.08)' }}>
               <div className="member-mini-val" style={{ color: '#4ade80', fontWeight: 800, fontSize: '1.2rem' }}>{stats?.completed_sessions || 0}</div>
-              <div className="label" style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Ca hoàn thành</div>
+              <div className="label" style={{ fontSize: '0.7rem', color: '#94a3b8' }}>Tràng Đã Viên Mãn</div>
             </div>
           </div>
         </div>
@@ -91,9 +91,9 @@ export default function MemberDashboard() {
           boxShadow: '0 4px 18px rgba(0, 0, 0, 0.35)'
         }}>
           <div className="quick-action-icon" style={{ filter: 'drop-shadow(0 0 8px #38bdf8)' }}>📜</div>
-          <h3 className="h4" style={{ color: '#7dd3fc', fontWeight: 800 }}>Đăng Ký Ca Học</h3>
+          <h3 className="h4" style={{ color: '#7dd3fc', fontWeight: 800 }}>Lĩnh Nhận Khảo Nghiệm</h3>
           <p className="body-xs" style={{ color: '#94a3b8', marginTop: 2 }}>
-            Xem và tiếp nhận nhiệm vụ ca học trống trong tuần
+            Xem bảng thông cáo và tiếp nhận đạo tràng thí luyện trống trong tuần
           </p>
         </Link>
         <Link to="/member/schedule" className="card card-interactive quick-action-card" style={{
@@ -103,16 +103,16 @@ export default function MemberDashboard() {
           boxShadow: '0 4px 18px rgba(0, 0, 0, 0.35)'
         }}>
           <div className="quick-action-icon" style={{ filter: 'drop-shadow(0 0 8px #c084fc)' }}>🔮</div>
-          <h3 className="h4" style={{ color: '#e9d5ff', fontWeight: 800 }}>Lịch Pháp Đàn Của Tôi</h3>
+          <h3 className="h4" style={{ color: '#e9d5ff', fontWeight: 800 }}>Lịch Trình Hộ Đạo Bản Thân</h3>
           <p className="body-xs" style={{ color: '#94a3b8', marginTop: 2 }}>
-            Xem lịch trực nhật và nộp ảnh check-in điểm danh
+            Xem lịch trực trận và tế xuất thần ảnh điểm danh nhập trận
           </p>
         </Link>
       </div>
 
       {notifs.length > 0 && (
         <div className="card">
-          <h3 className="h3" style={{ marginBottom: 14 }}>🔔 Thông báo mới nhất</h3>
+          <h3 className="h3" style={{ marginBottom: 14 }}>🔔 Thần Niệm Truyền Âm Mới Nhất</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {notifs.map(n => (
               <div key={n.id} className="flex gap-3" style={{

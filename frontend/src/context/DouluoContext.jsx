@@ -3,7 +3,6 @@ import { douluoAPI } from '../api'
 import { useAuth } from './AuthContext'
 import toast from 'react-hot-toast'
 
-// 12 Cảnh giới Hồn Sư chuẩn Đấu La Đại Lục
 export const DOULUO_REALMS = [
   { minLevel: 1, maxLevel: 10, name: 'Hồn Sĩ', ring: 'ring-white', badge: 'badge-douluo-white', icon: '🥋', ringName: 'Hồn Hoàn 10 năm (Trắng)' },
   { minLevel: 11, maxLevel: 20, name: 'Hồn Sư', ring: 'ring-yellow', badge: 'badge-douluo-yellow', icon: '⚡', ringName: 'Hồn Hoàn 100 năm (Vàng)' },
@@ -28,16 +27,16 @@ export const getRealmInfo = (level) => {
 export const SHOP_ITEMS = [
   {
     id: 'remember_me',
-    name: 'Ghi Nhớ Tâm Pháp (Lưu Mật Khẩu)',
+    name: 'Ghi Nhớ Tâm Pháp (Khẩu Quyết)',
     price: 500,
     icon: '🔐',
-    description: 'Tự động ghi nhớ tài khoản và mật khẩu tại Tiên Giới Cổng, không cần gõ lại mỗi lần đăng nhập.',
+    description: 'Tự động ghi nhớ đạo tịch và mật khẩu tại Tiên Môn Cổng, không cần gõ lại mỗi lần nhập cảnh.',
     category: 'convenience',
     permanent: true,
   },
   {
     id: 'skin_light',
-    name: 'Giao Diện Trắng Thanh Khiết',
+    name: 'Giao Diện Bạch Ngọc Thanh Khiết',
     price: 500,
     icon: '🤍',
     description: 'Khai mở giao diện nền sáng ngọc ngà, chữ đen đậm siêu rõ nét và thanh nhã.',
@@ -77,10 +76,10 @@ export const SHOP_ITEMS = [
   },
   {
     id: 'session_extend_2h',
-    name: 'Gia Hạn 120 Phút Phiên Tu Luyện',
+    name: 'Gia Hạn 4 Khắc (120 Phút) Bế Quan',
     price: 1000,
     icon: '⏳',
-    description: 'Cộng thêm 2 giờ làm việc tập trung mà không lo hết phiên khảo thí.',
+    description: 'Cộng thêm 4 khắc nhập định tập trung mà không lo gián đoạn phiên tu luyện.',
     category: 'session',
     permanent: false,
   },
@@ -111,11 +110,10 @@ export function DouluoProvider({ children }) {
   const [vipTier, setVipTier] = useState(0)
   const [purchasedItems, setPurchasedItems] = useState([])
   const [sessionExpiry, setSessionExpiry] = useState(null)
-  const [sessionSecondsLeft, setSessionSecondsLeft] = useState(7200) // Mặc định 2 tiếng
+  const [sessionSecondsLeft, setSessionSecondsLeft] = useState(7200)
   const [isSessionExpired, setIsSessionExpired] = useState(false)
   const [loading, setLoading] = useState(true)
 
-  // Modals
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [isRechargeOpen, setIsRechargeOpen] = useState(false)
   const [isCultivationOpen, setIsCultivationOpen] = useState(false)
@@ -124,10 +122,8 @@ export function DouluoProvider({ children }) {
   const [isShopOpen, setIsShopOpen] = useState(false)
   const [isThemeModalOpen, setIsThemeModalOpen] = useState(false)
 
-  // Unsynced seconds buffer for heartbeat
   const unsyncedSecondsRef = useRef(0)
 
-  // Load status from Backend API
   const loadStatus = async () => {
     if (!user) return
     try {
@@ -154,7 +150,7 @@ export function DouluoProvider({ children }) {
         setSessionExpiry(data.session_expiry)
       }
     } catch (e) {
-      console.error('Lỗi tải trạng thái Đấu La:', e)
+      console.error(e)
     } finally {
       setLoading(false)
     }
@@ -164,7 +160,6 @@ export function DouluoProvider({ children }) {
     loadStatus()
   }, [user])
 
-  // Real-time cultivation timer: Cứ mỗi 1s chạy 1 tick
   useEffect(() => {
     if (!user || !enabled) return
 
@@ -176,19 +171,15 @@ export function DouluoProvider({ children }) {
       setTotalCultivateSeconds(prev => prev + 1)
       unsyncedSecondsRef.current += 1
 
-      // Cứ 30 giây sync 1 lần lên server
       if (unsyncedSecondsRef.current >= 30) {
         const secsToSync = unsyncedSecondsRef.current
         unsyncedSecondsRef.current = 0
-        douluoAPI.cultivateHeartbeat(secsToSync).catch(err => {
-          console.error('Lỗi sync heartbeat tu luyện:', err)
-        })
+        douluoAPI.cultivateHeartbeat(secsToSync).catch(() => {})
       }
     }, 1000)
 
     return () => {
       clearInterval(interval)
-      // Sync nốt số giây còn tồn đọng khi unmount
       if (unsyncedSecondsRef.current > 0) {
         douluoAPI.cultivateHeartbeat(unsyncedSecondsRef.current).catch(() => {})
         unsyncedSecondsRef.current = 0
@@ -198,13 +189,12 @@ export function DouluoProvider({ children }) {
 
   const realm = getRealmInfo(level)
 
-  // Bật/Tắt chế độ
   const toggleEnabled = async () => {
     try {
       const res = await douluoAPI.toggleMode()
       const next = res.data.is_enabled
       setEnabled(next)
-      toast(next ? '🔮 Đã kích hoạt Chế Độ Đấu La Đại Lục!' : '🛡️ Đã ẩn Chế Độ Đấu La Đại Lục', {
+      toast(next ? '🔮 Đã kích hoạt Chế Độ Đấu La Tu Tiên!' : '🛡️ Đã ẩn Chế Độ Đấu La Tu Tiên', {
         icon: next ? '⚡' : '🏢'
       })
     } catch {
@@ -212,7 +202,6 @@ export function DouluoProvider({ children }) {
     }
   }
 
-  // Đột phá cảnh giới
   const breakthrough = async () => {
     try {
       const res = await douluoAPI.breakthrough()
@@ -221,17 +210,15 @@ export function DouluoProvider({ children }) {
       setRealmName(data.new_realm)
       setExp(data.exp)
       setExpNeeded(data.exp_needed)
-      // Cập nhật lại kim cương được thưởng
       loadStatus()
       toast.success(data.message, { duration: 5000, icon: '🎉' })
       return true
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Chưa đủ hồn lực để đột phá!')
+      toast.error(err.response?.data?.detail || 'Chưa đủ hồn lực để đột phá cảnh giới!')
       return false
     }
   }
 
-  // Nạp VIP 0đ mua kim cương
   const recharge = async (tier, diamondsAmount, packName) => {
     try {
       const res = await douluoAPI.buyDiamonds(tier, diamondsAmount, packName)
@@ -241,24 +228,22 @@ export function DouluoProvider({ children }) {
       setIsRechargeOpen(false)
       loadStatus()
     } catch (err) {
-      toast.error('Có lỗi xảy ra khi nạp VIP')
+      toast.error('Có lỗi xảy ra khi nạp Tiên Tinh')
     }
   }
 
-  // Trừ kim cương khi thao tác
   const spendDiamonds = (amount, actionName = 'Thao tác') => {
     if (!enabled) return true
 
-    // Optimistic update
     let currentDiamonds = diamonds
     if (currentDiamonds < amount) {
       currentDiamonds += 50000
-      toast.success('🎁 Hết Kim Cương! Đường Môn bí mật viện trợ +50.000 💎!', { duration: 4000 })
+      toast.success('🎁 Hết Tiên Tinh! Tông Môn bí mật viện trợ +50.000 💎!', { duration: 4000 })
     }
     const nextDiamonds = Math.max(0, currentDiamonds - amount)
     setDiamonds(nextDiamonds)
 
-    toast(`💎 -${amount.toLocaleString()} 💎 cho [${actionName}]. Chúc ${customTitle || realm.name} vạn thọ vô cương!`, {
+    toast(`💎 -${amount.toLocaleString()} Tiên Tinh cho [${actionName}]. Chúc ${customTitle || realm.name} vạn thọ vô cương!`, {
       icon: '✨',
       style: {
         borderRadius: '10px',
@@ -269,18 +254,16 @@ export function DouluoProvider({ children }) {
       duration: 3000
     })
 
-    // Gọi API trừ ngầm
     douluoAPI.spendDiamonds(amount, actionName).catch(() => {})
     return true
   }
 
-  // Khởi tạo và đếm ngược phiên làm việc (2 tiếng mặc định)
   useEffect(() => {
     if (!user) return
 
     let sessionEnd = Number(sessionStorage.getItem('douluo_session_end'))
     if (!sessionEnd || isNaN(sessionEnd) || sessionEnd < Date.now()) {
-      sessionEnd = Date.now() + 7200 * 1000 // 2 tiếng
+      sessionEnd = Date.now() + 7200 * 1000
       sessionStorage.setItem('douluo_session_end', String(sessionEnd))
     }
 
@@ -296,12 +279,10 @@ export function DouluoProvider({ children }) {
     return () => clearInterval(timer)
   }, [user])
 
-  // Kiểm tra đã sở hữu đặc quyền chưa
   const hasPrivilege = (itemId) => {
     return purchasedItems.includes(itemId)
   }
 
-  // Mua đặc quyền / Skin / VIP
   const purchasePrivilege = async (item) => {
     try {
       const res = await douluoAPI.purchasePrivilege(item.id, item.name, item.price)
@@ -317,7 +298,6 @@ export function DouluoProvider({ children }) {
         setPurchasedItems(prev => prev.includes(item.id) ? prev : [...prev, item.id])
       }
 
-      // Nếu mua gói gia hạn phiên làm việc
       if (item.id === 'session_extend_2h') {
         const currentEnd = Number(sessionStorage.getItem('douluo_session_end')) || Date.now()
         const newEnd = Math.max(Date.now(), currentEnd) + 7200 * 1000
@@ -325,15 +305,14 @@ export function DouluoProvider({ children }) {
         setIsSessionExpired(false)
       }
 
-      toast.success(data.message || `🎉 Mua thành công ${item.name}!`, { icon: '💎', duration: 4000 })
+      toast.success(data.message || `🎉 Khai mở thành công ${item.name}!`, { icon: '💎', duration: 4000 })
       return true
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi khi giao dịch trong Cửa Hàng!')
+      toast.error(err.response?.data?.detail || 'Lỗi khi giao dịch trong Tàng Bảo Các!')
       return false
     }
   }
 
-  // Gia hạn phiên làm việc
   const extendSession = async (minutes = 120, price = 1000) => {
     try {
       const res = await douluoAPI.extendSession(minutes, price)
@@ -345,10 +324,10 @@ export function DouluoProvider({ children }) {
       sessionStorage.setItem('douluo_session_end', String(newEnd))
       setIsSessionExpired(false)
 
-      toast.success(data.message || `⏳ Đã gia hạn thành công thêm ${minutes} phút!`, { icon: '⌛' })
+      toast.success(data.message || `⏳ Đã gia hạn thành công thêm ${minutes} phút bế quan!`, { icon: '⌛' })
       return true
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Không thể gia hạn phiên làm việc!')
+      toast.error(err.response?.data?.detail || 'Không thể gia hạn phiên bế quan!')
       return false
     }
   }
@@ -357,17 +336,13 @@ export function DouluoProvider({ children }) {
     setIsSessionExpired(false)
   }
 
-  // Member gõ mỏ đào kim cương
   const mineDiamonds = (clicks = 1) => {
     const earned = clicks * 10
     setDiamonds(prev => prev + earned)
-    douluoAPI.mineDiamonds(clicks).catch(err => {
-      console.error('Lỗi mine diamonds:', err)
-    })
+    douluoAPI.mineDiamonds(clicks).catch(() => {})
     return earned
   }
 
-  // Admin sắc phong cảnh giới (1 người hoặc ALL)
   const adminPromote = async (data) => {
     try {
       const res = await douluoAPI.adminPromote(data)
@@ -375,7 +350,7 @@ export function DouluoProvider({ children }) {
       loadStatus()
       return true
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi khi sắc phong')
+      toast.error(err.response?.data?.detail || 'Lỗi khi sắc phong tu vi')
       return false
     }
   }

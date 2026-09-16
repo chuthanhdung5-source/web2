@@ -6,7 +6,6 @@ import { format, startOfWeek, addWeeks, subWeeks } from 'date-fns'
 
 const DAY_NAMES = { 2: 'Thứ 2', 3: 'Thứ 3', 4: 'Thứ 4', 5: 'Thứ 5', 6: 'Thứ 6', 7: 'Thứ 7', 8: 'Chủ Nhật' }
 
-// Standard period times helper for auto-calculating start/end times
 const PERIOD_TIMES = {
   1: { start: '07:00', end: '07:50' },
   2: { start: '07:55', end: '08:45' },
@@ -33,13 +32,12 @@ export default function ScheduleManager() {
   const [weekStart, setWeekStart] = useState(startOfWeek(new Date(), { weekStartsOn: 1 }))
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
-  const [viewMode, setViewMode] = useState('grid') // 'grid' | 'table' | 'manage'
+  const [viewMode, setViewMode] = useState('grid')
 
-  // Modals & Forms State
   const [showSubjectModal, setShowSubjectModal] = useState(false)
   const [editingSubject, setEditingSubject] = useState(null)
   const [subjectForm, setSubjectForm] = useState({
-    code: '', name: '', credits: 3, class_code: '', status: 'Đăng ký lần đầu', tuition: 0
+    code: '', name: '', credits: 3, class_code: '', status: 'Sơ Nhập Khảo Nghiệm', tuition: 0
   })
 
   const [showSlotModal, setShowSlotModal] = useState(false)
@@ -78,94 +76,92 @@ export default function ScheduleManager() {
   useEffect(loadSessions, [weekStart])
 
   const generateWeek = async () => {
-    if (!activeSemester) return toast.error('Chưa chọn học kỳ')
+    if (!activeSemester) return toast.error('Chưa chọn niên khóa tu chân')
     setGenerating(true)
     try {
       const res = await scheduleAPI.generateWeeklySessions(format(weekStart, 'yyyy-MM-dd'), activeSemester)
-      toast.success(res.data.message)
+      toast.success(res.data.message || 'Khởi trận pháp tuần thành công!')
       loadSessions()
-    } catch (err) { toast.error(err.response?.data?.detail || 'Lỗi tạo lịch') }
+    } catch (err) { toast.error(err.response?.data?.detail || 'Lỗi khởi trận pháp') }
     finally { setGenerating(false) }
   }
 
   const handleAssign = async (sessionId, memberId) => {
     try {
       const res = await adminAPI.assignSession(sessionId, memberId)
-      toast.success(res.data.message)
+      toast.success(res.data.message || 'Đã ban sắc lệnh hộ đạo!')
       loadSessions()
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi phân công ca học')
+      toast.error(err.response?.data?.detail || 'Lỗi ban sắc lệnh hộ đạo')
     }
   }
 
   const handleApprove = async (sessionId, approve) => {
     try {
       await adminAPI.approveSession(sessionId, approve)
-      toast.success(approve ? '✅ Đã duyệt ca học!' : '❌ Đã hủy ca học')
+      toast.success(approve ? '✅ Đã chuẩn phê tràng thí luyện!' : '❌ Đã bác bỏ tràng thí luyện')
       loadSessions()
     } catch {
-      toast.error('Lỗi khi duyệt ca học')
+      toast.error('Lỗi khi chuẩn phê tràng thí luyện')
     }
   }
 
   const handleDeleteSession = async (sessionId) => {
-    if (!window.confirm('Bạn có chắc chắn muốn xóa ca học này khỏi tuần hiện tại?')) return
+    if (!window.confirm('Bản tọa có chắc chắn muốn thu hồi tràng hộ đạo này khỏi tuần hiện tại?')) return
     try {
       await adminAPI.deleteWeeklySession(sessionId)
-      toast.success('Đã xóa ca học thành công!')
+      toast.success('Đã thu hồi tràng hộ đạo thành công!')
       loadSessions()
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi khi xóa ca học')
+      toast.error(err.response?.data?.detail || 'Lỗi khi thu hồi tràng hộ đạo')
     }
   }
 
-  // --- Subject CRUD Handlers ---
   const openSubjectModal = (subj = null) => {
     if (subj) {
       setEditingSubject(subj)
       setSubjectForm({
         code: subj.code, name: subj.name, credits: subj.credits || 3,
-        class_code: subj.class_code || '', status: subj.status || 'Đăng ký lần đầu', tuition: subj.tuition || 0
+        class_code: subj.class_code || '', status: subj.status || 'Sơ Nhập Khảo Nghiệm', tuition: subj.tuition || 0
       })
     } else {
       setEditingSubject(null)
-      setSubjectForm({ code: '', name: '', credits: 3, class_code: '', status: 'Đăng ký lần đầu', tuition: 0 })
+      setSubjectForm({ code: '', name: '', credits: 3, class_code: '', status: 'Sơ Nhập Khảo Nghiệm', tuition: 0 })
     }
     setShowSubjectModal(true)
   }
 
   const handleSaveSubject = async (e) => {
     e.preventDefault()
-    if (!subjectForm.code || !subjectForm.name) return toast.error('Vui lòng điền đủ Mã môn và Tên môn!')
+    if (!subjectForm.code || !subjectForm.name) return toast.error('Vui lòng điền đủ Mã pháp môn và Tên pháp môn!')
     try {
       if (editingSubject) {
         await adminAPI.updateSubject(editingSubject.id, subjectForm)
-        toast.success('Đã cập nhật môn học!')
+        toast.success('Đã cập nhật pháp môn!')
       } else {
         await adminAPI.createSubject(subjectForm)
-        toast.success('Đã thêm môn học mới!')
+        toast.success('Đã khai mở pháp môn mới!')
       }
       setShowSubjectModal(false)
       loadSubjects()
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi lưu thông tin môn học!')
+      toast.error(err.response?.data?.detail || 'Lỗi lưu thông tin pháp môn!')
     }
   }
 
   const handleDeleteSubject = async (subj) => {
-    if (!window.confirm(`⚠️ CẢNH BÁO: Xóa môn "${subj.name}" (${subj.code}) sẽ XÓA TOÀN BỘ lịch cố định và ca học liên quan! Bạn có muốn tiếp tục?`)) return
+    if (!window.confirm(`⚠️ CẢNH BÁO: Xóa pháp môn "${subj.name}" (${subj.code}) sẽ HỦY BỎ TOÀN BỘ trận pháp cố định và các tràng liên quan! Tiếp tục?`)) return
     try {
       await adminAPI.deleteSubject(subj.id)
-      toast.success(`Đã xóa môn học ${subj.name}`)
+      toast.success(`Đã xóa pháp môn ${subj.name}`)
       loadSubjects()
       loadSlots()
       loadSessions()
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi khi xóa môn học!')
+      toast.error(err.response?.data?.detail || 'Lỗi khi xóa pháp môn!')
     }
   }
 
-  // --- Slot CRUD Handlers ---
   const openSlotModal = (slot = null) => {
     if (slot) {
       setEditingSlot(slot)
@@ -201,8 +197,8 @@ export default function ScheduleManager() {
 
   const handleSaveSlot = async (e) => {
     e.preventDefault()
-    if (!slotForm.subject_id) return toast.error('Vui lòng chọn môn học!')
-    if (!activeSemester) return toast.error('Chưa có học kỳ hoạt động!')
+    if (!slotForm.subject_id) return toast.error('Vui lòng chọn pháp môn!')
+    if (!activeSemester) return toast.error('Chưa có niên khóa hoạt động!')
 
     const payload = {
       ...slotForm,
@@ -216,27 +212,27 @@ export default function ScheduleManager() {
     try {
       if (editingSlot) {
         await adminAPI.updateSlot(editingSlot.id, payload)
-        toast.success('Đã cập nhật lịch cố định!')
+        toast.success('Đã cập nhật trận pháp cố định!')
       } else {
         await adminAPI.createSlot(payload)
-        toast.success('Đã thêm lịch cố định mới!')
+        toast.success('Đã thiết lập trận pháp cố định mới!')
       }
       setShowSlotModal(false)
       loadSlots()
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi lưu lịch cố định!')
+      toast.error(err.response?.data?.detail || 'Lỗi lưu trận pháp cố định!')
     }
   }
 
   const handleDeleteSlot = async (slot) => {
-    if (!window.confirm(`Bạn có chắc chắn muốn xóa ca học thứ ${DAY_NAMES[slot.day_of_week]} (Tiết ${slot.start_period}-${slot.end_period})?`)) return
+    if (!window.confirm(`Bạn có chắc muốn thu hồi tràng hộ đạo thứ ${DAY_NAMES[slot.day_of_week]} (Khắc ${slot.start_period}-${slot.end_period})?`)) return
     try {
       await adminAPI.deleteSlot(slot.id)
-      toast.success('Đã xóa lịch cố định!')
+      toast.success('Đã thu hồi trận pháp cố định!')
       loadSlots()
       loadSessions()
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi xóa lịch cố định!')
+      toast.error(err.response?.data?.detail || 'Lỗi thu hồi trận pháp cố định!')
     }
   }
 
@@ -244,37 +240,34 @@ export default function ScheduleManager() {
 
   return (
     <div>
-      {/* Header */}
       <div className="page-header flex flex-between align-center" style={{ flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
         <div>
-          <h1>📅 Quản Lý Thời Khóa Biểu & Tiết Học</h1>
-          <p>Quản lý lịch học mẫu, chỉnh sửa tiết học, môn học và phân công thành viên</p>
+          <h1>📅 Khảo Thí Trực Trận & Pháp Tràng Hộ Đạo</h1>
+          <p>Quản trị trận pháp mẫu, điều chỉnh thời khắc thí luyện, pháp môn và ban sắc lệnh hộ đạo</p>
         </div>
 
-        {/* View mode toggle */}
         <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
           <button
             className={`btn ${viewMode === 'grid' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
             onClick={() => setViewMode('grid')}
           >
-            🗓️ Bảng TKB Ma trận
+            🗓️ Bát Quái Trận Đồ TKB
           </button>
           <button
             className={`btn ${viewMode === 'table' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
             onClick={() => setViewMode('table')}
           >
-            📋 Ca Trong Tuần
+            📋 Đạo Tràng Trong Tuần
           </button>
           <button
             className={`btn ${viewMode === 'manage' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
             onClick={() => setViewMode('manage')}
           >
-            ⚙️ Quản Lý Môn Học & Lịch Cố Định
+            ⚙️ Pháp Môn & Khảo Kỳ Cố Định
           </button>
         </div>
       </div>
 
-      {/* Week Selector Bar (Active in grid & table modes) */}
       {viewMode !== 'manage' && (
         <div className="flex flex-between align-center" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 10 }}>
           <div className="flex gap-2 align-center" style={{ flexWrap: 'wrap' }}>
@@ -283,20 +276,19 @@ export default function ScheduleManager() {
             <button className="btn btn-secondary btn-sm" onClick={() => setWeekStart(w => addWeeks(w, 1))}>Tuần sau →</button>
           </div>
           <button id="generate-week" className="btn btn-primary btn-sm" onClick={generateWeek} disabled={generating}>
-            {generating ? '⏳ Đang tạo...' : '⚡ Tạo ca tuần này từ lịch mẫu'}
+            {generating ? '⏳ Đang khởi trận...' : '⚡ Khởi Trận Pháp Lịch Tuần Này'}
           </button>
         </div>
       )}
 
-      {/* Mode Views */}
       {viewMode === 'grid' && (
         loading ? (
           <div className="flex-center" style={{ height: 300 }}><div className="spinner" style={{ width: 36, height: 36 }} /></div>
         ) : sessions.length === 0 ? (
           <div className="empty-state">
             <div className="icon">📭</div>
-            <h3>Chưa có ca học nào trong tuần này</h3>
-            <p>Bấm "Tạo ca tuần này từ lịch mẫu" để tự động tạo ca học hoặc chuyển sang tab "Quản Lý Môn Học & Lịch Cố Định" để sửa TKB.</p>
+            <h3>Chưa có đạo tràng khảo thí nào trong tuần này</h3>
+            <p>Bấm "Khởi Trận Pháp Lịch Tuần Này" để tự động kiến lập các tràng hộ đạo từ pháp trận mẫu hoặc chuyển sang tab "Pháp Môn & Khảo Kỳ Cố Định".</p>
           </div>
         ) : (
           <TimetableGrid
@@ -316,15 +308,15 @@ export default function ScheduleManager() {
         ) : sessions.length === 0 ? (
           <div className="empty-state">
             <div className="icon">📭</div>
-            <h3>Chưa có ca học nào trong tuần này</h3>
-            <p>Bấm "Tạo ca tuần này từ lịch mẫu" để tạo ca.</p>
+            <h3>Chưa có đạo tràng nào trong tuần này</h3>
+            <p>Bấm "Khởi Trận Pháp Lịch Tuần Này" để tạo đạo tràng.</p>
           </div>
         ) : (
           <div className="table-wrapper">
             <table>
               <thead>
                 <tr>
-                  <th>Ngày</th><th>Thứ</th><th>Môn học</th><th>Tiết</th><th>Giờ</th><th>Phòng</th><th>Trạng thái</th><th>Phân công thành viên</th><th>Thao tác</th>
+                  <th>Ngày</th><th>Thứ</th><th>Pháp Môn</th><th>Khắc</th><th>Canh Giờ</th><th>Đạo Trường</th><th>Trạng Thái</th><th>Sắc Lệnh Môn Hạ</th><th>Thao Tác</th>
                 </tr>
               </thead>
               <tbody>
@@ -336,11 +328,11 @@ export default function ScheduleManager() {
                       <div style={{ fontWeight: 600 }}>{s.schedule_slot?.subject?.name}</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{s.schedule_slot?.subject?.code}</div>
                     </td>
-                    <td>Tiết {s.schedule_slot?.start_period}–{s.schedule_slot?.end_period}</td>
+                    <td>Khắc {s.schedule_slot?.start_period}–{s.schedule_slot?.end_period}</td>
                     <td style={{ fontSize: '0.85rem' }}>{s.schedule_slot?.start_time} – {s.schedule_slot?.end_time}</td>
                     <td style={{ color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{s.schedule_slot?.classroom}</td>
                     <td><span className={`badge badge-${s.status}`}>
-                      {{ open: 'Trống', registered: 'Chờ duyệt', approved: 'Đã duyệt', completed: 'Hoàn thành', cancelled: 'Hủy' }[s.status]}
+                      {{ open: 'Bỏ Ngỏ', registered: 'Chờ Phê', approved: 'Đã Ban Lệnh', completed: 'Viên Mãn', cancelled: 'Thu Hồi' }[s.status]}
                     </span></td>
                     <td>
                       <select
@@ -349,7 +341,7 @@ export default function ScheduleManager() {
                         value={s.assigned_member?.id || ''}
                         onChange={(e) => e.target.value && handleAssign(s.id, e.target.value)}
                       >
-                        <option value="">-- Chưa giao --</option>
+                        <option value="">-- Chưa Ban Sắc Lệnh --</option>
                         {members.map(m => (
                           <option key={m.id} value={m.id}>👤 {m.full_name}</option>
                         ))}
@@ -360,9 +352,9 @@ export default function ScheduleManager() {
                         className="btn btn-danger btn-sm"
                         style={{ padding: '3px 8px', fontSize: '0.75rem' }}
                         onClick={() => handleDeleteSession(s.id)}
-                        title="Xóa ca học này"
+                        title="Thu hồi tràng này"
                       >
-                        🗑️ Xóa ca
+                        🗑️ Thu Hồi
                       </button>
                     </td>
                   </tr>
@@ -373,38 +365,35 @@ export default function ScheduleManager() {
         )
       )}
 
-      {/* MANAGE MODE: Subject & ScheduleSlot Editor */}
       {viewMode === 'manage' && (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-
-          {/* 1. SCHEDULE SLOTS SECTION */}
           <div className="card" style={{ padding: 20 }}>
             <div className="flex flex-between align-center" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
               <div>
-                <h2 style={{ fontSize: '1.2rem', marginBottom: 4 }}>📌 Lịch Học Cố Định Hàng Tuần (Master Schedule Slots)</h2>
+                <h2 style={{ fontSize: '1.2rem', marginBottom: 4 }}>📌 Trận Pháp Khảo Kỳ Cố Định Tuần (Master Schedule Slots)</h2>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  Lịch mẫu dùng để tự động sinh ca học mỗi tuần. Bạn có thể sửa phòng, thứ, tiết học hoặc thêm ca cố định mới tại đây.
+                  Trận pháp mẫu dùng để tự động khởi tạo các tràng hộ đạo mỗi tuần.
                 </p>
               </div>
               <button className="btn btn-primary btn-sm" onClick={() => openSlotModal()}>
-                ➕ Thêm Ca Cố Định Mới
+                ➕ Thiết Lập Tràng Cố Định
               </button>
             </div>
 
             {slots.length === 0 ? (
-              <div style={{ padding: '20px 0', textAlign: 'center', color: 'var(--text-muted)' }}>Chưa có lịch cố định nào</div>
+              <div style={{ padding: '20px 0', textAlign: 'center', color: 'var(--text-muted)' }}>Chưa có trận pháp cố định nào</div>
             ) : (
               <div className="table-wrapper">
                 <table>
                   <thead>
                     <tr>
-                      <th>Môn học</th>
+                      <th>Pháp Môn</th>
                       <th>Thứ</th>
-                      <th>Tiết học</th>
-                      <th>Khung giờ</th>
-                      <th>Phòng học</th>
-                      <th>Trạng thái</th>
-                      <th>Thao tác</th>
+                      <th>Thời Khắc</th>
+                      <th>Canh Giờ</th>
+                      <th>Đạo Trường</th>
+                      <th>Trạng Thái</th>
+                      <th>Thao Tác</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -415,12 +404,12 @@ export default function ScheduleManager() {
                           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{sl.subject?.code} ({sl.subject?.class_code})</div>
                         </td>
                         <td><span className="badge badge-info">{DAY_NAMES[sl.day_of_week]}</span></td>
-                        <td><strong>Tiết {sl.start_period} – {sl.end_period}</strong></td>
+                        <td><strong>Khắc {sl.start_period} – {sl.end_period}</strong></td>
                         <td style={{ fontSize: '0.85rem' }}>⏰ {sl.start_time} - {sl.end_time}</td>
-                        <td>🏫 <span style={{ fontWeight: 600, color: 'var(--primary-light)' }}>{sl.classroom}</span></td>
+                        <td>🏰 <span style={{ fontWeight: 600, color: 'var(--primary-light)' }}>{sl.classroom}</span></td>
                         <td>
                           <span className={`badge ${sl.is_active ? 'badge-verified' : 'badge-danger'}`}>
-                            {sl.is_active ? '🟢 Hoạt động' : '🔴 Đã tắt'}
+                            {sl.is_active ? '🟢 Hoạt Động' : '🔴 Đã Phong Tỏa'}
                           </span>
                         </td>
                         <td>
@@ -441,18 +430,16 @@ export default function ScheduleManager() {
             )}
           </div>
 
-
-          {/* 2. SUBJECTS SECTION */}
           <div className="card" style={{ padding: 20 }}>
             <div className="flex flex-between align-center" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
               <div>
-                <h2 style={{ fontSize: '1.2rem', marginBottom: 4 }}>📚 Danh Sách Môn Học (Subjects)</h2>
+                <h2 style={{ fontSize: '1.2rem', marginBottom: 4 }}>📚 Danh Lục Pháp Môn Khảo Thí (Subjects)</h2>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                  Quản lý danh mục các môn học trong hệ thống. Xóa môn học tại đây sẽ tự động làm sạch TKB.
+                  Quản lý danh mục các pháp môn khảo thí trong hệ thống.
                 </p>
               </div>
               <button className="btn btn-primary btn-sm" onClick={() => openSubjectModal()}>
-                ➕ Thêm Môn Học Mới
+                ➕ Khai Mở Pháp Môn Mới
               </button>
             </div>
 
@@ -460,13 +447,13 @@ export default function ScheduleManager() {
               <table>
                 <thead>
                   <tr>
-                    <th>Mã môn</th>
-                    <th>Tên môn học</th>
-                    <th>Số tín chỉ</th>
-                    <th>Mã lớp HP</th>
-                    <th>Trạng thái ĐK</th>
-                    <th>Học phí</th>
-                    <th>Thao tác</th>
+                    <th>Mã Pháp Môn</th>
+                    <th>Danh Xưng Pháp Môn</th>
+                    <th>Đạo Phẩm</th>
+                    <th>Đạo Tràng Hội</th>
+                    <th>Cảnh Giới Thí Luyện</th>
+                    <th>Linh Thạch Tiêu Hao</th>
+                    <th>Thao Tác</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -474,7 +461,7 @@ export default function ScheduleManager() {
                     <tr key={s.id}>
                       <td><code>{s.code}</code></td>
                       <td style={{ fontWeight: 600 }}>{s.name}</td>
-                      <td>{s.credits} TC</td>
+                      <td>{s.credits} Đạo Phẩm</td>
                       <td>{s.class_code || '—'}</td>
                       <td><span className="badge badge-info">{s.status || 'N/A'}</span></td>
                       <td>{s.tuition ? `${s.tuition.toLocaleString('vi-VN')}đ` : '0đ'}</td>
@@ -494,19 +481,16 @@ export default function ScheduleManager() {
               </table>
             </div>
           </div>
-
         </div>
       )}
 
-
-      {/* SUBJECT MODAL */}
       {showSubjectModal && (
         <div className="modal-backdrop" onClick={() => setShowSubjectModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: 500, padding: 24 }}>
-            <h3>{editingSubject ? '✏️ Chỉnh Sửa Môn Học' : '➕ Thêm Môn Học Mới'}</h3>
+            <h3>{editingSubject ? '✏️ Chỉnh Sửa Pháp Môn' : '➕ Khai Mở Pháp Môn Mới'}</h3>
             <form onSubmit={handleSaveSubject} style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
               <div>
-                <label className="form-label">Mã môn học (*)</label>
+                <label className="form-label">Mã Pháp Môn (*)</label>
                 <input
                   type="text"
                   className="form-input"
@@ -518,11 +502,11 @@ export default function ScheduleManager() {
               </div>
 
               <div>
-                <label className="form-label">Tên môn học (*)</label>
+                <label className="form-label">Danh Xưng Pháp Môn (*)</label>
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="Ví dụ: Giải tích số"
+                  placeholder="Ví dụ: Cửu Thiên Huyền Toán Đại Pháp"
                   value={subjectForm.name}
                   onChange={e => setSubjectForm({ ...subjectForm, name: e.target.value })}
                   required
@@ -531,7 +515,7 @@ export default function ScheduleManager() {
 
               <div className="flex gap-3">
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Số tín chỉ</label>
+                  <label className="form-label">Đạo Phẩm (Tín chỉ)</label>
                   <input
                     type="number"
                     className="form-input"
@@ -540,7 +524,7 @@ export default function ScheduleManager() {
                   />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Mã lớp hp</label>
+                  <label className="form-label">Đạo Tràng Hội (Lớp HP)</label>
                   <input
                     type="text"
                     className="form-input"
@@ -553,19 +537,19 @@ export default function ScheduleManager() {
 
               <div className="flex gap-3">
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Trạng thái đăng ký</label>
+                  <label className="form-label">Cảnh Giới Thí Luyện</label>
                   <select
                     className="form-input"
                     value={subjectForm.status}
                     onChange={e => setSubjectForm({ ...subjectForm, status: e.target.value })}
                   >
-                    <option value="Đăng ký lần đầu">Đăng ký lần đầu</option>
-                    <option value="Đăng ký học lại">Đăng ký học lại</option>
-                    <option value="Tự chọn">Tự chọn</option>
+                    <option value="Sơ Nhập Khảo Nghiệm">Sơ Nhập Khảo Nghiệm</option>
+                    <option value="Trọng Tu Khảo Nghiệm">Trọng Tu Khảo Nghiệm</option>
+                    <option value="Tự Do Ngộ Đạo">Tự Do Ngộ Đạo</option>
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Học phí (VND)</label>
+                  <label className="form-label">Linh Thạch Tiêu Hao (VNĐ)</label>
                   <input
                     type="number"
                     className="form-input"
@@ -577,29 +561,27 @@ export default function ScheduleManager() {
 
               <div className="flex gap-2 flex-end" style={{ marginTop: 16 }}>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowSubjectModal(false)}>Hủy</button>
-                <button type="submit" className="btn btn-primary">Lưu thay đổi</button>
+                <button type="submit" className="btn btn-primary">Xác Nhận Khai Mở</button>
               </div>
             </form>
           </div>
         </div>
       )}
 
-
-      {/* SLOT MODAL */}
       {showSlotModal && (
         <div className="modal-backdrop" onClick={() => setShowSlotModal(false)}>
           <div className="modal-content" onClick={e => e.stopPropagation()} style={{ maxWidth: 520, padding: 24 }}>
-            <h3>{editingSlot ? '✏️ Chỉnh Sửa Ca Lịch Cố Định' : '➕ Thêm Ca Lịch Cố Định Mới'}</h3>
+            <h3>{editingSlot ? '✏️ Chỉnh Sửa Trận Pháp Cố Định' : '➕ Thiết Lập Tràng Cố Định Mới'}</h3>
             <form onSubmit={handleSaveSlot} style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
               <div>
-                <label className="form-label">Môn học (*)</label>
+                <label className="form-label">Pháp Môn (*)</label>
                 <select
                   className="form-input"
                   value={slotForm.subject_id}
                   onChange={e => setSlotForm({ ...slotForm, subject_id: e.target.value })}
                   required
                 >
-                  <option value="">-- Chọn môn học --</option>
+                  <option value="">-- Chọn Pháp Môn --</option>
                   {subjects.map(s => (
                     <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
                   ))}
@@ -624,7 +606,7 @@ export default function ScheduleManager() {
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Phòng học (*)</label>
+                  <label className="form-label">Đạo Trường (Phòng học) (*)</label>
                   <input
                     type="text"
                     className="form-input"
@@ -638,7 +620,7 @@ export default function ScheduleManager() {
 
               <div className="flex gap-3">
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Tiết bắt đầu (*)</label>
+                  <label className="form-label">Khắc bắt đầu (*)</label>
                   <select
                     className="form-input"
                     value={slotForm.start_period}
@@ -649,13 +631,13 @@ export default function ScheduleManager() {
                     }}
                   >
                     {[1,2,3,4,5,6,7,8,9,10,11,12].map(p => (
-                      <option key={p} value={p}>Tiết {p} ({PERIOD_TIMES[p].start})</option>
+                      <option key={p} value={p}>Khắc {p} ({PERIOD_TIMES[p].start})</option>
                     ))}
                   </select>
                 </div>
 
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Tiết kết thúc (*)</label>
+                  <label className="form-label">Khắc kết thúc (*)</label>
                   <select
                     className="form-input"
                     value={slotForm.end_period}
@@ -666,7 +648,7 @@ export default function ScheduleManager() {
                     }}
                   >
                     {[1,2,3,4,5,6,7,8,9,10,11,12].map(p => (
-                      <option key={p} value={p}>Tiết {p} ({PERIOD_TIMES[p].end})</option>
+                      <option key={p} value={p}>Khắc {p} ({PERIOD_TIMES[p].end})</option>
                     ))}
                   </select>
                 </div>
@@ -674,7 +656,7 @@ export default function ScheduleManager() {
 
               <div className="flex gap-3">
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Giờ bắt đầu</label>
+                  <label className="form-label">Canh giờ khởi sự</label>
                   <input
                     type="text"
                     className="form-input"
@@ -683,7 +665,7 @@ export default function ScheduleManager() {
                   />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Giờ kết thúc</label>
+                  <label className="form-label">Canh giờ hoàn tất</label>
                   <input
                     type="text"
                     className="form-input"
@@ -695,13 +677,12 @@ export default function ScheduleManager() {
 
               <div className="flex gap-2 flex-end" style={{ marginTop: 16 }}>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowSlotModal(false)}>Hủy</button>
-                <button type="submit" className="btn btn-primary">Lưu lịch mẫu</button>
+                <button type="submit" className="btn btn-primary">Khắc Lên Ngọc Giản</button>
               </div>
             </form>
           </div>
         </div>
       )}
-
     </div>
   )
 }

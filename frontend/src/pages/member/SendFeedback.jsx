@@ -3,11 +3,11 @@ import { memberAPI } from '../../api'
 import toast from 'react-hot-toast'
 
 const TYPE_MAP = {
-  general: { label: '💬 Góp ý chung', cls: 'badge-open' },
-  bug: { label: '🐛 Báo lỗi hệ thống', cls: 'badge-rejected' },
-  suggestion: { label: '💡 Đề xuất tính năng', cls: 'badge-registered' },
-  payment_issue: { label: '💰 Vấn đề thanh toán', cls: 'badge-warning' },
-  schedule_issue: { label: '📅 Vấn đề lịch học', cls: 'badge-verified' },
+  general: { label: '💬 Thần niệm vấn đáp', cls: 'badge-open' },
+  bug: { label: '🐛 Dị biến trận pháp', cls: 'badge-rejected' },
+  suggestion: { label: '💡 Hiến kế tu chân', cls: 'badge-registered' },
+  payment_issue: { label: '💰 Dị nghị bổng lộc', cls: 'badge-warning' },
+  schedule_issue: { label: '📅 Dị nghị khảo kỳ', cls: 'badge-verified' },
 }
 
 export default function SendFeedback() {
@@ -30,19 +30,19 @@ export default function SendFeedback() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!title.trim() || !content.trim()) {
-      toast.error('Vui lòng nhập tiêu đề và nội dung góp ý!')
+      toast.error('Vui lòng nhập tiêu đề và nội dung biểu sớ!')
       return
     }
 
     setSending(true)
     try {
       await memberAPI.createFeedback(title.trim(), content.trim(), feedbackType)
-      toast.success('🎉 Đã gửi góp ý tới Admin! Cảm ơn bạn.')
+      toast.success('🎉 Đã dâng sớ lên Giáo Hoàng thành công!')
       setTitle('')
       setContent('')
       loadFeedbacks()
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Gửi thất bại!')
+      toast.error(err.response?.data?.detail || 'Dâng sớ thất bại!')
     } finally {
       setSending(false)
     }
@@ -51,36 +51,35 @@ export default function SendFeedback() {
   return (
     <div>
       <div className="page-header">
-        <h1>💬 Gửi Góp Ý & Báo Lỗi Cho Admin</h1>
-        <p>Nếu bạn gặp sự cố, thắc mắc thanh toán hoặc có ý kiến đóng góp, hãy gửi ngay cho Admin</p>
+        <h1>💬 Thượng Thư Dâng Sớ Lên Giáo Hoàng</h1>
+        <p>Đạo hữu gặp dị biến pháp trận, thắc mắc bổng lộc hay có diệu kế tu chân, hãy dâng sớ lên Giáo Hoàng</p>
       </div>
 
       <div className="grid grid-2" style={{ gap: 24 }}>
-        {/* Form gửi feedback */}
         <div className="card card-elevated" style={{ padding: 24 }}>
-          <h2 className="h3" style={{ marginBottom: 16 }}>✍️ Tạo góp ý / Báo lỗi mới</h2>
+          <h2 className="h3" style={{ marginBottom: 16 }}>✍️ Soạn Thảo Biểu Sớ / Thỉnh Nguyện</h2>
           <form onSubmit={handleSubmit}>
             <div className="form-group" style={{ marginBottom: 16 }}>
-              <label className="form-label" style={{ fontWeight: 700 }}>Chủ đề góp ý:</label>
+              <label className="form-label" style={{ fontWeight: 700 }}>Thuộc tính biểu sớ:</label>
               <select
                 className="form-control"
                 value={feedbackType}
                 onChange={(e) => setFeedbackType(e.target.value)}
               >
-                <option value="general">💬 Góp ý chung</option>
-                <option value="bug">🐛 Báo lỗi hệ thống / Giao diện</option>
-                <option value="payment_issue">💰 Thắc mắc Thanh toán / Tiền nhận</option>
-                <option value="schedule_issue">📅 Thắc mắc Lịch học / Duyệt ca</option>
-                <option value="suggestion">💡 Đề xuất tính năng mới</option>
+                <option value="general">💬 Thần niệm vấn đáp</option>
+                <option value="bug">🐛 Báo cáo dị biến trận pháp / Giao diện</option>
+                <option value="payment_issue">💰 Thắc mắc Bổng Lộc / Linh thạch nhận</option>
+                <option value="schedule_issue">📅 Thắc mắc Khảo Kỳ / Chuẩn phê tràng</option>
+                <option value="suggestion">💡 Hiến kế diệu pháp mới</option>
               </select>
             </div>
 
             <div className="form-group" style={{ marginBottom: 16 }}>
-              <label className="form-label" style={{ fontWeight: 700 }}>Tiêu đề ngắn gọn:</label>
+              <label className="form-label" style={{ fontWeight: 700 }}>Tiêu đề thỉnh nguyện:</label>
               <input
                 type="text"
                 className="form-control"
-                placeholder="VD: Không thấy ảnh điểm danh tiết 3..."
+                placeholder="VD: Không thấy pháp ảnh điểm danh khắc 3..."
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
@@ -88,11 +87,11 @@ export default function SendFeedback() {
             </div>
 
             <div className="form-group" style={{ marginBottom: 20 }}>
-              <label className="form-label" style={{ fontWeight: 700 }}>Nội dung chi tiết:</label>
+              <label className="form-label" style={{ fontWeight: 700 }}>Lời tấu trình tường tận:</label>
               <textarea
                 className="form-control"
                 rows={5}
-                placeholder="Mô tả chi tiết vấn đề bạn đang gặp phải hoặc đóng góp ý kiến..."
+                placeholder="Mô tả chi tiết khúc mắc đạo hữu đang gặp phải hoặc hiến kế tâm đắc..."
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
                 required
@@ -105,21 +104,20 @@ export default function SendFeedback() {
               style={{ width: '100%', justifyContent: 'center' }}
               disabled={sending}
             >
-              {sending ? '⏳ Đang gửi...' : '🚀 Gửi Cho Admin'}
+              {sending ? '⏳ Đang truyền tống sớ...' : '🚀 Dâng Sớ Lên Giáo Hoàng'}
             </button>
           </form>
         </div>
 
-        {/* Danh sách góp ý đã gửi */}
         <div>
-          <h2 className="h3" style={{ marginBottom: 16 }}>📋 Lịch sử góp ý của bạn ({myFeedbacks.length})</h2>
+          <h2 className="h3" style={{ marginBottom: 16 }}>📋 Linh Ký Thư Thỉnh Nguyện Bản Thân ({myFeedbacks.length})</h2>
 
           {loading ? (
             <div className="flex-center" style={{ height: 200 }}><div className="spinner" style={{ width: 32, height: 32 }} /></div>
           ) : myFeedbacks.length === 0 ? (
             <div className="empty-state">
               <div className="icon">📭</div>
-              <h3>Bạn chưa gửi góp ý nào</h3>
+              <h3>Đạo hữu chưa từng dâng biểu sớ nào</h3>
             </div>
           ) : (
             <div className="flex flex-col gap-3" style={{ maxHeight: 520, overflowY: 'auto', paddingRight: 4 }}>
@@ -132,7 +130,7 @@ export default function SendFeedback() {
                     <div className="flex flex-between align-center" style={{ marginBottom: 8 }}>
                       <span className={`badge ${typeInfo.cls}`}>{typeInfo.label}</span>
                       <span className={`badge ${isPending ? 'badge-registered' : f.status === 'resolved' ? 'badge-verified' : 'badge-approved'}`}>
-                        {isPending ? '⏳ Đang chờ Admin trả lời' : f.status === 'resolved' ? '✅ Đã xong' : '💬 Admin đã phản hồi'}
+                        {isPending ? '⏳ Đang chờ Giáo Hoàng khai thị' : f.status === 'resolved' ? '✅ Viên mãn' : '💬 Đã có lời chỉ bảo'}
                       </span>
                     </div>
 
@@ -149,14 +147,14 @@ export default function SendFeedback() {
                         marginTop: 8
                       }}>
                         <div style={{ fontWeight: 700, color: 'var(--primary-light)', marginBottom: 2 }}>
-                          👑 Phản hồi từ Admin:
+                          👑 Khẩu dụ từ Giáo Hoàng:
                         </div>
                         <div>{f.admin_reply}</div>
                       </div>
                     )}
 
                     <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 8, textAlign: 'right' }}>
-                      ⏱ Gửi lúc: {f.created_at ? new Date(f.created_at).toLocaleString('vi-VN') : '--'}
+                      ⏱ Dâng sớ lúc: {f.created_at ? new Date(f.created_at).toLocaleString('vi-VN') : '--'}
                     </div>
                   </div>
                 )

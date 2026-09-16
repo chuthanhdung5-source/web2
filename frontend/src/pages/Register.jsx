@@ -16,10 +16,10 @@ export default function Register() {
     setLoading(true)
     try {
       await authAPI.register(form)
-      toast.success('Đăng ký thành công! Đăng nhập ngay nhé 🎉')
+      toast.success('Đã thức tỉnh Võ Hồn! Mau mau nhập cảnh Tiên Môn 🎉')
       navigate('/login')
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Đăng ký thất bại')
+      toast.error(err.response?.data?.detail || 'Thức tỉnh thất bại, linh lực bất túc')
     } finally {
       setLoading(false)
     }
@@ -37,7 +37,7 @@ export default function Register() {
         <div className="auth-header">
           <div className="auth-logo-badge">
             <span>🔮</span>
-            <span>Đấu La Tông Môn v2.0</span>
+            <span>ĐẤU LA TÔNG MÔN v2.0</span>
           </div>
           <div className="auth-logo">🔮</div>
           <h1>Gia Nhập Hồn Sư</h1>
@@ -46,33 +46,33 @@ export default function Register() {
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label className="form-label">Họ và tên</label>
-            <input id="reg-name" className="form-input" type="text" placeholder="Nguyễn Văn A"
+            <label className="form-label">Đạo Hiệu / Chân Tên</label>
+            <input id="reg-name" className="form-input" type="text" placeholder="Đường Tam / Tiêu Viêm"
               value={form.full_name} onChange={set('full_name')} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Tên đăng nhập</label>
+            <label className="form-label">Đạo Tịch Đăng Nhập (Username)</label>
             <input id="reg-username" className="form-input" type="text" placeholder="username"
               value={form.username} onChange={set('username')} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Email</label>
+            <label className="form-label">Linh Hạc Truyền Thư (Email)</label>
             <input id="reg-email" className="form-input" type="email" placeholder="email@gmail.com"
               value={form.email} onChange={set('email')} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Số điện thoại</label>
+            <label className="form-label">Thần Thức Cảm Ứng (Số Điện Thoại)</label>
             <input id="reg-phone" className="form-input" type="tel" placeholder="0912345678"
               value={form.phone} onChange={set('phone')} />
           </div>
           <div className="form-group">
-            <label className="form-label">Mật khẩu</label>
+            <label className="form-label">Khẩu Quyết Tâm Pháp (Mật Khẩu)</label>
             <input id="reg-password" className="form-input" type="password" placeholder="••••••••"
               value={form.password} onChange={set('password')} required minLength={6} />
           </div>
 
           <button id="reg-submit" type="submit" className="btn-auth-submit" disabled={loading}>
-            {loading ? <><span className="spinner" /> Đang thức tỉnh Võ Hồn...</> : '⚡ Thức Tỉnh & Gia Nhập'}
+            {loading ? <><span className="spinner" /> Đang thức tỉnh Võ Hồn...</> : '⚡ Thức Tỉnh & Khai Môn Nhập Đạo'}
           </button>
         </form>
 

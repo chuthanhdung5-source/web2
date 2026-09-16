@@ -5,11 +5,11 @@ import { useAuth } from '../../context/AuthContext'
 import toast from 'react-hot-toast'
 
 const VIP_TIERS = [
-  { value: 0, label: 'VIP 0 - Phổ Thông' },
-  { value: 1, label: 'VIP 1 - Đồng (Hồn Vương)' },
-  { value: 2, label: 'VIP 2 - Bạc (Hồn Thánh)' },
-  { value: 3, label: 'VIP 3 - Vàng (Phong Hào)' },
-  { value: 4, label: 'VIP 4 - Chí Tôn (Thần Vương)' }
+  { value: 0, label: 'VIP 0 - Phổ Thông Tu Giả' },
+  { value: 1, label: 'VIP 1 - Đồng Cấp (Hồn Vương Hộ Đạo)' },
+  { value: 2, label: 'VIP 2 - Ngân Cấp (Hồn Thánh Trấn Phái)' },
+  { value: 3, label: 'VIP 3 - Kim Cấp (Phong Hào Trưởng Lão)' },
+  { value: 4, label: 'VIP 4 - Chí Tôn Vô Thượng (Thần Vương Giáo Hoàng)' }
 ]
 
 export default function MemberList() {
@@ -43,10 +43,10 @@ export default function MemberList() {
   const toggleActive = async (id) => {
     try {
       await adminAPI.toggleMember(id)
-      toast.success('Đã cập nhật trạng thái')
+      toast.success('Đã cập nhật đạo tịch trạng thái')
       load()
     } catch {
-      toast.error('Có lỗi xảy ra')
+      toast.error('Có lỗi linh lực xảy ra')
     }
   }
 
@@ -59,7 +59,7 @@ export default function MemberList() {
     e.preventDefault()
     if (!resetModalMember) return
     if (newPassword && newPassword.length < 6) {
-      toast.error('Mật khẩu phải có ít nhất 6 ký tự')
+      toast.error('Khẩu quyết phải có ít nhất 6 ấn ký')
       return
     }
 
@@ -68,13 +68,13 @@ export default function MemberList() {
       const res = await adminAPI.forceResetPassword(resetModalMember.id, {
         new_password: newPassword.trim() || undefined
       })
-      toast.success(`✅ Đã đổi mật khẩu cho @${resetModalMember.username} thành: ${res.data.new_password}`, {
+      toast.success(`✅ Đã ban cố khẩu quyết cho đệ tử @${resetModalMember.username} thành: ${res.data.new_password}`, {
         duration: 8000
       })
       setResetModalMember(null)
       setNewPassword('')
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi khi đổi mật khẩu')
+      toast.error(err.response?.data?.detail || 'Lỗi khi ban cố khẩu quyết')
     } finally {
       setResetting(false)
     }
@@ -143,7 +143,7 @@ export default function MemberList() {
         is_enabled: editIsEnabled
       }
       await douluoAPI.adminUpdateMemberCultivation(editMember.id, payload)
-      toast.success(`✅ Đã cập nhật toàn bộ quyền hạn & tu vi cho ${editMember.full_name}!`, {
+      toast.success(`✅ Đã ban sắc toàn bộ quyền hạn & tu vi cho ${editMember.full_name}!`, {
         duration: 5000,
         icon: '👑'
       })
@@ -152,7 +152,7 @@ export default function MemberList() {
       }
       setEditMember(null)
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Lỗi khi cập nhật tu vi thành viên')
+      toast.error(err.response?.data?.detail || 'Lỗi khi ban bố tu vi đệ tử')
     } finally {
       setSavingCultivation(false)
     }
@@ -163,25 +163,25 @@ export default function MemberList() {
   return (
     <div>
       <div className="page-header">
-        <h1>👥 Quản lý thành viên</h1>
-        <p>Danh sách tất cả thành viên trong hệ thống, thông tin chi trả và quyền năng Đấu La</p>
+        <h1>👥 Chư Vị Đồng Môn & Đệ Tử Tiên Tông</h1>
+        <p>Danh sách chư vị đệ tử tông môn, tiên trang linh thạch và quyền năng Đấu La tu tiên</p>
       </div>
 
       {loading ? (
         <div className="flex-center" style={{ height: 200 }}><div className="spinner" /></div>
       ) : members.length === 0 ? (
-        <div className="empty-state">Chưa có thành viên nào</div>
+        <div className="empty-state">Chưa có đệ tử nào nhập môn</div>
       ) : (
         <div className="table-responsive">
           <table className="table">
             <thead>
               <tr>
-                <th>Thành viên</th>
-                <th>Liên hệ</th>
-                <th>Thông tin ngân hàng</th>
-                <th>Tổng thu nhập</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
+                <th>Đệ Tử / Đạo Hiệu</th>
+                <th>Truyền Tin (Liên Hệ)</th>
+                <th>Tiên Trang Thần Phù (Ngân Hàng)</th>
+                <th>Tổng Bổng Lộc Linh Thạch</th>
+                <th>Trạng Thái Đạo Tịch</th>
+                <th>Pháp Quyết Thao Tác</th>
               </tr>
             </thead>
             <tbody>
@@ -204,24 +204,24 @@ export default function MemberList() {
                         </div>
                       </div>
                     ) : (
-                      <span style={{ color: 'var(--text-muted)' }}>Chưa cập nhật</span>
+                      <span style={{ color: 'var(--text-muted)' }}>Chưa tuyên ấn</span>
                     )}
                   </td>
                   <td>
                     <span style={{ fontWeight: 600, color: 'var(--accent-green)' }}>
-                      {(m.total_earnings || 0).toLocaleString('vi-VN')}đ
+                      {(m.total_earnings || 0).toLocaleString('vi-VN')} Linh Thạch
                     </span>
                   </td>
                   <td>
                     <span className={`badge ${m.is_active ? 'badge-verified' : 'badge-rejected'}`}>
-                      {m.is_active ? 'Hoạt động' : 'Đã khóa'}
+                      {m.is_active ? 'Đang Tu Luyện' : 'Đã Trục Xuất'}
                     </span>
                   </td>
                   <td>
                     <div className="flex gap-2" style={{ alignItems: 'center' }}>
                       <button
                         className="btn btn-sm btn-ghost"
-                        title="Quản lý toàn diện: Cấp độ, Kim cương, Gói đã mua, VIP, Danh hiệu"
+                        title="Chấp chưởng toàn diện: Cảnh giới, Tiên tinh, Pháp bảo, VIP, Phong hào"
                         onClick={() => openCultivationModal(m)}
                         style={{
                           border: '1px solid rgba(168, 85, 247, 0.5)',
@@ -234,22 +234,22 @@ export default function MemberList() {
                           background: 'rgba(168, 85, 247, 0.08)'
                         }}
                       >
-                        🔱 Tu Vi & Gói
+                        🔱 Tu Vi & Bảo Khố
                       </button>
                       <button
                         className="btn btn-sm btn-secondary"
-                        title="Cưỡng chế đổi mật khẩu"
+                        title="Ban cố đổi khẩu quyết"
                         onClick={() => openResetModal(m)}
                         style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}
                       >
-                        🔑 Đổi MK
+                        🔑 Khẩu Quyết
                       </button>
                       <button
                         id={`toggle-${m.id}`}
                         className={`btn btn-sm ${m.is_active ? 'btn-danger' : 'btn-success'}`}
                         onClick={() => toggleActive(m.id)}
                       >
-                        {m.is_active ? '🔒 Khóa' : '🔓 Mở khóa'}
+                        {m.is_active ? '🔒 Phong Ấn' : '🔓 Giải Ấn'}
                       </button>
                     </div>
                   </td>
@@ -290,10 +290,10 @@ export default function MemberList() {
                 <span style={{ fontSize: '1.4rem' }}>👑</span>
                 <div>
                   <h2 className="h3" style={{ margin: 0, fontSize: '1.1rem' }}>
-                    Sửa Toàn Diện Quyền & Tu Vi Thành Viên
+                    Chấp Chưởng Toàn Diện Quyền Năng & Tu Vi Đệ Tử
                   </h2>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                    {editMember.full_name} (@{editMember.username}) • ID #{editMember.id}
+                    {editMember.full_name} (@{editMember.username}) • Đạo Tịch #{editMember.id}
                   </div>
                 </div>
               </div>
@@ -325,7 +325,7 @@ export default function MemberList() {
                       <span style={{ fontSize: '2rem' }}>{currentRealm.icon}</span>
                       <div>
                         <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-primary)' }}>
-                          {editTitle ? `${editTitle} • ` : ''}{currentRealm.name} (Cấp {editLevel})
+                          {editTitle ? `${editTitle} • ` : ''}{currentRealm.name} (Cảnh Giới Cấp {editLevel})
                         </div>
                         <div style={{ fontSize: '0.75rem', color: '#a855f7', fontWeight: 600 }}>
                           {currentRealm.ringName}
@@ -334,7 +334,7 @@ export default function MemberList() {
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#38bdf8' }}>
-                        💎 {Number(editDiamonds || 0).toLocaleString('vi-VN')}
+                        💎 {Number(editDiamonds || 0).toLocaleString('vi-VN')} Tiên Tinh
                       </div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                         {VIP_TIERS.find(v => v.value === Number(editVipTier))?.label || 'VIP 0'}
@@ -344,7 +344,7 @@ export default function MemberList() {
 
                   <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
                     <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
-                      <span>🥋 Cấp Độ Hồn Sư & Cảnh Giới:</span>
+                      <span>🥋 Cảnh Giới Tu Vi & Hồn Hoàn:</span>
                       <span style={{ color: '#38bdf8', fontWeight: 800 }}>Cấp {editLevel} / 100 ({currentRealm.name})</span>
                     </div>
                     <div className="flex gap-3 align-center">
@@ -383,7 +383,7 @@ export default function MemberList() {
 
                   <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
                     <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: 10 }}>
-                      💎 Số Kim Cương Sở Hữu:
+                      💎 Tiên Tinh / Kim Cương Sở Hữu:
                     </div>
                     <div className="flex gap-2">
                       <input
@@ -451,7 +451,7 @@ export default function MemberList() {
                   <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
                     <div className="flex flex-between align-center" style={{ marginBottom: 8 }}>
                       <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>
-                        🎁 Tất Cả Các Gói & Vật Phẩm Đã Mua ({editPurchasedItems.length}/{SHOP_ITEMS.length}):
+                        🎁 Tất Cả Pháp Bảo & Đặc Quyền Đã Ban Sắc ({editPurchasedItems.length}/{SHOP_ITEMS.length}):
                       </div>
                       <div className="flex gap-2">
                         <button
@@ -460,7 +460,7 @@ export default function MemberList() {
                           style={{ fontSize: '0.75rem', color: '#38bdf8', padding: '2px 8px' }}
                           onClick={handleSelectAllItems}
                         >
-                          ✨ Mở khóa tất cả
+                          ✨ Khai mở toàn bộ
                         </button>
                         <button
                           type="button"
@@ -468,7 +468,7 @@ export default function MemberList() {
                           style={{ fontSize: '0.75rem', color: '#ef4444', padding: '2px 8px' }}
                           onClick={handleClearAllItems}
                         >
-                          🧹 Tước hết gói
+                          🧹 Thu hồi tất cả
                         </button>
                       </div>
                     </div>
@@ -504,7 +504,7 @@ export default function MemberList() {
                                 {item.name}
                               </div>
                               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                                {item.price.toLocaleString('vi-VN')} 💎 {isOwned ? '• (ĐÃ SỞ HỮU)' : ''}
+                                {item.price.toLocaleString('vi-VN')} 💎 {isOwned ? '• (ĐÃ ĐẮC ĐẠO)' : ''}
                               </div>
                             </div>
                           </div>
@@ -516,7 +516,7 @@ export default function MemberList() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
                     <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
                       <label style={{ fontWeight: 700, fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>
-                        👑 Cấp VIP Đặc Quyền:
+                        👑 Cấp Bậc Tôn Quý Tông Môn (VIP):
                       </label>
                       <select
                         className="form-control"
@@ -532,17 +532,17 @@ export default function MemberList() {
 
                     <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
                       <label style={{ fontWeight: 700, fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>
-                        📜 Phong Hào / Danh Hiệu:
+                        📜 Phong Hào Đạo Hiệu Thần Tông:
                       </label>
                       <input
                         type="text"
                         className="form-input"
-                        placeholder="VD: Học Hộ Đấu La, Tu La..."
+                        placeholder="VD: Hộ Đạo Đấu La, Tu La Thần..."
                         value={editTitle}
                         onChange={e => setEditTitle(e.target.value)}
                       />
                       <div className="flex gap-2" style={{ marginTop: 6, flexWrap: 'wrap' }}>
-                        {['Học Hộ Đấu La', 'Hải Thần', 'Tu La Thần Vương'].map(t => (
+                        {['Hộ Đạo Đấu La', 'Hải Thần Chi Quang', 'Tu La Thần Vương'].map(t => (
                           <button
                             key={t}
                             type="button"
@@ -560,7 +560,7 @@ export default function MemberList() {
                             style={{ fontSize: '0.7rem', padding: '2px 6px', color: '#ef4444' }}
                             onClick={() => setEditTitle('')}
                           >
-                            Xóa
+                            Hủy Bỏ
                           </button>
                         )}
                       </div>
@@ -571,10 +571,10 @@ export default function MemberList() {
                     <div className="flex-between align-center">
                       <div>
                         <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>
-                          ⚡ Kích hoạt Chế độ Tu Tiên Đấu La
+                          ⚡ Khai Thông Linh Mạch Tu Tiên Đấu La
                         </div>
                         <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                          Bật tính năng tu luyện, vòng hồn hoàn, kim cương cho thành viên này
+                          Ban phát đại đạo tu luyện, hồn hoàn dị tượng và tiên tinh cho đệ tử này
                         </div>
                       </div>
                       <input
@@ -589,7 +589,7 @@ export default function MemberList() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
                     <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
                       <label style={{ fontWeight: 600, fontSize: '0.8rem', display: 'block', marginBottom: 4, color: 'var(--text-secondary)' }}>
-                        Điểm Kinh Nghiệm (EXP):
+                        Tu Luyện Tu Vi (EXP):
                       </label>
                       <input
                         type="number"
@@ -601,7 +601,7 @@ export default function MemberList() {
                     </div>
                     <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
                       <label style={{ fontWeight: 600, fontSize: '0.8rem', display: 'block', marginBottom: 4, color: 'var(--text-secondary)' }}>
-                        Tổng số giây bế quan tu luyện:
+                        Thời Khắc Nhập Định Bế Quan (Giây):
                       </label>
                       <input
                         type="number"
@@ -631,7 +631,7 @@ export default function MemberList() {
                     onClick={() => setEditMember(null)}
                     disabled={savingCultivation}
                   >
-                    Hủy bỏ
+                    Thu Hồi Ý Định
                   </button>
                   <button
                     type="submit"
@@ -649,10 +649,10 @@ export default function MemberList() {
                     {savingCultivation ? (
                       <>
                         <div className="spinner" style={{ width: 14, height: 14 }} />
-                        Đang lưu quyền hạn...
+                        Đang ban sắc quyền hạn...
                       </>
                     ) : (
-                      '✓ Lưu Toàn Bộ Quyền Hạn & Tu Vi'
+                      '✓ Ban Sắc Lệnh Tu Vi & Bảo Khố'
                     )}
                   </button>
                 </div>
@@ -666,21 +666,21 @@ export default function MemberList() {
         <div className="modal-backdrop" onClick={() => setResetModalMember(null)}>
           <div className="modal card" style={{ maxWidth: 460, width: '100%', margin: 20 }} onClick={e => e.stopPropagation()}>
             <div className="flex flex-between align-center" style={{ marginBottom: 16 }}>
-              <h2 className="h3">🔑 Cưỡng chế đổi mật khẩu</h2>
+              <h2 className="h3">🔑 Cưỡng Chế Ban Cố Khẩu Quyết</h2>
               <button className="btn btn-ghost btn-sm" onClick={() => setResetModalMember(null)}>✕</button>
             </div>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 16 }}>
-              Đặt lại mật khẩu trực tiếp cho thành viên <strong>{resetModalMember.full_name}</strong> (<code>@{resetModalMember.username}</code>).
+              Tái định khẩu quyết tâm pháp trực tiếp cho đệ tử <strong>{resetModalMember.full_name}</strong> (<code>@{resetModalMember.username}</code>).
             </p>
 
             <form onSubmit={handleForceReset} className="flex flex-col gap-4">
               <div className="form-group">
-                <label className="form-label">Mật khẩu mới</label>
+                <label className="form-label">Khẩu Quyết Tâm Pháp Mới</label>
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="Nhập mật khẩu mới (tối thiểu 6 ký tự)"
+                  placeholder="Nhập khẩu quyết mới (tối thiểu 6 ấn ký)"
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
                   required
@@ -711,7 +711,7 @@ export default function MemberList() {
                   style={{ fontSize: '0.8rem', padding: '4px 8px' }}
                   onClick={() => setNewPassword(`hoc${Math.floor(100000 + Math.random() * 900000)}`)}
                 >
-                  🎲 Ngẫu nhiên
+                  🎲 Khẩu Quyết Ngẫu Nhiên
                 </button>
               </div>
 
@@ -722,14 +722,14 @@ export default function MemberList() {
                   onClick={() => setResetModalMember(null)}
                   disabled={resetting}
                 >
-                  Hủy
+                  Hủy Bỏ
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary"
                   disabled={resetting}
                 >
-                  {resetting ? <><div className="spinner" style={{ width: 14, height: 14 }} /> Đang lưu...</> : '✓ Xác nhận đổi'}
+                  {resetting ? <><div className="spinner" style={{ width: 14, height: 14 }} /> Đang ban lệnh...</> : '✓ Xác Nhận Ban Lệnh'}
                 </button>
               </div>
             </form>

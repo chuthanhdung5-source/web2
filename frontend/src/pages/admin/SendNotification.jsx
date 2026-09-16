@@ -17,7 +17,7 @@ export default function SendNotification() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!title.trim() || !message.trim()) {
-      toast.error('Vui lòng nhập đầy đủ tiêu đề và nội dung thông báo!')
+      toast.error('Vui lòng nhập đầy đủ tiêu đề và nội dung hịch văn!')
       return
     }
 
@@ -25,12 +25,12 @@ export default function SendNotification() {
     try {
       const target = targetUserId ? parseInt(targetUserId) : null
       const res = await adminAPI.broadcastNotification(title.trim(), message.trim(), notifType, target)
-      toast.success(res.data.message || 'Đã gửi thông báo thành công!')
+      toast.success(res.data.message || 'Đã truyền hịch thành công!')
       setTitle('')
       setMessage('')
       setTargetUserId('')
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Gửi thông báo thất bại!')
+      toast.error(err.response?.data?.detail || 'Truyền hịch thất bại!')
     } finally {
       setSending(false)
     }
@@ -39,18 +39,18 @@ export default function SendNotification() {
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
       <div className="page-header">
-        <h1>📢 Gửi Thông Báo Hệ Thống</h1>
-        <p>Phát thông báo tới tất cả thành viên hoặc gửi trực tiếp cho một thành viên cụ thể</p>
+        <h1>📢 Truyền Hịch Tông Môn & Vạn Dặm Phi Kiếm</h1>
+        <p>Phát thần niệm tới toàn thể chư vị đệ tử hoặc truyền âm mật thất cho một tu giả cụ thể</p>
       </div>
 
       <div className="card card-elevated" style={{ padding: 24 }}>
         <form onSubmit={handleSubmit}>
           <div className="form-group" style={{ marginBottom: 16 }}>
-            <label className="form-label" style={{ fontWeight: 700 }}>📌 Tiêu đề thông báo:</label>
+            <label className="form-label" style={{ fontWeight: 700 }}>📌 Tiêu đề hịch văn / thần niệm:</label>
             <input
               type="text"
               className="form-control"
-              placeholder="VD: Nhắc nhở nộp ảnh check-in tiết 5..."
+              placeholder="VD: Chiếu chỉ điểm danh hộ đạo đúng thời khắc..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -59,28 +59,28 @@ export default function SendNotification() {
 
           <div className="grid grid-2" style={{ gap: 16, marginBottom: 16 }}>
             <div className="form-group">
-              <label className="form-label" style={{ fontWeight: 700 }}>🔔 Loại thông báo:</label>
+              <label className="form-label" style={{ fontWeight: 700 }}>🔔 Thuộc tính thần niệm:</label>
               <select
                 className="form-control"
                 value={notifType}
                 onChange={(e) => setNotifType(e.target.value)}
               >
-                <option value="info">ℹ️ Thông tin chung (Info)</option>
-                <option value="reminder">⏰ Nhắc nhở (Reminder)</option>
-                <option value="warning">⚠️ Cảnh báo (Warning)</option>
-                <option value="payment">💰 Thanh toán (Payment)</option>
-                <option value="approval">✅ Duyệt ca (Approval)</option>
+                <option value="info">ℹ️ Thông cáo môn quy (Info)</option>
+                <option value="reminder">⏰ Thúc giục khảo kỳ (Reminder)</option>
+                <option value="warning">⚠️ Cảnh cáo tông môn (Warning)</option>
+                <option value="payment">💰 Quyết toán bổng lộc (Payment)</option>
+                <option value="approval">✅ Sắc chỉ chuẩn phê (Approval)</option>
               </select>
             </div>
 
             <div className="form-group">
-              <label className="form-label" style={{ fontWeight: 700 }}>👥 Đối tượng nhận:</label>
+              <label className="form-label" style={{ fontWeight: 700 }}>👥 Môn hạ tiếp nhận:</label>
               <select
                 className="form-control"
                 value={targetUserId}
                 onChange={(e) => setTargetUserId(e.target.value)}
               >
-                <option value="">📢 Tất cả Thành viên (Broadcast)</option>
+                <option value="">📢 Toàn Thể Chư Vị Tu Giả (Vạn Dặm Phi Kiếm)</option>
                 {members.map(m => (
                   <option key={m.id} value={m.id}>
                     👤 {m.full_name} (@{m.username})
@@ -91,11 +91,11 @@ export default function SendNotification() {
           </div>
 
           <div className="form-group" style={{ marginBottom: 20 }}>
-            <label className="form-label" style={{ fontWeight: 700 }}>💬 Nội dung chi tiết:</label>
+            <label className="form-label" style={{ fontWeight: 700 }}>💬 Nội dung hịch văn:</label>
             <textarea
               className="form-control"
               rows={5}
-              placeholder="Nhập nội dung chi tiết thông báo gửi tới thành viên..."
+              placeholder="Khắc ghi lời huấn thị gửi tới chư vị đệ tử tông môn..."
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               required
@@ -108,7 +108,7 @@ export default function SendNotification() {
             style={{ width: '100%', justifyContent: 'center', padding: '12px 0', fontSize: '1rem' }}
             disabled={sending}
           >
-            {sending ? '⏳ Đang gửi thông báo...' : '🚀 Gửi Thông Báo Ngay'}
+            {sending ? '⏳ Đang truyền tống hịch văn...' : '🚀 Truyền Hịch Ngay Lập Tức'}
           </button>
         </form>
       </div>

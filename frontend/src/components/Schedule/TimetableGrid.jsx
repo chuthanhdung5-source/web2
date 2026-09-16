@@ -11,18 +11,18 @@ const DAYS = [
 ]
 
 const PERIODS = [
-  { num: 1, label: 'Tiết 1', time: '07:00–07:50', session: 'morning' },
-  { num: 2, label: 'Tiết 2', time: '07:55–08:45', session: 'morning' },
-  { num: 3, label: 'Tiết 3', time: '08:50–09:40', session: 'morning' },
-  { num: 4, label: 'Tiết 4', time: '09:50–10:40', session: 'morning' },
-  { num: 5, label: 'Tiết 5', time: '10:45–11:35', session: 'morning' },
-  { num: 6, label: 'Tiết 6', time: '11:40–12:30', session: 'morning' },
-  { num: 7, label: 'Tiết 7', time: '13:00–13:50', session: 'afternoon' },
-  { num: 8, label: 'Tiết 8', time: '13:55–14:45', session: 'afternoon' },
-  { num: 9, label: 'Tiết 9', time: '14:50–15:40', session: 'afternoon' },
-  { num: 10, label: 'Tiết 10', time: '15:50–16:40', session: 'afternoon' },
-  { num: 11, label: 'Tiết 11', time: '16:45–17:35', session: 'afternoon' },
-  { num: 12, label: 'Tiết 12', time: '17:40–18:30', session: 'afternoon' },
+  { num: 1, label: 'Khắc 1', time: '07:00–07:50', session: 'morning' },
+  { num: 2, label: 'Khắc 2', time: '07:55–08:45', session: 'morning' },
+  { num: 3, label: 'Khắc 3', time: '08:50–09:40', session: 'morning' },
+  { num: 4, label: 'Khắc 4', time: '09:50–10:40', session: 'morning' },
+  { num: 5, label: 'Khắc 5', time: '10:45–11:35', session: 'morning' },
+  { num: 6, label: 'Khắc 6', time: '11:40–12:30', session: 'morning' },
+  { num: 7, label: 'Khắc 7', time: '13:00–13:50', session: 'afternoon' },
+  { num: 8, label: 'Khắc 8', time: '13:55–14:45', session: 'afternoon' },
+  { num: 9, label: 'Khắc 9', time: '14:50–15:40', session: 'afternoon' },
+  { num: 10, label: 'Khắc 10', time: '15:50–16:40', session: 'afternoon' },
+  { num: 11, label: 'Khắc 11', time: '16:45–17:35', session: 'afternoon' },
+  { num: 12, label: 'Khắc 12', time: '17:40–18:30', session: 'afternoon' },
 ]
 
 export default function TimetableGrid({
@@ -39,9 +39,8 @@ export default function TimetableGrid({
   const [selectedMember, setSelectedMember] = useState({})
   const [isCompact, setIsCompact] = useState(true)
 
-  // Index sessions by day and start_period
   const sessionMap = {}
-  const coveredCells = new Set() // Set of `${day}_${period}` that are covered by rowSpan
+  const coveredCells = new Set()
 
   weeklySessions.forEach(s => {
     const slot = s.schedule_slot
@@ -57,7 +56,6 @@ export default function TimetableGrid({
     }
   })
 
-  // Dynamic values based on view mode
   const cellHeightMultiplier = isCompact ? 34 : 50
   const thPadding = isCompact ? '6px 4px' : '12px 8px'
   const cardPadding = isCompact ? '4px 6px' : '8px'
@@ -68,26 +66,24 @@ export default function TimetableGrid({
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-      {/* View Mode Bar */}
       <div className="flex flex-between align-center" style={{ padding: '0 4px' }}>
         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          🔍 Chế độ hiển thị: <strong style={{ color: 'var(--text-primary)' }}>{isCompact ? 'Thu nhỏ (Tổng quan)' : 'Tiêu chuẩn'}</strong>
+          🔍 Thần Nhãn Trận Đồ: <strong style={{ color: 'var(--text-primary)' }}>{isCompact ? 'Bao Quát Trận Đồ' : 'Chi Tiết Phù Trận'}</strong>
         </span>
         <button
           className="btn btn-secondary btn-sm"
           style={{ fontSize: '0.75rem', padding: '3px 10px' }}
           onClick={() => setIsCompact(prev => !prev)}
         >
-          {isCompact ? '🔍 Xem Phóng to' : '🔎 Xem Thu nhỏ'}
+          {isCompact ? '🔍 Soi Kỹ Chi Tiết' : '🔎 Thu Gọn Trận Đồ'}
         </button>
       </div>
 
-      {/* Table Container */}
       <div style={{ overflowX: 'auto', borderRadius: 12, border: '1px solid var(--border)', background: 'var(--surface)' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: isCompact ? 760 : 900, textAlign: 'center' }}>
           <thead>
             <tr style={{ background: 'var(--surface-hover)', borderBottom: '2px solid var(--border)' }}>
-              <th style={{ padding: thPadding, width: isCompact ? 75 : 100, fontSize: isCompact ? '0.75rem' : '0.85rem' }}>Tiết / Giờ</th>
+              <th style={{ padding: thPadding, width: isCompact ? 80 : 105, fontSize: isCompact ? '0.75rem' : '0.85rem' }}>Khắc / Canh Giờ</th>
               {DAYS.map(d => (
                 <th key={d.num} style={{ padding: thPadding, fontSize: isCompact ? '0.8rem' : '0.9rem', width: '13%' }}>
                   {d.label}
@@ -102,7 +98,6 @@ export default function TimetableGrid({
                   borderBottom: p.num === 6 ? '3px solid var(--primary)' : '1px solid var(--border)',
                   background: p.num % 2 === 0 ? 'rgba(255,255,255,0.01)' : 'transparent',
                 }}>
-                  {/* Period Column Header */}
                   <td style={{
                     padding: isCompact ? '4px 2px' : '8px 4px',
                     background: 'var(--surface-hover)',
@@ -114,10 +109,9 @@ export default function TimetableGrid({
                     <div style={{ fontSize: isCompact ? '0.62rem' : '0.7rem', color: 'var(--primary-light)' }}>{p.time}</div>
                   </td>
 
-                  {/* Day Columns */}
                   {DAYS.map(d => {
                     const key = `${d.num}_${p.num}`
-                    if (coveredCells.has(key)) return null // Skip spanned cell
+                    if (coveredCells.has(key)) return null
 
                     const session = sessionMap[key]
                     if (!session) {
@@ -133,19 +127,18 @@ export default function TimetableGrid({
                     const member = session.assigned_member
                     const isMine = currentUserId && member?.id === currentUserId
 
-                    // Card styling based on status
                     let borderClr = 'var(--border)'
                     let bgClr = 'var(--surface-hover)'
-                    let statusBadge = { label: 'Trống', cls: 'badge-open', icon: '🔵' }
+                    let statusBadge = { label: 'Bỏ Ngỏ', cls: 'badge-open', icon: '🔵' }
 
                     if (session.status === 'approved') {
                       borderClr = 'var(--accent-green)'
                       bgClr = 'rgba(16,185,129,0.1)'
-                      statusBadge = { label: 'Đã giao', cls: 'badge-verified', icon: '🟢' }
+                      statusBadge = { label: 'Đã Ban Lệnh', cls: 'badge-verified', icon: '🟢' }
                     } else if (session.status === 'registered') {
                       borderClr = 'var(--accent)'
                       bgClr = 'rgba(245,158,11,0.1)'
-                      statusBadge = { label: 'Chờ duyệt', cls: 'badge-registered', icon: '🟠' }
+                      statusBadge = { label: 'Chờ Phê', cls: 'badge-registered', icon: '🟠' }
                     }
 
                     if (isMine) {
@@ -191,10 +184,9 @@ export default function TimetableGrid({
                             </div>
 
                             <div style={{ fontSize: detailsFontSize, color: 'var(--text-muted)', marginBottom: 2 }}>
-                              📌 {slot.subject?.code} | 🏫 {slot.classroom}
+                              📌 {slot.subject?.code} | 🏰 {slot.classroom}
                             </div>
 
-                            {/* Member assignment info */}
                             {member ? (
                               <div style={{
                                 background: 'var(--surface)',
@@ -205,16 +197,15 @@ export default function TimetableGrid({
                                 color: isMine ? 'var(--primary-light)' : 'var(--accent-green)',
                                 fontSize: memberFontSize,
                               }}>
-                                👤 {member.full_name} {isMine && '(Tôi)'}
+                                👤 {member.full_name} {isMine && '(Bản Tọa)'}
                               </div>
                             ) : (
                               <div style={{ fontSize: detailsFontSize, color: 'var(--text-muted)', fontStyle: 'italic', marginTop: 2 }}>
-                                ⚪ Chưa giao
+                                ⚪ Chưa định môn hạ
                               </div>
                             )}
                           </div>
 
-                          {/* Actions for Admin / Member */}
                           <div style={{ marginTop: isCompact ? 3 : 6 }}>
                             {isAdmin ? (
                               <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -222,16 +213,15 @@ export default function TimetableGrid({
                                   <div className="flex gap-1">
                                     <button className="btn btn-success btn-sm" style={{ padding: '2px 4px', fontSize: '0.65rem', flex: 1 }}
                                       onClick={() => onApprove && onApprove(session.id, true)}>
-                                      ✅ Duyệt
+                                      ✅ Chuẩn Phê
                                     </button>
                                     <button className="btn btn-danger btn-sm" style={{ padding: '2px 4px', fontSize: '0.65rem', flex: 1 }}
                                       onClick={() => onApprove && onApprove(session.id, false)}>
-                                      ❌ Hủy
+                                      ❌ Bác Bỏ
                                     </button>
                                   </div>
                                 )}
 
-                                {/* Admin Direct Assign Select & Delete */}
                                 <div className="flex gap-1" style={{ marginTop: 2 }}>
                                   <select
                                     style={{
@@ -250,7 +240,7 @@ export default function TimetableGrid({
                                       if (val && onAssign) onAssign(session.id, val)
                                     }}
                                   >
-                                    <option value="">-- Giao người --</option>
+                                    <option value="">-- Ban Sắc Lệnh --</option>
                                     {members.map(m => (
                                       <option key={m.id} value={m.id}>
                                         👤 {m.full_name}
@@ -262,7 +252,7 @@ export default function TimetableGrid({
                                       className="btn btn-danger btn-sm"
                                       style={{ padding: '1px 5px', fontSize: '0.65rem' }}
                                       onClick={() => onDeleteSession(session.id)}
-                                      title="Xóa ca này khỏi tuần"
+                                      title="Thu hồi tràng này khỏi tuần"
                                     >
                                       🗑️
                                     </button>
@@ -277,14 +267,14 @@ export default function TimetableGrid({
                                     return (
                                       <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                                         <span className="badge badge-registered" style={{ fontSize: '0.62rem', width: '100%', justifyContent: 'center' }}>
-                                          🟠 Đã đăng ký
+                                          🟠 Đã Thỉnh Mệnh
                                         </span>
                                         <button
                                           className="btn btn-danger btn-sm"
                                           style={{ width: '100%', padding: '1px 4px', fontSize: '0.62rem', justifyContent: 'center' }}
                                           onClick={() => onCancelRegister && onCancelRegister(session.id)}
                                         >
-                                          ❌ Hủy đăng ký
+                                          ❌ Thu Hồi Thỉnh Mệnh
                                         </button>
                                       </div>
                                     )
@@ -297,7 +287,7 @@ export default function TimetableGrid({
                                         style={{ width: '100%', padding: '2px 4px', fontSize: '0.68rem', justifyContent: 'center' }}
                                         onClick={() => onRegister && onRegister(session.id)}
                                       >
-                                        📝 Đăng ký {applicantCount > 0 ? `(${applicantCount})` : ''}
+                                        📜 Lĩnh Nhận {applicantCount > 0 ? `(${applicantCount})` : ''}
                                       </button>
                                     )
                                   }
@@ -320,4 +310,3 @@ export default function TimetableGrid({
     </div>
   )
 }
-

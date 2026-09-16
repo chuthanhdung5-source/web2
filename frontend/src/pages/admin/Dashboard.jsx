@@ -14,7 +14,7 @@ export default function AdminDashboard() {
     else setLoading(true)
     adminAPI.getStats()
       .then(r => setStats(r.data))
-      .catch(() => toast.error('Lỗi tải dữ liệu thống kê'))
+      .catch(() => toast.error('Lỗi tải dữ liệu thống kê tông môn'))
       .finally(() => {
         setLoading(false)
         setRefreshing(false)
@@ -46,11 +46,11 @@ export default function AdminDashboard() {
               <span className="live-pulse" />
               <span>GIÁO HOÀNG ĐIỆN • ĐIỀU HÀNH TỔNG BẢNG</span>
             </div>
-            <h1 className="arch-title">Tiên Môn Chưởng Quản</h1>
+            <h1 className="arch-title">Tiên Môn Chưởng Quản Điện</h1>
             <p className="arch-desc">
               {pendingTotal > 0
-                ? `Cảnh báo: Hiện có ${pendingTotal} công vụ đang chờ phê duyệt khẩn cấp!`
-                : 'Toàn tông môn vận hành hanh thông, không có tác vụ tồn đọng.'}
+                ? `Cảnh báo: Hiện có ${pendingTotal} đạo vụ khảo thí đang chờ Giáo Hoàng chuẩn phê khẩn cấp!`
+                : 'Toàn tông môn vận hành hanh thông, vạn sự viên mãn, không có đạo vụ tồn đọng.'}
             </p>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default function AdminDashboard() {
               <span className="sect-symbol">⚔️</span>
               <span className="section-heading">TRUNG TÂM PHÙ TRIỆU & ĐIỀU HÀNH</span>
               {pendingTotal > 0 && (
-                <span className="urgent-badge">{pendingTotal} CẦN DUYỆT</span>
+                <span className="urgent-badge">{pendingTotal} CẦN CHUẨN PHÊ</span>
               )}
             </div>
 
@@ -86,8 +86,8 @@ export default function AdminDashboard() {
                       {stats?.pending_approval || 0}
                     </span>
                   </div>
-                  <h3 className="dispatch-name">Duyệt Ca Học</h3>
-                  <p className="dispatch-desc">Phê duyệt các ca học đệ tử vừa nhận</p>
+                  <h3 className="dispatch-name">Chuẩn Phê Thí Luyện</h3>
+                  <p className="dispatch-desc">Phê chuẩn các đạo tràng đệ tử vừa lĩnh nhận</p>
                   <div className="dispatch-action-footer">
                     <span>Vào thẩm định</span>
                     <span className="arrow-glyph">→</span>
@@ -103,10 +103,10 @@ export default function AdminDashboard() {
                       {stats?.pending_checkins || 0}
                     </span>
                   </div>
-                  <h3 className="dispatch-name">Xem Ảnh Check-in</h3>
-                  <p className="dispatch-desc">Xác thực chứng cứ điểm danh trực nhật</p>
+                  <h3 className="dispatch-name">Linh Ảnh Khảo Thí</h3>
+                  <p className="dispatch-desc">Chiêm bái pháp ảnh truyền tống nhập trận</p>
                   <div className="dispatch-action-footer">
-                    <span>Xem bằng chứng</span>
+                    <span>Soi chiếu linh ảnh</span>
                     <span className="arrow-glyph">→</span>
                   </div>
                 </div>
@@ -118,10 +118,10 @@ export default function AdminDashboard() {
                     <span className="dispatch-icon">🪙</span>
                     <span className="dispatch-count-badge amber-badge">Ngân khố</span>
                   </div>
-                  <h3 className="dispatch-name">Quản Lý Thanh Toán</h3>
-                  <p className="dispatch-desc">Quyết toán linh thạch lương thưởng</p>
+                  <h3 className="dispatch-name">Bổng Lộc Linh Thạch</h3>
+                  <p className="dispatch-desc">Quyết toán bổng lộc phát thưởng môn hạ</p>
                   <div className="dispatch-action-footer">
-                    <span>Giải ngân ngay</span>
+                    <span>Xuất ngân khố ngay</span>
                     <span className="arrow-glyph">→</span>
                   </div>
                 </div>
@@ -131,12 +131,12 @@ export default function AdminDashboard() {
                 <div className="dispatch-card-inner">
                   <div className="dispatch-header">
                     <span className="dispatch-icon">📜</span>
-                    <span className="dispatch-count-badge ruby-badge">Thời khóa</span>
+                    <span className="dispatch-count-badge ruby-badge">Khảo kỳ</span>
                   </div>
-                  <h3 className="dispatch-name">Thiết Lập Pháp Đàn</h3>
-                  <p className="dispatch-desc">Tạo ca học phân bổ cho các môn đệ</p>
+                  <h3 className="dispatch-name">Khai Mở Đạo Tràng</h3>
+                  <p className="dispatch-desc">Bố trí khảo kỳ hộ đạo truyền thừa</p>
                   <div className="dispatch-action-footer">
-                    <span>Tạo ca tuần</span>
+                    <span>Khai mở tuần tràng</span>
                     <span className="arrow-glyph">→</span>
                   </div>
                 </div>
@@ -152,7 +152,7 @@ export default function AdminDashboard() {
             <div className="pulse-content">
               <div className="pulse-progress-wrap">
                 <div className="pulse-labels">
-                  <span>Tiến độ hoàn thành ca học:</span>
+                  <span>Tiến độ hoàn tất khảo kỳ hộ đạo:</span>
                   <span className="rate-text">{completionRate}%</span>
                 </div>
                 <div className="pulse-bar-track">
@@ -162,11 +162,11 @@ export default function AdminDashboard() {
               <div className="pulse-sub-chips">
                 <div className="sub-chip">
                   <span className="sub-chip-dot green-dot" />
-                  <span>{stats?.completed_sessions || 0} Ca hoàn tất mỹ mãn</span>
+                  <span>{stats?.completed_sessions || 0} Tràng thí luyện viên mãn</span>
                 </div>
                 <div className="sub-chip">
                   <span className="sub-chip-dot amber-dot" />
-                  <span>{stats?.pending_approval || 0} Ca đang thụ lý</span>
+                  <span>{stats?.pending_approval || 0} Tràng đang chờ thẩm định</span>
                 </div>
               </div>
             </div>
@@ -184,13 +184,13 @@ export default function AdminDashboard() {
               <span className="monolith-icon">💎</span>
               <div>
                 <div className="monolith-tag">LINH THẠCH NGÂN KHỐ</div>
-                <div className="monolith-subtitle">Quỹ lương & Tài chính tông môn</div>
+                <div className="monolith-subtitle">Quỹ bổng lộc & Tài chính tông môn</div>
               </div>
             </div>
 
             <div className="monolith-body">
               <div className="monolith-figure-box">
-                <div className="figure-label">TỔNG LINH THẠCH ĐÃ TRẢ</div>
+                <div className="figure-label">TỔNG LINH THẠCH ĐÃ BAN THƯỞNG</div>
                 <div className="figure-value-gold">
                   {(stats?.total_paid_amount || 0).toLocaleString('vi-VN')}đ
                 </div>
@@ -198,7 +198,7 @@ export default function AdminDashboard() {
 
               <div className="monolith-pending-box">
                 <div className="pending-row">
-                  <span className="pending-label">⏳ Đang chờ giải ngân:</span>
+                  <span className="pending-label">⏳ Đang chờ ngân khố giải ngân:</span>
                   <span className="pending-amount">
                     {(stats?.total_pending_amount || 0).toLocaleString('vi-VN')}đ
                   </span>
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
                 <div className="pillar-icon-box">👥</div>
                 <div className="pillar-info">
                   <div className="pillar-num">{(stats?.total_members || 0).toLocaleString('vi-VN')}</div>
-                  <div className="pillar-name">Đồng Môn</div>
+                  <div className="pillar-name">Chư Vị Tu Giả</div>
                 </div>
               </div>
 
@@ -226,7 +226,7 @@ export default function AdminDashboard() {
                 <div className="pillar-icon-box">📅</div>
                 <div className="pillar-info">
                   <div className="pillar-num">{stats?.total_sessions || 0}</div>
-                  <div className="pillar-name">Ca Hệ Thống</div>
+                  <div className="pillar-name">Tổng Tràng Khảo Kỳ</div>
                 </div>
               </div>
 
@@ -234,7 +234,7 @@ export default function AdminDashboard() {
                 <div className="pillar-icon-box">⏳</div>
                 <div className="pillar-info">
                   <div className="pillar-num">{stats?.pending_approval || 0}</div>
-                  <div className="pillar-name">Ca Chờ Duyệt</div>
+                  <div className="pillar-name">Khảo Kỳ Chờ Phê</div>
                 </div>
               </div>
 
@@ -242,7 +242,7 @@ export default function AdminDashboard() {
                 <div className="pillar-icon-box">📸</div>
                 <div className="pillar-info">
                   <div className="pillar-num">{stats?.pending_checkins || 0}</div>
-                  <div className="pillar-name">Ảnh Check-in</div>
+                  <div className="pillar-name">Pháp Ảnh Khảo Thí</div>
                 </div>
               </div>
             </div>

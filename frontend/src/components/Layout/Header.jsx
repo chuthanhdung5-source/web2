@@ -4,19 +4,23 @@ import { useDouluo } from '../../context/DouluoContext'
 import './Header.css'
 
 const PAGE_TITLES = {
-  '/admin': 'Dashboard',
-  '/admin/schedule': 'Thời khóa biểu',
-  '/admin/sessions': 'Duyệt ca học',
-  '/admin/checkins': 'Xem ảnh Check-in',
-  '/admin/members': 'Quản lý thành viên',
-  '/admin/payments': 'Quản lý thanh toán',
-  '/admin/profile': 'Hồ sơ sinh viên',
-  '/member': 'Dashboard',
-  '/member/slots': 'Đăng ký ca học',
-  '/member/schedule': 'Lịch của tôi',
-  '/member/earnings': 'Thu nhập',
-  '/member/admin-info': 'Thông tin sinh viên',
-  '/member/profile': 'Hồ sơ',
+  '/admin': 'Tông Môn Điện • Tổng Bảng Điều Hành',
+  '/admin/schedule': 'Lịch Khảo Thí Trực Trận',
+  '/admin/sessions': 'Chuẩn Phê Thí Luyện Hộ Đạo',
+  '/admin/checkins': 'Linh Ảnh Khảo Thí Điểm Danh',
+  '/admin/notifications/send': 'Truyền Hịch Tông Môn',
+  '/admin/feedbacks': 'Thần Niệm Đệ Tử Góp Ý',
+  '/admin/activity-logs': 'Tông Môn Linh Ký Vạn Tượng',
+  '/admin/members': 'Quản Trị Chư Vị Tu Giả',
+  '/admin/payments': 'Bổng Lộc Linh Thạch Ngân Khố',
+  '/admin/profile': 'Ngọc Giản Thân Phận Tiên Môn',
+  '/member': 'Động Phủ Tu Vi Hồn Sư',
+  '/member/slots': 'Lĩnh Nhận Khảo Nghiệm Hộ Đạo',
+  '/member/schedule': 'Lịch Trình Hộ Đạo Bản Thân',
+  '/member/earnings': 'Bổng Lộc Linh Thạch Thu Hoạch',
+  '/member/feedback': 'Thượng Thư Giáo Hoàng',
+  '/member/admin-info': 'Môn Quy Tiên Tông',
+  '/member/profile': 'Đạo Lộ Cá Nhân',
 }
 
 export default function Header({ onToggleSidebar }) {
@@ -45,14 +49,12 @@ export default function Header({ onToggleSidebar }) {
 
   const isAdmin = user?.role === 'admin'
 
-  // Format kim cương gọn: 888.888 -> 888K
   const formatDiamonds = (n) => {
     if (n >= 1000000) return `${(n / 1000000).toFixed(1)}M`
     if (n >= 1000) return `${(n / 1000).toFixed(0)}K`
     return n
   }
 
-  // Format đếm ngược phiên làm việc
   const formatSessionTime = (totalSecs) => {
     const s = Math.max(0, totalSecs || 0)
     const h = Math.floor(s / 3600)
@@ -84,7 +86,7 @@ export default function Header({ onToggleSidebar }) {
         <div
           className="session-timer-badge"
           onClick={() => setIsShopOpen(true)}
-          title="Thời gian phiên tu luyện còn lại (Bấm để gia hạn trong Tàng Bảo Các)"
+          title="Thời gian canh giờ hộ đạo còn lại (Vào Tàng Bảo Các để gia hạn)"
         >
           <span className="session-icon">⏳</span>
           <span className="session-time">{formatSessionTime(sessionSecondsLeft)}</span>
@@ -93,10 +95,10 @@ export default function Header({ onToggleSidebar }) {
         <button
           className="btn-theme-switcher"
           onClick={() => setIsThemeModalOpen(true)}
-          title="Đổi Giao Diện Theme (Đen, Trắng, Tiên Môn...)"
+          title="Biến Hóa Huyễn Cảnh (Đổi Giao Diện)"
         >
           <span className="theme-btn-icon">🎨</span>
-          <span className="theme-btn-label">Đổi Theme</span>
+          <span className="theme-btn-label">Huyễn Cảnh</span>
         </button>
 
         {enabled ? (
@@ -113,7 +115,7 @@ export default function Header({ onToggleSidebar }) {
             <button
               className="btn-shop-trigger"
               onClick={() => setIsShopOpen(true)}
-              title="Tàng Bảo Các: Mua Skin, Đặc Quyền, Gia Hạn Bằng Kim Cương"
+              title="Tàng Bảo Các: Mua Huyễn Cảnh, Đặc Quyền, Gia Hạn Khẩu Quyết Bằng Kim Cương"
             >
               <span className="shop-icon">🔮</span>
               <span className="shop-text">Bảo Các</span>
@@ -132,7 +134,7 @@ export default function Header({ onToggleSidebar }) {
             <div
               className="diamond-wallet"
               onClick={() => (isAdmin ? setIsRechargeOpen(true) : setIsMineOpen(true))}
-              title={isAdmin ? 'Kho Kim Cương (Bấm để nạp VIP 0đ)' : 'Mỏ Hồn Thạch (Bấm để gõ nhặt kim cương)'}
+              title={isAdmin ? 'Kho Kim Cương Tiên Tinh' : 'Mỏ Hồn Thạch (Khai thác tinh thạch)'}
             >
               <span>💎</span>
               <span>{formatDiamonds(diamonds)}</span>
@@ -142,7 +144,7 @@ export default function Header({ onToggleSidebar }) {
             <button
               className="btn btn-ghost btn-sm btn-settings-icon"
               onClick={() => setIsSettingsOpen(true)}
-              title={isAdmin ? 'Giáo Hoàng Điện: Sắc phong Hồn Sư toàn Server' : 'Cài đặt chế độ Đấu La'}
+              title={isAdmin ? 'Giáo Hoàng Điện: Sắc phong Hồn Sư toàn Tiên Giới' : 'Thiết lập tâm pháp Đấu La'}
             >
               {isAdmin ? '🔱' : '⚙️'}
             </button>
@@ -151,14 +153,14 @@ export default function Header({ onToggleSidebar }) {
           <button
             className="btn btn-ghost btn-sm"
             onClick={() => setIsSettingsOpen(true)}
-            title="Mở lại chế độ Đấu La Đại Lục"
+            title="Khai mở cảnh giới Đấu La Đại Lục"
             style={{ opacity: 0.7, fontSize: '0.78rem', padding: '4px 8px' }}
           >
-            🔮 Đấu La
+            🔮 Khởi Đạo
           </button>
         )}
 
-        <div className="earnings-pill" title="Tổng thu nhập thực tế">
+        <div className="earnings-pill" title="Tổng bổng lộc linh thạch tích lũy">
           <span>💰</span>
           <span>{(user?.total_earnings || 0).toLocaleString('vi-VN')}đ</span>
         </div>
