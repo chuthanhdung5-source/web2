@@ -36,9 +36,19 @@ export const SHOP_ITEMS = [
     permanent: true,
   },
   {
+    id: 'skin_light',
+    name: 'Giao Diện Trắng Thanh Khiết',
+    price: 500,
+    icon: '🤍',
+    description: 'Khai mở giao diện nền sáng ngọc ngà, chữ đen đậm siêu rõ nét và thanh nhã.',
+    category: 'skin',
+    permanent: true,
+    skinId: 'skin-light',
+  },
+  {
     id: 'skin_huyen_ao',
     name: 'Giao Diện Lam Ngân Thần Khí',
-    price: 2000,
+    price: 1000,
     icon: '🌿',
     description: 'Khai mở skin giao diện Lam Ngân Thảo sắc xanh ngọc huyền ảo, dịu mát.',
     category: 'skin',
@@ -112,6 +122,7 @@ export function DouluoProvider({ children }) {
   const [isLeaderboardOpen, setIsLeaderboardOpen] = useState(false)
   const [isMineOpen, setIsMineOpen] = useState(false)
   const [isShopOpen, setIsShopOpen] = useState(false)
+  const [isThemeModalOpen, setIsThemeModalOpen] = useState(false)
 
   // Unsynced seconds buffer for heartbeat
   const unsyncedSecondsRef = useRef(0)
@@ -410,6 +421,8 @@ export function DouluoProvider({ children }) {
         setIsMineOpen,
         isShopOpen,
         setIsShopOpen,
+        isThemeModalOpen,
+        setIsThemeModalOpen,
       }}
     >
       {children}

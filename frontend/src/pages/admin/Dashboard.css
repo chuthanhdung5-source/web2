@@ -608,3 +608,134 @@
     font-size: 1.5rem;
   }
 }
+
+[data-theme="skin-light"] .sect-arch-banner {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="skin-light"] .arch-title {
+  color: #0f172a;
+  text-shadow: none;
+}
+
+[data-theme="skin-light"] .arch-desc {
+  color: #475569;
+}
+
+[data-theme="skin-light"] .arch-tag {
+  color: #4f46e5;
+  text-shadow: none;
+}
+
+[data-theme="skin-light"] .sect-crest {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  box-shadow: none;
+}
+
+[data-theme="skin-light"] .dispatch-card {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="skin-light"] .dispatch-name {
+  color: #0f172a;
+}
+
+[data-theme="skin-light"] .dispatch-desc {
+  color: #64748b;
+}
+
+[data-theme="skin-light"] .dispatch-action-footer {
+  border-top-color: #f1f5f9;
+  color: #4f46e5;
+}
+
+[data-theme="skin-light"] .sect-pulse-box {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="skin-light"] .pulse-title {
+  color: #4f46e5;
+}
+
+[data-theme="skin-light"] .pulse-labels {
+  color: #0f172a;
+}
+
+[data-theme="skin-light"] .sub-chip {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #475569;
+}
+
+[data-theme="skin-light"] .treasury-monolith {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="skin-light"] .monolith-corner {
+  border-color: #cbd5e1;
+}
+
+[data-theme="skin-light"] .monolith-header {
+  border-bottom-color: #f1f5f9;
+}
+
+[data-theme="skin-light"] .monolith-tag {
+  color: #0f172a;
+  text-shadow: none;
+}
+
+[data-theme="skin-light"] .monolith-figure-box {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+[data-theme="skin-light"] .figure-label {
+  color: #64748b;
+}
+
+[data-theme="skin-light"] .figure-value-gold {
+  color: #059669;
+  text-shadow: none;
+}
+
+[data-theme="skin-light"] .monolith-pending-box {
+  background: #fef3c7;
+  border-color: #fde68a;
+}
+
+[data-theme="skin-light"] .pending-label {
+  color: #92400e;
+}
+
+[data-theme="skin-light"] .pending-amount {
+  color: #b45309;
+}
+
+[data-theme="skin-light"] .pillar-tile {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="skin-light"] .pillar-num {
+  color: #0f172a !important;
+  text-shadow: none !important;
+}
+
+[data-theme="skin-light"] .pillar-name {
+  color: #64748b;
+}
+
+[data-theme="skin-light"] .section-heading {
+  color: #0f172a;
+  text-shadow: none;
+}

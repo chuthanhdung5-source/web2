@@ -7,13 +7,12 @@ import RechargeVipModal from './components/Douluo/RechargeVipModal'
 import CultivationModal from './components/Douluo/CultivationModal'
 import DiamondMineModal from './components/Douluo/DiamondMineModal'
 import DiamondShopModal from './components/Douluo/DiamondShopModal'
+import ThemeModal from './components/Douluo/ThemeModal'
 import SessionTimerOverlay from './components/Common/SessionTimerOverlay'
 
-// Auth pages
 import Login from './pages/Login'
 import Register from './pages/Register'
 
-// Admin pages
 import AdminDashboard from './pages/admin/Dashboard'
 import AdminSchedule from './pages/admin/ScheduleManager'
 import AdminSessionApproval from './pages/admin/SessionApproval'
@@ -25,7 +24,6 @@ import AdminMembers from './pages/admin/MemberList'
 import AdminPayments from './pages/admin/PaymentManager'
 import AdminProfile from './pages/admin/ProfileSettings'
 
-// Member pages
 import MemberDashboard from './pages/member/Dashboard'
 import AvailableSlots from './pages/member/AvailableSlots'
 import MySchedule from './pages/member/MySchedule'
@@ -35,7 +33,6 @@ import SendFeedback from './pages/member/SendFeedback'
 import AdminInfo from './pages/member/AdminInfo'
 import MemberProfile from './pages/member/ProfileSettings'
 
-// Layout
 import AppLayout from './components/Layout/AppLayout'
 
 function ProtectedRoute({ children, role }) {
@@ -69,7 +66,6 @@ export default function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/" element={<RootRedirect />} />
 
-              {/* Admin Routes */}
               <Route path="/admin" element={
                 <ProtectedRoute role="admin"><AppLayout /></ProtectedRoute>
               }>
@@ -85,8 +81,6 @@ export default function App() {
                 <Route path="profile" element={<AdminProfile />} />
               </Route>
 
-
-              {/* Member Routes */}
               <Route path="/member" element={
                 <ProtectedRoute role="member"><AppLayout /></ProtectedRoute>
               }>
@@ -100,12 +94,12 @@ export default function App() {
                 <Route path="profile" element={<MemberProfile />} />
               </Route>
             </Routes>
-            {/* Global Modals for Douluo Mode */}
             <DouluoSettingsModal />
             <RechargeVipModal />
             <CultivationModal />
             <DiamondMineModal />
             <DiamondShopModal />
+            <ThemeModal />
             <SessionTimerOverlay />
           </BrowserRouter>
         </ThemeProvider>

@@ -138,6 +138,29 @@
   transform: translateY(-1px);
 }
 
+.btn-theme-switcher {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(124, 106, 245, 0.18);
+  border: 1px solid rgba(124, 106, 245, 0.45);
+  color: #c7d2fe;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-theme-switcher:hover {
+  background: rgba(124, 106, 245, 0.35);
+  border-color: #a89ff8;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
 .btn-cultivate-pulse {
   display: flex;
   align-items: center;
@@ -330,4 +353,54 @@
   .session-timer-badge .session-icon {
     display: none;
   }
+
+  .btn-theme-switcher .theme-btn-label {
+    display: none;
+  }
+}
+
+[data-theme="skin-light"] .top-header {
+  background: #ffffff;
+  border-bottom: 1px solid #cbd5e1;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="skin-light"] .header-title {
+  color: #0f172a;
+}
+
+[data-theme="skin-light"] .sidebar-toggle-btn {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #0f172a;
+}
+
+[data-theme="skin-light"] .btn-theme-switcher {
+  background: #ede9fe;
+  border-color: #c4b5fd;
+  color: #4f46e5;
+}
+
+[data-theme="skin-light"] .session-timer-badge {
+  background: #fef3c7;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+[data-theme="skin-light"] .btn-shop-trigger {
+  background: #f3e8ff;
+  border-color: #d8b4fe;
+  color: #7e22ce;
+}
+
+[data-theme="skin-light"] .diamond-wallet {
+  background: #e0f2fe;
+  border-color: #bae6fd;
+  color: #0369a1;
+}
+
+[data-theme="skin-light"] .earnings-pill {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
 }

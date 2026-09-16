@@ -272,3 +272,45 @@
   color: #fff;
 }
 
+[data-theme="skin-light"] .sidebar {
+  background: #ffffff;
+  border-right: 1px solid #cbd5e1;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="skin-light"] .sidebar-logo {
+  border-bottom-color: #e2e8f0;
+}
+
+[data-theme="skin-light"] .logo-title {
+  color: #0f172a;
+}
+
+[data-theme="skin-light"] .sidebar-link {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #334155;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="skin-light"] .sidebar-link:hover {
+  background: #ede9fe;
+  color: #4f46e5;
+  border-color: #a89ff8;
+}
+
+[data-theme="skin-light"] .sidebar-link.active {
+  background: #e0e7ff;
+  border-color: #6366f1;
+  color: #4338ca;
+}
+
+[data-theme="skin-light"] .sidebar-footer {
+  border-top-color: #e2e8f0;
+}
+
+[data-theme="skin-light"] .user-name {
+  color: #0f172a;
+  text-shadow: none;
+}
+

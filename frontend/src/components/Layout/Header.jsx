@@ -34,6 +34,7 @@ export default function Header({ onToggleSidebar }) {
     setIsCultivationOpen,
     setIsMineOpen,
     setIsShopOpen,
+    setIsThemeModalOpen,
   } = useDouluo()
 
   const title = Object.entries(PAGE_TITLES).find(([key]) => pathname === key)?.[1] || 'Đấu La Đại Khảo Chi Lưới'
@@ -88,6 +89,15 @@ export default function Header({ onToggleSidebar }) {
           <span className="session-icon">⏳</span>
           <span className="session-time">{formatSessionTime(sessionSecondsLeft)}</span>
         </div>
+
+        <button
+          className="btn-theme-switcher"
+          onClick={() => setIsThemeModalOpen(true)}
+          title="Đổi Giao Diện Theme (Đen, Trắng, Tiên Môn...)"
+        >
+          <span className="theme-btn-icon">🎨</span>
+          <span className="theme-btn-label">Đổi Theme</span>
+        </button>
 
         {enabled ? (
           <>
