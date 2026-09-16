@@ -107,5 +107,7 @@ export const douluoAPI = {
   toggleMode: () => api.post('/douluo/toggle'),
   getLeaderboard: () => api.get('/douluo/leaderboard'),
   adminPromote: (data) => api.post('/douluo/admin/promote', data),
+  adminGetMemberCultivation: (userId) => api.get(`/douluo/admin/member/${userId}`),
+  adminUpdateMemberCultivation: (userId, data) => api.put(`/douluo/admin/member/${userId}`, data),
 }
 

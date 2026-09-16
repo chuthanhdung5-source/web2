@@ -71,6 +71,35 @@ class AdminPromoteRequest(BaseModel):
     custom_title: Optional[str] = None
 
 
+class AdminMemberCultivationOut(BaseModel):
+    id: int
+    user_id: int
+    user_name: Optional[str] = None
+    username: Optional[str] = None
+    level: int
+    realm_name: str
+    exp: int
+    exp_needed: int
+    diamonds: int
+    total_cultivate_seconds: int
+    custom_title: Optional[str] = None
+    vip_tier: int
+    purchased_items: List[str] = []
+    is_enabled: bool
+
+
+class AdminUpdateMemberCultivationRequest(BaseModel):
+    level: Optional[int] = Field(None, ge=1, le=100)
+    diamonds: Optional[int] = Field(None, ge=0)
+    diamonds_add: Optional[int] = None
+    custom_title: Optional[str] = None
+    vip_tier: Optional[int] = Field(None, ge=0, le=4)
+    purchased_items: Optional[List[str]] = None
+    exp: Optional[int] = None
+    total_cultivate_seconds: Optional[int] = None
+    is_enabled: Optional[bool] = None
+
+
 class LeaderboardItem(BaseModel):
     rank: int
     user_id: int

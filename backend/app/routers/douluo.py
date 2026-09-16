@@ -19,6 +19,8 @@ from app.schemas.douluo import (
     LeaderboardItem,
     PurchaseRequest,
     ExtendSessionRequest,
+    AdminMemberCultivationOut,
+    AdminUpdateMemberCultivationRequest,
 )
 from app.routers.auth import get_current_user
 
@@ -527,3 +529,140 @@ def admin_promote(
         "message": f"✅ Đã ban sắc lệnh nâng cấp thành công cho {count} người ({target_desc})!",
         "affected_count": count,
     }
+
+
+@router.get("/admin/member/{user_id}", response_model=AdminMemberCultivationOut)
+def admin_get_member_cultivation(
+    user_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role != UserRole.admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Chỉ có Giáo Hoàng / Admin mới có quyền truy cập!",
+        )
+    target_user = db.query(User).filter(User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="Không tìm thấy thành viên")
+
+    cult = get_or_create_cultivation(db, target_user)
+    items = []
+    if cult.purchased_items:
+        try:
+            items = json.loads(cult.purchased_items)
+            if not isinstance(items, list):
+                items = []
+        except Exception:
+            items = []
+
+    return AdminMemberCultivationOut(
+        id=cult.id,
+        user_id=target_user.id,
+        user_name=target_user.full_name,
+        username=target_user.username,
+        level=cult.level,
+        realm_name=cult.realm_name,
+        exp=cult.exp,
+        exp_needed=get_exp_needed(cult.level),
+        diamonds=cult.diamonds,
+        total_cultivate_seconds=cult.total_cultivate_seconds,
+        custom_title=cult.custom_title,
+        vip_tier=cult.vip_tier,
+        purchased_items=items,
+        is_enabled=cult.is_enabled,
+    )
+
+
+@router.put("/admin/member/{user_id}", response_model=AdminMemberCultivationOut)
+def admin_update_member_cultivation(
+    user_id: int,
+    payload: AdminUpdateMemberCultivationRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    if current_user.role != UserRole.admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Chỉ có Giáo Hoàng / Admin mới có quyền chỉnh sửa tu vi!",
+        )
+    target_user = db.query(User).filter(User.id == user_id).first()
+    if not target_user:
+        raise HTTPException(status_code=404, detail="Không tìm thấy thành viên")
+
+    cult = get_or_create_cultivation(db, target_user)
+
+    if payload.level is not None:
+        cult.level = max(1, min(100, payload.level))
+        cult.realm_name = get_realm_by_level(cult.level)
+
+    if payload.diamonds is not None:
+        old_d = cult.diamonds
+        cult.diamonds = max(0, payload.diamonds)
+        diff = cult.diamonds - old_d
+        if diff != 0:
+            tx = DouluoTransaction(
+                user_id=cult.user_id,
+                amount=diff,
+                action_type="admin_set",
+                description=f"Admin điều chỉnh số dư thành {cult.diamonds:,} 💎",
+            )
+            db.add(tx)
+    elif payload.diamonds_add is not None and payload.diamonds_add != 0:
+        cult.diamonds = max(0, cult.diamonds + payload.diamonds_add)
+        tx = DouluoTransaction(
+            user_id=cult.user_id,
+            amount=payload.diamonds_add,
+            action_type="admin_promote",
+            description=f"Admin thưởng/phạt kim cương ({payload.diamonds_add:+,} 💎)",
+        )
+        db.add(tx)
+
+    if payload.custom_title is not None:
+        cult.custom_title = payload.custom_title.strip() or None
+
+    if payload.vip_tier is not None:
+        cult.vip_tier = max(0, min(4, payload.vip_tier))
+
+    if payload.purchased_items is not None:
+        clean_items = list(dict.fromkeys(payload.purchased_items))
+        cult.purchased_items = json.dumps(clean_items)
+
+    if payload.exp is not None:
+        cult.exp = max(0, payload.exp)
+
+    if payload.total_cultivate_seconds is not None:
+        cult.total_cultivate_seconds = max(0, payload.total_cultivate_seconds)
+
+    if payload.is_enabled is not None:
+        cult.is_enabled = payload.is_enabled
+
+    db.commit()
+    db.refresh(cult)
+
+    items = []
+    if cult.purchased_items:
+        try:
+            items = json.loads(cult.purchased_items)
+            if not isinstance(items, list):
+                items = []
+        except Exception:
+            items = []
+
+    return AdminMemberCultivationOut(
+        id=cult.id,
+        user_id=target_user.id,
+        user_name=target_user.full_name,
+        username=target_user.username,
+        level=cult.level,
+        realm_name=cult.realm_name,
+        exp=cult.exp,
+        exp_needed=get_exp_needed(cult.level),
+        diamonds=cult.diamonds,
+        total_cultivate_seconds=cult.total_cultivate_seconds,
+        custom_title=cult.custom_title,
+        vip_tier=cult.vip_tier,
+        purchased_items=items,
+        is_enabled=cult.is_enabled,
+    )
+

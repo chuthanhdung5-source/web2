@@ -1,22 +1,39 @@
 import { useEffect, useState } from 'react'
-import { adminAPI } from '../../api'
-import { useDouluo, getRealmInfo } from '../../context/DouluoContext'
+import { adminAPI, douluoAPI } from '../../api'
+import { useDouluo, getRealmInfo, SHOP_ITEMS } from '../../context/DouluoContext'
+import { useAuth } from '../../context/AuthContext'
 import toast from 'react-hot-toast'
 
+const VIP_TIERS = [
+  { value: 0, label: 'VIP 0 - Phổ Thông' },
+  { value: 1, label: 'VIP 1 - Đồng (Hồn Vương)' },
+  { value: 2, label: 'VIP 2 - Bạc (Hồn Thánh)' },
+  { value: 3, label: 'VIP 3 - Vàng (Phong Hào)' },
+  { value: 4, label: 'VIP 4 - Chí Tôn (Thần Vương)' }
+]
+
 export default function MemberList() {
-  const { adminPromote } = useDouluo()
+  const { user } = useAuth()
+  const { loadStatus } = useDouluo()
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
+
   const [resetModalMember, setResetModalMember] = useState(null)
   const [newPassword, setNewPassword] = useState('')
   const [resetting, setResetting] = useState(false)
 
-  // Sắc phong Hồn Sư state
-  const [promoteMember, setPromoteMember] = useState(null)
-  const [promoteLevel, setPromoteLevel] = useState(60)
-  const [promoteDiamonds, setPromoteDiamonds] = useState(100000)
-  const [promoteTitle, setPromoteTitle] = useState('Học Hộ Đấu La')
-  const [promoting, setPromoting] = useState(false)
+  const [editMember, setEditMember] = useState(null)
+  const [loadingCultivation, setLoadingCultivation] = useState(false)
+  const [savingCultivation, setSavingCultivation] = useState(false)
+
+  const [editLevel, setEditLevel] = useState(1)
+  const [editDiamonds, setEditDiamonds] = useState(0)
+  const [editVipTier, setEditVipTier] = useState(0)
+  const [editTitle, setEditTitle] = useState('')
+  const [editPurchasedItems, setEditPurchasedItems] = useState([])
+  const [editExp, setEditExp] = useState(0)
+  const [editTotalSeconds, setEditTotalSeconds] = useState(0)
+  const [editIsEnabled, setEditIsEnabled] = useState(true)
 
   const load = () => {
     adminAPI.getMembers().then(r => setMembers(r.data)).finally(() => setLoading(false))
@@ -28,12 +45,14 @@ export default function MemberList() {
       await adminAPI.toggleMember(id)
       toast.success('Đã cập nhật trạng thái')
       load()
-    } catch { toast.error('Có lỗi xảy ra') }
+    } catch {
+      toast.error('Có lỗi xảy ra')
+    }
   }
 
   const openResetModal = (member) => {
     setResetModalMember(member)
-    setNewPassword('123456') // Mặc định gợi ý 123456 cho nhanh
+    setNewPassword('123456')
   }
 
   const handleForceReset = async (e) => {
@@ -61,36 +80,91 @@ export default function MemberList() {
     }
   }
 
-  const openPromoteModal = (member) => {
-    setPromoteMember(member)
-    setPromoteLevel(60)
-    setPromoteDiamonds(100000)
-    setPromoteTitle('Học Hộ Đấu La')
-  }
-
-  const handlePromoteSubmit = async (e) => {
-    e.preventDefault()
-    if (!promoteMember) return
-    setPromoting(true)
+  const openCultivationModal = async (member) => {
+    setEditMember(member)
+    setLoadingCultivation(true)
     try {
-      await adminPromote({
-        target_type: 'user',
-        user_id: promoteMember.id,
-        level: Number(promoteLevel),
-        diamonds_add: Number(promoteDiamonds),
-        custom_title: promoteTitle
-      })
-      setPromoteMember(null)
+      const res = await douluoAPI.adminGetMemberCultivation(member.id)
+      const data = res.data
+      setEditLevel(data.level || 1)
+      setEditDiamonds(data.diamonds || 0)
+      setEditVipTier(data.vip_tier || 0)
+      setEditTitle(data.custom_title || '')
+      setEditPurchasedItems(Array.isArray(data.purchased_items) ? data.purchased_items : [])
+      setEditExp(data.exp || 0)
+      setEditTotalSeconds(data.total_cultivate_seconds || 0)
+      setEditIsEnabled(data.is_enabled !== false)
+    } catch {
+      setEditLevel(1)
+      setEditDiamonds(88888)
+      setEditVipTier(0)
+      setEditTitle('')
+      setEditPurchasedItems([])
+      setEditExp(0)
+      setEditTotalSeconds(0)
+      setEditIsEnabled(true)
     } finally {
-      setPromoting(false)
+      setLoadingCultivation(false)
     }
   }
+
+  const handleToggleItem = (itemId) => {
+    setEditPurchasedItems(prev => {
+      if (prev.includes(itemId)) {
+        return prev.filter(id => id !== itemId)
+      } else {
+        return [...prev, itemId]
+      }
+    })
+  }
+
+  const handleSelectAllItems = () => {
+    const allIds = SHOP_ITEMS.map(item => item.id)
+    setEditPurchasedItems(allIds)
+  }
+
+  const handleClearAllItems = () => {
+    setEditPurchasedItems([])
+  }
+
+  const handleSaveCultivation = async (e) => {
+    e.preventDefault()
+    if (!editMember) return
+    setSavingCultivation(true)
+    try {
+      const payload = {
+        level: Number(editLevel),
+        diamonds: Number(editDiamonds),
+        vip_tier: Number(editVipTier),
+        custom_title: editTitle,
+        purchased_items: editPurchasedItems,
+        exp: Number(editExp),
+        total_cultivate_seconds: Number(editTotalSeconds),
+        is_enabled: editIsEnabled
+      }
+      await douluoAPI.adminUpdateMemberCultivation(editMember.id, payload)
+      toast.success(`✅ Đã cập nhật toàn bộ quyền hạn & tu vi cho ${editMember.full_name}!`, {
+        duration: 5000,
+        icon: '👑'
+      })
+      if (user && user.id === editMember.id) {
+        loadStatus()
+      }
+      setEditMember(null)
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Lỗi khi cập nhật tu vi thành viên')
+    } finally {
+      setSavingCultivation(false)
+    }
+  }
+
+  const currentRealm = getRealmInfo(editLevel)
 
   return (
     <div>
       <div className="page-header">
         <h1>👥 Quản lý thành viên</h1>
-        <p>Danh sách tất cả thành viên trong hệ thống và thông tin chi trả</p>
+        <p>Danh sách tất cả thành viên trong hệ thống, thông tin chi trả và quyền năng Đấu La</p>
       </div>
 
       {loading ? (
@@ -147,11 +221,20 @@ export default function MemberList() {
                     <div className="flex gap-2" style={{ alignItems: 'center' }}>
                       <button
                         className="btn btn-sm btn-ghost"
-                        title="Sắc phong Hồn Sư Đấu La"
-                        onClick={() => openPromoteModal(m)}
-                        style={{ border: '1px solid rgba(168, 85, 247, 0.4)', color: '#c084fc', padding: '4px 8px' }}
+                        title="Quản lý toàn diện: Cấp độ, Kim cương, Gói đã mua, VIP, Danh hiệu"
+                        onClick={() => openCultivationModal(m)}
+                        style={{
+                          border: '1px solid rgba(168, 85, 247, 0.5)',
+                          color: '#c084fc',
+                          padding: '4px 10px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 5,
+                          fontWeight: 600,
+                          background: 'rgba(168, 85, 247, 0.08)'
+                        }}
                       >
-                        🔱 Sắc phong
+                        🔱 Tu Vi & Gói
                       </button>
                       <button
                         className="btn btn-sm btn-secondary"
@@ -177,76 +260,408 @@ export default function MemberList() {
         </div>
       )}
 
-      {/* Modal Sắc phong Hồn Sư */}
-      {promoteMember && (
-        <div className="modal-backdrop" onClick={() => setPromoteMember(null)}>
-          <div className="modal card" style={{ maxWidth: 460, width: '100%', margin: 20 }} onClick={e => e.stopPropagation()}>
-            <div className="flex flex-between align-center" style={{ marginBottom: 16 }}>
-              <h2 className="h3">🔱 Sắc phong Hồn Sư</h2>
-              <button className="btn btn-ghost btn-sm" onClick={() => setPromoteMember(null)}>✕</button>
+      {editMember && (
+        <div className="modal-backdrop" onClick={() => setEditMember(null)} style={{ overflowY: 'auto', padding: '20px 10px' }}>
+          <div
+            className="modal card"
+            style={{
+              maxWidth: 620,
+              width: '100%',
+              margin: 'auto',
+              maxHeight: '90vh',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: 0,
+              overflow: 'hidden'
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div
+              style={{
+                padding: '16px 20px',
+                borderBottom: '1px solid var(--border)',
+                background: 'var(--bg-secondary)',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <div className="flex align-center gap-2">
+                <span style={{ fontSize: '1.4rem' }}>👑</span>
+                <div>
+                  <h2 className="h3" style={{ margin: 0, fontSize: '1.1rem' }}>
+                    Sửa Toàn Diện Quyền & Tu Vi Thành Viên
+                  </h2>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {editMember.full_name} (@{editMember.username}) • ID #{editMember.id}
+                  </div>
+                </div>
+              </div>
+              <button className="btn btn-ghost btn-sm" onClick={() => setEditMember(null)}>✕</button>
             </div>
 
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: 16 }}>
-              Sắc phong cho thành viên <strong>{promoteMember.full_name}</strong> (<code>@{promoteMember.username}</code>).
-            </p>
-
-            <form onSubmit={handlePromoteSubmit} className="flex flex-col gap-4">
-              <div className="form-group">
-                <label className="form-label">Cấp độ Hồn Sư</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  value={promoteLevel}
-                  onChange={e => setPromoteLevel(e.target.value)}
-                  required
-                />
+            {loadingCultivation ? (
+              <div className="flex-center" style={{ height: 260 }}>
+                <div className="spinner" />
               </div>
+            ) : (
+              <form onSubmit={handleSaveCultivation} style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                <div style={{ padding: '16px 20px', overflowY: 'auto', maxHeight: 'calc(90vh - 140px)', display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  
+                  <div
+                    style={{
+                      background: 'var(--bg-secondary)',
+                      border: '1px solid var(--border)',
+                      borderRadius: 12,
+                      padding: '12px 16px',
+                      display: 'flex',
+                      flexWrap: 'wrap',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: 12
+                    }}
+                  >
+                    <div className="flex align-center gap-3">
+                      <span style={{ fontSize: '2rem' }}>{currentRealm.icon}</span>
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--text-primary)' }}>
+                          {editTitle ? `${editTitle} • ` : ''}{currentRealm.name} (Cấp {editLevel})
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: '#a855f7', fontWeight: 600 }}>
+                          {currentRealm.ringName}
+                        </div>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '0.95rem', fontWeight: 800, color: '#38bdf8' }}>
+                        💎 {Number(editDiamonds || 0).toLocaleString('vi-VN')}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                        {VIP_TIERS.find(v => v.value === Number(editVipTier))?.label || 'VIP 0'}
+                      </div>
+                    </div>
+                  </div>
 
-              <div className="form-group">
-                <label className="form-label">Kim cương thưởng (+)</label>
-                <input
-                  type="number"
-                  className="form-input"
-                  value={promoteDiamonds}
-                  onChange={e => setPromoteDiamonds(e.target.value)}
-                  required
-                />
-              </div>
+                  <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: 10, display: 'flex', justifyContent: 'space-between' }}>
+                      <span>🥋 Cấp Độ Hồn Sư & Cảnh Giới:</span>
+                      <span style={{ color: '#38bdf8', fontWeight: 800 }}>Cấp {editLevel} / 100 ({currentRealm.name})</span>
+                    </div>
+                    <div className="flex gap-3 align-center">
+                      <input
+                        type="range"
+                        min="1"
+                        max="100"
+                        value={editLevel}
+                        onChange={e => setEditLevel(Number(e.target.value))}
+                        style={{ flex: 1, accentColor: '#a855f7' }}
+                      />
+                      <input
+                        type="number"
+                        min="1"
+                        max="100"
+                        className="form-input"
+                        style={{ width: 80, textAlign: 'center', fontWeight: 700 }}
+                        value={editLevel}
+                        onChange={e => setEditLevel(Math.max(1, Math.min(100, Number(e.target.value) || 1)))}
+                      />
+                    </div>
+                    <div className="flex gap-2" style={{ flexWrap: 'wrap', marginTop: 8 }}>
+                      {[10, 30, 50, 70, 90, 99, 100].map(lvl => (
+                        <button
+                          key={lvl}
+                          type="button"
+                          className="btn btn-ghost btn-sm"
+                          style={{ fontSize: '0.75rem', padding: '2px 6px', border: '1px solid var(--border)' }}
+                          onClick={() => setEditLevel(lvl)}
+                        >
+                          Cấp {lvl}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
-              <div className="form-group">
-                <label className="form-label">Danh hiệu</label>
-                <input
-                  type="text"
-                  className="form-input"
-                  value={promoteTitle}
-                  onChange={e => setPromoteTitle(e.target.value)}
-                  required
-                />
-              </div>
+                  <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
+                    <div style={{ fontWeight: 700, fontSize: '0.88rem', marginBottom: 10 }}>
+                      💎 Số Kim Cương Sở Hữu:
+                    </div>
+                    <div className="flex gap-2">
+                      <input
+                        type="number"
+                        min="0"
+                        className="form-input"
+                        style={{ fontWeight: 700, fontSize: '1rem', color: '#38bdf8' }}
+                        value={editDiamonds}
+                        onChange={e => setEditDiamonds(Math.max(0, Number(e.target.value) || 0))}
+                        required
+                      />
+                    </div>
+                    <div className="flex gap-2" style={{ flexWrap: 'wrap', marginTop: 8 }}>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        style={{ fontSize: '0.75rem', padding: '3px 8px', border: '1px solid var(--border)' }}
+                        onClick={() => setEditDiamonds(prev => prev + 10000)}
+                      >
+                        +10.000
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        style={{ fontSize: '0.75rem', padding: '3px 8px', border: '1px solid var(--border)' }}
+                        onClick={() => setEditDiamonds(prev => prev + 50000)}
+                      >
+                        +50.000
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        style={{ fontSize: '0.75rem', padding: '3px 8px', border: '1px solid var(--border)' }}
+                        onClick={() => setEditDiamonds(prev => prev + 100000)}
+                      >
+                        +100.000
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        style={{ fontSize: '0.75rem', padding: '3px 8px', border: '1px solid var(--border)' }}
+                        onClick={() => setEditDiamonds(prev => prev + 500000)}
+                      >
+                        +500.000
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        style={{ fontSize: '0.75rem', padding: '3px 8px', border: '1px solid #38bdf8', color: '#38bdf8' }}
+                        onClick={() => setEditDiamonds(999999)}
+                      >
+                        Set 999.999 💎
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-ghost btn-sm"
+                        style={{ fontSize: '0.75rem', padding: '3px 8px', border: '1px solid #ef4444', color: '#ef4444' }}
+                        onClick={() => setEditDiamonds(0)}
+                      >
+                        Về 0 💎
+                      </button>
+                    </div>
+                  </div>
 
-              <div className="flex gap-3" style={{ justifyContent: 'flex-end', marginTop: 12 }}>
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setPromoteMember(null)}
-                  disabled={promoting}
+                  <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
+                    <div className="flex flex-between align-center" style={{ marginBottom: 8 }}>
+                      <div style={{ fontWeight: 700, fontSize: '0.88rem' }}>
+                        🎁 Tất Cả Các Gói & Vật Phẩm Đã Mua ({editPurchasedItems.length}/{SHOP_ITEMS.length}):
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-sm"
+                          style={{ fontSize: '0.75rem', color: '#38bdf8', padding: '2px 8px' }}
+                          onClick={handleSelectAllItems}
+                        >
+                          ✨ Mở khóa tất cả
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-sm"
+                          style={{ fontSize: '0.75rem', color: '#ef4444', padding: '2px 8px' }}
+                          onClick={handleClearAllItems}
+                        >
+                          🧹 Tước hết gói
+                        </button>
+                      </div>
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 8 }}>
+                      {SHOP_ITEMS.map(item => {
+                        const isOwned = editPurchasedItems.includes(item.id)
+                        return (
+                          <div
+                            key={item.id}
+                            onClick={() => handleToggleItem(item.id)}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              gap: 10,
+                              padding: '8px 12px',
+                              borderRadius: 8,
+                              cursor: 'pointer',
+                              background: isOwned ? 'rgba(168, 85, 247, 0.12)' : 'var(--bg-secondary)',
+                              border: `1px solid ${isOwned ? '#a855f7' : 'var(--border)'}`,
+                              transition: 'all 0.15s ease'
+                            }}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isOwned}
+                              onChange={() => {}}
+                              style={{ width: 16, height: 16, accentColor: '#a855f7', cursor: 'pointer' }}
+                            />
+                            <span style={{ fontSize: '1.2rem' }}>{item.icon}</span>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: '0.82rem', fontWeight: 600, color: isOwned ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
+                                {item.name}
+                              </div>
+                              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                                {item.price.toLocaleString('vi-VN')} 💎 {isOwned ? '• (ĐÃ SỞ HỮU)' : ''}
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
+                    <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
+                      <label style={{ fontWeight: 700, fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>
+                        👑 Cấp VIP Đặc Quyền:
+                      </label>
+                      <select
+                        className="form-control"
+                        value={editVipTier}
+                        onChange={e => setEditVipTier(Number(e.target.value))}
+                        style={{ width: '100%', padding: '8px 12px', borderRadius: 8, background: 'var(--bg-secondary)' }}
+                      >
+                        {VIP_TIERS.map(v => (
+                          <option key={v.value} value={v.value}>{v.label}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
+                      <label style={{ fontWeight: 700, fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>
+                        📜 Phong Hào / Danh Hiệu:
+                      </label>
+                      <input
+                        type="text"
+                        className="form-input"
+                        placeholder="VD: Học Hộ Đấu La, Tu La..."
+                        value={editTitle}
+                        onChange={e => setEditTitle(e.target.value)}
+                      />
+                      <div className="flex gap-2" style={{ marginTop: 6, flexWrap: 'wrap' }}>
+                        {['Học Hộ Đấu La', 'Hải Thần', 'Tu La Thần Vương'].map(t => (
+                          <button
+                            key={t}
+                            type="button"
+                            className="btn btn-ghost btn-sm"
+                            style={{ fontSize: '0.7rem', padding: '2px 6px' }}
+                            onClick={() => setEditTitle(t)}
+                          >
+                            {t}
+                          </button>
+                        ))}
+                        {editTitle && (
+                          <button
+                            type="button"
+                            className="btn btn-ghost btn-sm"
+                            style={{ fontSize: '0.7rem', padding: '2px 6px', color: '#ef4444' }}
+                            onClick={() => setEditTitle('')}
+                          >
+                            Xóa
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
+                    <div className="flex-between align-center">
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '0.85rem' }}>
+                          ⚡ Kích hoạt Chế độ Tu Tiên Đấu La
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          Bật tính năng tu luyện, vòng hồn hoàn, kim cương cho thành viên này
+                        </div>
+                      </div>
+                      <input
+                        type="checkbox"
+                        checked={editIsEnabled}
+                        onChange={e => setEditIsEnabled(e.target.checked)}
+                        style={{ width: 20, height: 20, accentColor: '#a855f7', cursor: 'pointer' }}
+                      />
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
+                    <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
+                      <label style={{ fontWeight: 600, fontSize: '0.8rem', display: 'block', marginBottom: 4, color: 'var(--text-secondary)' }}>
+                        Điểm Kinh Nghiệm (EXP):
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        className="form-input"
+                        value={editExp}
+                        onChange={e => setEditExp(Math.max(0, Number(e.target.value) || 0))}
+                      />
+                    </div>
+                    <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
+                      <label style={{ fontWeight: 600, fontSize: '0.8rem', display: 'block', marginBottom: 4, color: 'var(--text-secondary)' }}>
+                        Tổng số giây bế quan tu luyện:
+                      </label>
+                      <input
+                        type="number"
+                        min="0"
+                        className="form-input"
+                        value={editTotalSeconds}
+                        onChange={e => setEditTotalSeconds(Math.max(0, Number(e.target.value) || 0))}
+                      />
+                    </div>
+                  </div>
+
+                </div>
+
+                <div
+                  style={{
+                    padding: '14px 20px',
+                    borderTop: '1px solid var(--border)',
+                    background: 'var(--bg-secondary)',
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                    gap: 10
+                  }}
                 >
-                  Hủy
-                </button>
-                <button
-                  type="submit"
-                  className="btn btn-primary"
-                  disabled={promoting}
-                >
-                  {promoting ? <><div className="spinner" style={{ width: 14, height: 14 }} /> Đang xử lý...</> : '✓ Xác nhận sắc phong'}
-                </button>
-              </div>
-            </form>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setEditMember(null)}
+                    disabled={savingCultivation}
+                  >
+                    Hủy bỏ
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    disabled={savingCultivation}
+                    style={{
+                      background: 'linear-gradient(135deg, #a855f7, #3b82f6)',
+                      fontWeight: 700,
+                      padding: '8px 20px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 6
+                    }}
+                  >
+                    {savingCultivation ? (
+                      <>
+                        <div className="spinner" style={{ width: 14, height: 14 }} />
+                        Đang lưu quyền hạn...
+                      </>
+                    ) : (
+                      '✓ Lưu Toàn Bộ Quyền Hạn & Tu Vi'
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
 
-      {/* Modal Admin cưỡng chế đổi mật khẩu */}
       {resetModalMember && (
         <div className="modal-backdrop" onClick={() => setResetModalMember(null)}>
           <div className="modal card" style={{ maxWidth: 460, width: '100%', margin: 20 }} onClick={e => e.stopPropagation()}>
@@ -273,7 +688,6 @@ export default function MemberList() {
                 />
               </div>
 
-              {/* Gợi ý nhanh */}
               <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
                 <button
                   type="button"
