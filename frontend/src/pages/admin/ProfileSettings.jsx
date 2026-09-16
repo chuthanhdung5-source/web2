@@ -89,15 +89,15 @@ export default function ProfileSettings() {
                 <input className="form-input" value={form.full_name || ''} onChange={set('full_name')} />
               </div>
               <div className="form-group">
-                <label className="form-label">Mã Đạo Tịch (Mã SV)</label>
+                <label className="form-label">Mã Đạo Tịch</label>
                 <input className="form-input" value={form.student_id || ''} onChange={set('student_id')} placeholder="23028..." />
               </div>
               <div className="form-group">
-                <label className="form-label">Ngày Giáng Thế (Sinh Thần)</label>
+                <label className="form-label">Ngày Giáng Thế</label>
                 <input className="form-input" type="date" value={form.date_of_birth || ''} onChange={set('date_of_birth')} />
               </div>
               <div className="form-group">
-                <label className="form-label">Đạo Phù Định Danh (CCCD)</label>
+                <label className="form-label">Đạo Phù Định Danh</label>
                 <input className="form-input" value={form.id_card || ''} onChange={set('id_card')} placeholder="0123..." />
               </div>
             </div>
@@ -107,7 +107,7 @@ export default function ProfileSettings() {
             <h3 style={{ marginBottom: 16 }}>Tiên Tông & Sơn Môn</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div className="form-group">
-                <label className="form-label">Đạo Pháp Tu Tập (Chuyên Ngành)</label>
+                <label className="form-label">Đạo Pháp Tu Tập</label>
                 <input className="form-input" value={form.program || ''} onChange={set('program')} />
               </div>
               <div className="form-group">
@@ -123,7 +123,7 @@ export default function ProfileSettings() {
                 <input className="form-input" value={form.faculty || ''} onChange={set('faculty')} />
               </div>
               <div className="form-group">
-                <label className="form-label">Pháp Tràng Đạo Lữ (Lớp Học)</label>
+                <label className="form-label">Pháp Tràng Đạo Lữ</label>
                 <input className="form-input" value={form.class_name || ''} onChange={set('class_name')} />
               </div>
             </div>

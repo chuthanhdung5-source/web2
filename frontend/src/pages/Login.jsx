@@ -60,10 +60,10 @@ export default function Login() {
   const handleQuickFill = (role) => {
     if (role === 'admin') {
       setForm({ username: 'admin', password: 'password' })
-      toast('⚡ Đã nạp thông tin Admin Giáo Hoàng (admin / password)', { icon: '👑' })
+      toast('⚡ Đã nạp thông tin Admin Giáo Hoàng: admin', { icon: '👑' })
     } else {
       setForm({ username: 'member1', password: 'password' })
-      toast('⚡ Đã nạp thông tin Hồn Sư (member1 / password)', { icon: '🥋' })
+      toast('⚡ Đã nạp thông tin Hồn Sư: member1', { icon: '🥋' })
     }
   }
 
@@ -122,8 +122,8 @@ export default function Login() {
           <div className="celestial-portal-sphere sphere-ice">
             <div className="portal-crest-icon">❄️</div>
             <h2 className="portal-heading ice">THIÊN PHÚ</h2>
-            <div className="portal-subheading ice">(Tài Khoản)</div>
-            <div className="portal-field-label">Tên Hồn Sư (Username)</div>
+            <div className="portal-subheading ice">Đạo Tịch</div>
+            <div className="portal-field-label">Tên Hồn Sư</div>
 
             <div className="celestial-input-tablet tablet-ice">
               <span className="tablet-icon-left">📜</span>
@@ -179,7 +179,7 @@ export default function Login() {
           <div className="celestial-portal-sphere sphere-fire">
             <div className="portal-crest-icon">🔥</div>
             <h2 className="portal-heading fire">TÂM TÍNH</h2>
-            <div className="portal-subheading fire">(Mật Khẩu)</div>
+            <div className="portal-subheading fire">Khẩu Quyết</div>
             <div className="portal-field-label">Mật Khẩu Tâm Pháp</div>
 
             <div className="celestial-input-tablet tablet-fire">
@@ -229,19 +229,19 @@ export default function Login() {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex flex-between align-center" style={{ marginBottom: 16 }}>
-              <h2 className="h3">🔑 Tìm Lại Tâm Pháp (Mật Khẩu)</h2>
+              <h2 className="h3">🔑 Tìm Lại Tâm Pháp</h2>
               <button className="btn btn-ghost btn-sm" onClick={() => setShowForgot(false)}>
                 ✕
               </button>
             </div>
 
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: 16 }}>
-              Xác minh tên Hồn Sư và thư tín (email) đã đăng ký để tự lập lại tâm pháp mới.
+              Xác minh tên Hồn Sư và thư tín đã đăng ký để tự lập lại tâm pháp mới.
             </p>
 
             <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
               <div className="form-group">
-                <label className="form-label">Tên đăng nhập (Username)</label>
+                <label className="form-label">Tên đăng nhập</label>
                 <input
                   type="text"
                   className="form-input"

@@ -4,16 +4,16 @@ import { useAuth } from './AuthContext'
 import toast from 'react-hot-toast'
 
 export const DOULUO_REALMS = [
-  { minLevel: 1, maxLevel: 10, name: 'Tọa Sơn Bàn Cuối', ring: 'ring-white', badge: 'badge-douluo-white', icon: '🎒', ringName: 'Hồn Hoàn Bàn Cuối (Trắng 10 Năm)' },
-  { minLevel: 11, maxLevel: 20, name: 'Trụ Thạch Núp Lùm', ring: 'ring-yellow', badge: 'badge-douluo-yellow', icon: '🏛️', ringName: 'Hồn Hoàn Góc Cột (Vàng 100 Năm)' },
-  { minLevel: 21, maxLevel: 30, name: 'Hư Ảo Gật Đầu', ring: 'ring-yellow', badge: 'badge-douluo-yellow', icon: '👀', ringName: 'Hồn Hoàn Thao Túng (Vàng Đậm)' },
-  { minLevel: 31, maxLevel: 40, name: 'Biến Âm Hô "CÓ!"', ring: 'ring-purple', badge: 'badge-douluo-purple', icon: '🗣️', ringName: 'Hồn Hoàn Giả Giọng (Tím 1.000 Năm)' },
-  { minLevel: 41, maxLevel: 50, name: 'Thần Bút Ký Hộ', ring: 'ring-purple', badge: 'badge-douluo-purple', icon: '✍️', ringName: 'Hồn Hoàn Phù Bút (Tím Cực Phẩm)' },
-  { minLevel: 51, maxLevel: 60, name: 'Thiền Định Ngủ Mở Mắt', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🧘', ringName: 'Hồn Hoàn Nhập Định (Đen 10.000 Năm)' },
-  { minLevel: 61, maxLevel: 70, name: 'Nghịch Chuyển Bàn Đầu', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🧠', ringName: 'Hồn Hoàn Tâm Lý Chiến (Hắc Sắc Vạn Năm)' },
-  { minLevel: 71, maxLevel: 80, name: 'Lăng Ba Chuồn Cửa', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🚪', ringName: 'Hồn Hoàn Thân Pháp (Hắc Kim Trấn Phái)' },
-  { minLevel: 81, maxLevel: 99, name: 'Vạn Ca Học Hộ Đấu La', ring: 'ring-red', badge: 'badge-douluo-red', icon: '⚡', ringName: 'Hồn Hoàn Phân Thân (Đỏ 100.000 Năm)' },
-  { minLevel: 100, maxLevel: 999, name: 'Núp Lùm Chi Thần', ring: 'ring-gold', badge: 'badge-douluo-gold', icon: '👑', ringName: 'Hồn Hoàn Chí Tôn Vô Ảnh (Hoàng Kim Triệu Năm)' },
+  { minLevel: 1, maxLevel: 10, name: 'Tọa Sơn Bàn Cuối', ring: 'ring-white', badge: 'badge-douluo-white', icon: '🎒', ringName: 'Hồn Hoàn Bàn Cuối' },
+  { minLevel: 11, maxLevel: 20, name: 'Trụ Thạch Núp Lùm', ring: 'ring-yellow', badge: 'badge-douluo-yellow', icon: '🏛️', ringName: 'Hồn Hoàn Góc Cột' },
+  { minLevel: 21, maxLevel: 30, name: 'Hư Ảo Gật Đầu', ring: 'ring-yellow', badge: 'badge-douluo-yellow', icon: '👀', ringName: 'Hồn Hoàn Thao Túng' },
+  { minLevel: 31, maxLevel: 40, name: 'Biến Âm Hô "CÓ!"', ring: 'ring-purple', badge: 'badge-douluo-purple', icon: '🗣️', ringName: 'Hồn Hoàn Giả Giọng' },
+  { minLevel: 41, maxLevel: 50, name: 'Thần Bút Ký Hộ', ring: 'ring-purple', badge: 'badge-douluo-purple', icon: '✍️', ringName: 'Hồn Hoàn Phù Bút' },
+  { minLevel: 51, maxLevel: 60, name: 'Thiền Định Ngủ Mở Mắt', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🧘', ringName: 'Hồn Hoàn Nhập Định' },
+  { minLevel: 61, maxLevel: 70, name: 'Nghịch Chuyển Bàn Đầu', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🧠', ringName: 'Hồn Hoàn Tâm Lý Chiến' },
+  { minLevel: 71, maxLevel: 80, name: 'Lăng Ba Chuồn Cửa', ring: 'ring-black', badge: 'badge-douluo-black', icon: '🚪', ringName: 'Hồn Hoàn Thân Pháp' },
+  { minLevel: 81, maxLevel: 99, name: 'Vạn Ca Học Hộ Đấu La', ring: 'ring-red', badge: 'badge-douluo-red', icon: '⚡', ringName: 'Hồn Hoàn Phân Thân' },
+  { minLevel: 100, maxLevel: 999, name: 'Núp Lùm Chi Thần', ring: 'ring-gold', badge: 'badge-douluo-gold', icon: '👑', ringName: 'Hồn Hoàn Chí Tôn Vô Ảnh' },
 ]
 
 export const getRealmInfo = (level) => {
@@ -25,7 +25,7 @@ export const getRealmInfo = (level) => {
 export const SHOP_ITEMS = [
   {
     id: 'remember_me',
-    name: 'Ghi Nhớ Tâm Pháp (Khẩu Quyết)',
+    name: 'Ghi Nhớ Tâm Pháp',
     price: 500,
     icon: '🔐',
     description: 'Tự động ghi nhớ đạo tịch và mật khẩu tại Tiên Môn Cổng, không cần gõ lại mỗi lần nhập cảnh.',
@@ -74,7 +74,7 @@ export const SHOP_ITEMS = [
   },
   {
     id: 'session_extend_2h',
-    name: 'Gia Hạn 4 Khắc (120 Phút) Bế Quan',
+    name: 'Gia Hạn 4 Khắc Bế Quan',
     price: 1000,
     icon: '⏳',
     description: 'Cộng thêm 4 khắc nhập định tập trung mà không lo gián đoạn phiên tu luyện.',
@@ -83,7 +83,7 @@ export const SHOP_ITEMS = [
   },
   {
     id: 'vip_badge',
-    name: 'Huy Hiệu Chí Tôn Đấu La (VIP)',
+    name: 'Huy Hiệu Chí Tôn Đấu La',
     price: 3000,
     icon: '🔱',
     description: 'Khai mở danh hiệu Đấu La Chí Tôn, viền hào quang vàng kim và tăng tốc độ tu vi.',

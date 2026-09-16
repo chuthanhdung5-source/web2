@@ -77,7 +77,7 @@ export default function PaymentManager() {
             <thead>
               <tr>
                 <th>Chư Vị Tu Giả</th>
-                <th>Tiên Trang Thần Phù (STK)</th>
+                <th>Tiên Trang Thần Phù</th>
                 <th>Tràng Hộ Đạo</th>
                 <th>Thời Khắc</th>
                 <th>Linh Thạch Quy Đổi</th>
@@ -164,7 +164,7 @@ export default function PaymentManager() {
             <div style={{ textAlign: 'center', marginBottom: 16, background: '#fff', padding: 16, borderRadius: 12, border: '1px solid var(--border)' }}>
               {payModal.member?.qr_code_url && !qrImageError ? (
                 <div>
-                  <div style={{ fontSize: '0.8rem', color: '#333', fontWeight: 700, marginBottom: 8 }}>🖼️ THẦN PHÙ TIÊN TRANG (ĐỆ TỬ TẾ XUẤT)</div>
+                  <div style={{ fontSize: '0.8rem', color: '#333', fontWeight: 700, marginBottom: 8 }}>🖼️ THẦN PHÙ TIÊN TRANG ĐỆ TỬ</div>
                   <img
                     src={getImageUrl(payModal.member.qr_code_url)}
                     alt="Member QR"
@@ -175,7 +175,7 @@ export default function PaymentManager() {
               ) : payModal.vietQRUrl ? (
                 <div>
                   <div style={{ fontSize: '0.8rem', color: '#333', fontWeight: 700, marginBottom: 8 }}>
-                    {qrImageError ? '⚡ THẦN PHÙ TỰ ĐỘNG SINH (DO ẢNH ĐỆ TỬ LỖI HOẶC TRỐNG)' : '⚡ THẦN PHÙ VIETQR TỰ ĐỘNG KHAI MỞ (QUÉT APP TIÊN TRANG)'}
+                    {qrImageError ? '⚡ THẦN PHÙ TỰ ĐỘNG SINH' : '⚡ THẦN PHÙ VIETQR TỰ ĐỘNG KHAI MỞ'}
                   </div>
                   <img src={payModal.vietQRUrl} alt="VietQR" style={{ maxWidth: 240, maxHeight: 240, objectFit: 'contain' }} />
                 </div>
@@ -194,7 +194,7 @@ export default function PaymentManager() {
 
             {payModal.payment?.status === 'pending' && (
               <div className="form-group" style={{ marginBottom: 16 }}>
-                <label className="form-label">Chiếu chỉ giải ngân (không bắt buộc)</label>
+                <label className="form-label">Chiếu chỉ giải ngân</label>
                 <input className="form-input" placeholder="Ví dụ: Đã truyền tống qua MB Bank canh ba" value={notes} onChange={e => setNotes(e.target.value)} />
               </div>
             )}

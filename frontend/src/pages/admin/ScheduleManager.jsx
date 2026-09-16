@@ -370,7 +370,7 @@ export default function ScheduleManager() {
           <div className="card" style={{ padding: 20 }}>
             <div className="flex flex-between align-center" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
               <div>
-                <h2 style={{ fontSize: '1.2rem', marginBottom: 4 }}>📌 Trận Pháp Khảo Kỳ Cố Định Tuần (Master Schedule Slots)</h2>
+                <h2 style={{ fontSize: '1.2rem', marginBottom: 4 }}>📌 Trận Pháp Khảo Kỳ Cố Định Tuần</h2>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                   Trận pháp mẫu dùng để tự động khởi tạo các tràng hộ đạo mỗi tuần.
                 </p>
@@ -433,7 +433,7 @@ export default function ScheduleManager() {
           <div className="card" style={{ padding: 20 }}>
             <div className="flex flex-between align-center" style={{ marginBottom: 16, flexWrap: 'wrap', gap: 12 }}>
               <div>
-                <h2 style={{ fontSize: '1.2rem', marginBottom: 4 }}>📚 Danh Lục Pháp Môn Khảo Thí (Subjects)</h2>
+                <h2 style={{ fontSize: '1.2rem', marginBottom: 4 }}>📚 Danh Lục Pháp Môn Khảo Thí</h2>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                   Quản lý danh mục các pháp môn khảo thí trong hệ thống.
                 </p>
@@ -515,7 +515,7 @@ export default function ScheduleManager() {
 
               <div className="flex gap-3">
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Đạo Phẩm (Tín chỉ)</label>
+                  <label className="form-label">Đạo Phẩm</label>
                   <input
                     type="number"
                     className="form-input"
@@ -524,7 +524,7 @@ export default function ScheduleManager() {
                   />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Đạo Tràng Hội (Lớp HP)</label>
+                  <label className="form-label">Đạo Tràng Hội</label>
                   <input
                     type="text"
                     className="form-input"
@@ -549,7 +549,7 @@ export default function ScheduleManager() {
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Linh Thạch Tiêu Hao (VNĐ)</label>
+                  <label className="form-label">Linh Thạch Tiêu Hao</label>
                   <input
                     type="number"
                     className="form-input"
@@ -574,7 +574,7 @@ export default function ScheduleManager() {
             <h3>{editingSlot ? '✏️ Chỉnh Sửa Trận Pháp Cố Định' : '➕ Thiết Lập Tràng Cố Định Mới'}</h3>
             <form onSubmit={handleSaveSlot} style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 16 }}>
               <div>
-                <label className="form-label">Pháp Môn (*)</label>
+                <label className="form-label">Pháp Môn *</label>
                 <select
                   className="form-input"
                   value={slotForm.subject_id}
@@ -583,14 +583,14 @@ export default function ScheduleManager() {
                 >
                   <option value="">-- Chọn Pháp Môn --</option>
                   {subjects.map(s => (
-                    <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
+                    <option key={s.id} value={s.id}>{s.name} - {s.code}</option>
                   ))}
                 </select>
               </div>
 
               <div className="flex gap-3">
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Thứ trong tuần (*)</label>
+                  <label className="form-label">Thứ trong tuần *</label>
                   <select
                     className="form-input"
                     value={slotForm.day_of_week}
@@ -606,7 +606,7 @@ export default function ScheduleManager() {
                   </select>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <label className="form-label">Đạo Trường (Phòng học) (*)</label>
+                  <label className="form-label">Đạo Trường *</label>
                   <input
                     type="text"
                     className="form-input"

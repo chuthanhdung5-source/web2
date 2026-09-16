@@ -5,11 +5,11 @@ import { useAuth } from '../../context/AuthContext'
 import toast from 'react-hot-toast'
 
 const VIP_TIERS = [
-  { value: 0, label: 'VIP 0 - Phổ Thông Hộ Đạo (Đệ Tử Bàn Cuối)' },
-  { value: 1, label: 'VIP 1 - Đồng Cấp (Cao Thủ Núp Lùm)' },
-  { value: 2, label: 'VIP 2 - Ngân Cấp (Chân Nhân Bàn Đầu)' },
-  { value: 3, label: 'VIP 3 - Kim Cấp (Vạn Ca Đấu La)' },
-  { value: 4, label: 'VIP 4 - Chí Tôn Vô Thượng (Núp Lùm Chi Thần)' }
+  { value: 0, label: 'VIP 0 - Phổ Thông Hộ Đạo' },
+  { value: 1, label: 'VIP 1 - Đồng Cấp Hộ Đạo' },
+  { value: 2, label: 'VIP 2 - Ngân Cấp Hộ Đạo' },
+  { value: 3, label: 'VIP 3 - Kim Cấp Hộ Đạo' },
+  { value: 4, label: 'VIP 4 - Chí Tôn Vô Thượng' }
 ]
 
 export default function MemberList() {
@@ -177,8 +177,8 @@ export default function MemberList() {
             <thead>
               <tr>
                 <th>Đệ Tử / Đạo Hiệu</th>
-                <th>Truyền Tin (Liên Hệ)</th>
-                <th>Tiên Trang Thần Phù (Ngân Hàng)</th>
+                <th>Truyền Tin</th>
+                <th>Tiên Trang Thần Phù</th>
                 <th>Tổng Bổng Lộc Linh Thạch</th>
                 <th>Trạng Thái Đạo Tịch</th>
                 <th>Pháp Quyết Thao Tác</th>
@@ -504,7 +504,7 @@ export default function MemberList() {
                                 {item.name}
                               </div>
                               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                                {item.price.toLocaleString('vi-VN')} 💎 {isOwned ? '• (ĐÃ ĐẮC ĐẠO)' : ''}
+                                {item.price.toLocaleString('vi-VN')} 💎 {isOwned ? '• ĐÃ ĐẮC ĐẠO' : ''}
                               </div>
                             </div>
                           </div>
@@ -516,7 +516,7 @@ export default function MemberList() {
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12 }}>
                     <div className="card" style={{ padding: 14, background: 'var(--bg-surface)' }}>
                       <label style={{ fontWeight: 700, fontSize: '0.85rem', display: 'block', marginBottom: 6 }}>
-                        👑 Cấp Bậc Tôn Quý Tông Môn (VIP):
+                        👑 Cấp Bậc Tôn Quý Tông Môn:
                       </label>
                       <select
                         className="form-control"
@@ -680,7 +680,7 @@ export default function MemberList() {
                 <input
                   type="text"
                   className="form-input"
-                  placeholder="Nhập khẩu quyết mới (tối thiểu 6 ấn ký)"
+                  placeholder="Nhập khẩu quyết mới tối thiểu 6 ấn ký"
                   value={newPassword}
                   onChange={e => setNewPassword(e.target.value)}
                   required

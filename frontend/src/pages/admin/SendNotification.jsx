@@ -65,11 +65,11 @@ export default function SendNotification() {
                 value={notifType}
                 onChange={(e) => setNotifType(e.target.value)}
               >
-                <option value="info">ℹ️ Thông cáo môn quy (Info)</option>
-                <option value="reminder">⏰ Thúc giục khảo kỳ (Reminder)</option>
-                <option value="warning">⚠️ Cảnh cáo tông môn (Warning)</option>
-                <option value="payment">💰 Quyết toán bổng lộc (Payment)</option>
-                <option value="approval">✅ Sắc chỉ chuẩn phê (Approval)</option>
+                <option value="info">ℹ️ Thông cáo môn quy</option>
+                <option value="reminder">⏰ Thúc giục khảo kỳ</option>
+                <option value="warning">⚠️ Cảnh cáo tông môn</option>
+                <option value="payment">💰 Quyết toán bổng lộc</option>
+                <option value="approval">✅ Sắc chỉ chuẩn phê</option>
               </select>
             </div>
 
@@ -80,7 +80,7 @@ export default function SendNotification() {
                 value={targetUserId}
                 onChange={(e) => setTargetUserId(e.target.value)}
               >
-                <option value="">📢 Toàn Thể Chư Vị Tu Giả (Vạn Dặm Phi Kiếm)</option>
+                <option value="">📢 Toàn Thể Chư Vị Tu Giả</option>
                 {members.map(m => (
                   <option key={m.id} value={m.id}>
                     👤 {m.full_name} (@{m.username})

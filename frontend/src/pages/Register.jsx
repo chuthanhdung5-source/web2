@@ -51,22 +51,22 @@ export default function Register() {
               value={form.full_name} onChange={set('full_name')} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Đạo Tịch Đăng Nhập (Username)</label>
+            <label className="form-label">Đạo Tịch Đăng Nhập</label>
             <input id="reg-username" className="form-input" type="text" placeholder="username"
               value={form.username} onChange={set('username')} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Linh Hạc Truyền Thư (Email)</label>
+            <label className="form-label">Linh Hạc Truyền Thư</label>
             <input id="reg-email" className="form-input" type="email" placeholder="email@gmail.com"
               value={form.email} onChange={set('email')} required />
           </div>
           <div className="form-group">
-            <label className="form-label">Thần Thức Cảm Ứng (Số Điện Thoại)</label>
+            <label className="form-label">Thần Thức Cảm Ứng</label>
             <input id="reg-phone" className="form-input" type="tel" placeholder="0912345678"
               value={form.phone} onChange={set('phone')} />
           </div>
           <div className="form-group">
-            <label className="form-label">Khẩu Quyết Tâm Pháp (Mật Khẩu)</label>
+            <label className="form-label">Khẩu Quyết Tâm Pháp</label>
             <input id="reg-password" className="form-input" type="password" placeholder="••••••••"
               value={form.password} onChange={set('password')} required minLength={6} />
           </div>

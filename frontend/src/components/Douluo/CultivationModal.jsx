@@ -100,7 +100,7 @@ export default function CultivationModal() {
               <span style={{ color: '#64748b', fontWeight: 800, alignSelf: 'center' }}>:</span>
               <div className="timer-unit">
                 <span className="timer-val">{String(hours).padStart(2, '0')}</span>
-                <span className="timer-lbl">Khắc (Giờ)</span>
+                <span className="timer-lbl">Khắc</span>
               </div>
               <span style={{ color: '#64748b', fontWeight: 800, alignSelf: 'center' }}>:</span>
               <div className="timer-unit">

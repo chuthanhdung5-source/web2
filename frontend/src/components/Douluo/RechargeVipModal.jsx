@@ -70,7 +70,7 @@ export default function RechargeVipModal() {
           <div className="flex align-center gap-3">
             <span style={{ fontSize: '2rem' }}>👑</span>
             <div>
-              <h2 className="h3" style={{ margin: 0, color: '#fbbf24' }}>Kho Kim Cương VIP (Admin)</h2>
+              <h2 className="h3" style={{ margin: 0, color: '#fbbf24' }}>Kho Kim Cương VIP</h2>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                 Đặc quyền cấp phát Kim Cương giả lập dành riêng cho Giáo Hoàng Admin
               </div>

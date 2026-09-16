@@ -174,8 +174,8 @@ export default function FeedbackManager() {
                   value={replyStatus}
                   onChange={(e) => setReplyStatus(e.target.value)}
                 >
-                  <option value="replied">💬 Đã truyền âm khai thị (Replied)</option>
-                  <option value="resolved">✅ Đã giải quyết viên mãn (Resolved)</option>
+                  <option value="replied">💬 Đã truyền âm khai thị</option>
+                  <option value="resolved">✅ Đã giải quyết viên mãn</option>
                 </select>
               </div>
 

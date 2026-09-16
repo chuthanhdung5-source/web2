@@ -86,7 +86,7 @@ export default function Header({ onToggleSidebar }) {
         <div
           className="session-timer-badge"
           onClick={() => setIsShopOpen(true)}
-          title="Thời gian canh giờ hộ đạo còn lại (Vào Tàng Bảo Các để gia hạn)"
+          title="Thời gian canh giờ hộ đạo còn lại"
         >
           <span className="session-icon">⏳</span>
           <span className="session-time">{formatSessionTime(sessionSecondsLeft)}</span>
@@ -95,7 +95,7 @@ export default function Header({ onToggleSidebar }) {
         <button
           className="btn-theme-switcher"
           onClick={() => setIsThemeModalOpen(true)}
-          title="Biến Hóa Huyễn Cảnh (Đổi Giao Diện)"
+          title="Biến Hóa Huyễn Cảnh"
         >
           <span className="theme-btn-icon">🎨</span>
           <span className="theme-btn-label">Huyễn Cảnh</span>
@@ -106,7 +106,7 @@ export default function Header({ onToggleSidebar }) {
             <button
               className="btn-cultivate-pulse"
               onClick={() => setIsCultivationOpen(true)}
-              title="Động Phủ Bế Quan Tu Luyện (Tích lũy Hồn Lực theo thời gian)"
+              title="Động Phủ Bế Quan Tu Luyện"
             >
               <span className="cult-icon">🧘</span>
               <span className="cult-text">Bế Quan</span>
@@ -124,7 +124,7 @@ export default function Header({ onToggleSidebar }) {
             <div
               className={`douluo-badge ${realm.badge}`}
               onClick={() => (isAdmin ? setIsSettingsOpen(true) : setIsCultivationOpen(true))}
-              title={isAdmin ? 'Giáo Hoàng Điện (Sắc phong Hồn Sư)' : 'Xem tu vi & đột phá cảnh giới'}
+              title={isAdmin ? 'Giáo Hoàng Điện' : 'Xem tu vi và đột phá cảnh giới'}
             >
               <span>{realm.icon}</span>
               <span className="realm-full-title">{customTitle || realm.name}</span>
@@ -134,7 +134,7 @@ export default function Header({ onToggleSidebar }) {
             <div
               className="diamond-wallet"
               onClick={() => (isAdmin ? setIsRechargeOpen(true) : setIsMineOpen(true))}
-              title={isAdmin ? 'Kho Kim Cương Tiên Tinh' : 'Mỏ Hồn Thạch (Khai thác tinh thạch)'}
+              title={isAdmin ? 'Kho Kim Cương Tiên Tinh' : 'Mỏ Hồn Thạch'}
             >
               <span>💎</span>
               <span>{formatDiamonds(diamonds)}</span>

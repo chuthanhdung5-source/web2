@@ -47,7 +47,7 @@ export default function SessionApproval() {
     <div>
       <div className="page-header">
         <h1>✅ Chuẩn Phê Thí Luyện & Phụ Trách Hộ Đạo</h1>
-        <p>{sessions.length} tràng đang có đệ tử thỉnh mệnh chờ Giáo Hoàng chuẩn phê (theo thứ tự thỉnh cầu)</p>
+        <p>{sessions.length} tràng đang có đệ tử thỉnh mệnh chờ Giáo Hoàng chuẩn phê</p>
       </div>
 
       {sessions.length === 0 ? (
@@ -141,7 +141,7 @@ export default function SessionApproval() {
                                 background: isFirst ? 'var(--primary)' : 'var(--border-strong)',
                                 color: 'white'
                               }}>
-                                #{index + 1} {isFirst && '(Tiên Phong Nhất)'}
+                                #{index + 1} {isFirst && '• Tiên Phong'}
                               </span>
 
                               <div className="avatar" style={{ width: 34, height: 34 }}>

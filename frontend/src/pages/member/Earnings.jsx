@@ -37,7 +37,7 @@ export default function Earnings() {
           gap: 12
         }}>
           <div>
-            <strong>⚠️ Đạo hữu chưa thiết lập Thần Phù Tiên Trang (STK)!</strong>
+            <strong>⚠️ Đạo hữu chưa thiết lập Thần Phù Tiên Trang!</strong>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Vui lòng bổ sung Số tài khoản Tiên Trang hoặc Thần Phù QR để Ngân Khố chuyển bổng lộc chính xác.</div>
           </div>
           <Link to="/member/profile" className="btn btn-primary btn-sm">💳 Thiết Lập Ngay →</Link>
@@ -70,7 +70,7 @@ export default function Earnings() {
           <div className="table-wrapper">
             <table>
               <thead>
-                <tr><th>Tràng Hộ Đạo</th><th>Khảo Kỳ</th><th>Thời Khắc</th><th>Linh Thạch (VNĐ)</th><th>Trạng Thái</th></tr>
+                <tr><th>Tràng Hộ Đạo</th><th>Khảo Kỳ</th><th>Thời Khắc</th><th>Linh Thạch</th><th>Trạng Thái</th></tr>
               </thead>
               <tbody>
                 {data.payments.map(p => (

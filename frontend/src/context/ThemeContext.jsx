@@ -5,7 +5,7 @@ const ThemeContext = createContext()
 export const AVAILABLE_SKINS = [
   {
     id: 'skin-default',
-    name: 'Đen Huyền Bí (Mặc định)',
+    name: 'Đen Huyền Bí',
     privilegeId: null,
     price: 0,
     icon: '🖤',
@@ -17,7 +17,7 @@ export const AVAILABLE_SKINS = [
   },
   {
     id: 'skin-light',
-    name: 'Trắng Thanh Khiết (Sáng)',
+    name: 'Trắng Thanh Khiết',
     privilegeId: 'skin_light',
     price: 500,
     icon: '🤍',
@@ -29,7 +29,7 @@ export const AVAILABLE_SKINS = [
   },
   {
     id: 'skin-huyen-ao',
-    name: 'Lam Ngân Thần Khí (Xanh Lam)',
+    name: 'Lam Ngân Thần Khí',
     privilegeId: 'skin_huyen_ao',
     price: 1000,
     icon: '🌿',
@@ -41,7 +41,7 @@ export const AVAILABLE_SKINS = [
   },
   {
     id: 'skin-hoang-gia',
-    name: 'Hoàng Gia Hắc Kim (Vàng Kim)',
+    name: 'Hoàng Gia Hắc Kim',
     privilegeId: 'skin_hoang_gia',
     price: 1000,
     icon: '👑',
@@ -53,7 +53,7 @@ export const AVAILABLE_SKINS = [
   },
   {
     id: 'skin-than-thanh',
-    name: 'Hải Thần Quang Diệu (Tím Tinh Hà)',
+    name: 'Hải Thần Quang Diệu',
     privilegeId: 'skin_than_thanh',
     price: 1000,
     icon: '✨',

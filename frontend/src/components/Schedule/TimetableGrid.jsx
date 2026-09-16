@@ -197,7 +197,7 @@ export default function TimetableGrid({
                                 color: isMine ? 'var(--primary-light)' : 'var(--accent-green)',
                                 fontSize: memberFontSize,
                               }}>
-                                👤 {member.full_name} {isMine && '(Bản Tọa)'}
+                                👤 {member.full_name} {isMine && '• Bản Tọa'}
                               </div>
                             ) : (
                               <div style={{ fontSize: detailsFontSize, color: 'var(--text-muted)', fontStyle: 'italic', marginTop: 2 }}>

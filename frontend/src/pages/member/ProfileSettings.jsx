@@ -5,19 +5,19 @@ import { getImageUrl } from '../../api/client'
 import toast from 'react-hot-toast'
 
 const BANKS = [
-  'MBBank (Ngân hàng Quân Đội)',
-  'Vietcombank (VCB)',
-  'Techcombank (TCB)',
-  'ACB (Ngân hàng Á Châu)',
+  'MBBank',
+  'Vietcombank',
+  'Techcombank',
+  'ACB',
   'VPBank',
   'TPBank',
   'BIDV',
   'Agribank',
   'VietinBank',
   'Sacombank',
-  'MoMo (Ví điện tử)',
-  'ZaloPay (Ví điện tử)',
-  'Khác (Ghi rõ ở STK)',
+  'MoMo',
+  'ZaloPay',
+  'Khác',
 ]
 
 export default function ProfileSettings() {
@@ -26,7 +26,7 @@ export default function ProfileSettings() {
     full_name: user?.full_name || '',
     email: user?.email || '',
     phone: user?.phone || '',
-    bank_name: user?.bank_name || 'MBBank (Ngân hàng Quân Đội)',
+    bank_name: user?.bank_name || 'MBBank',
     bank_account_no: user?.bank_account_no || '',
     bank_account_name: user?.bank_account_name || user?.full_name || '',
   })
@@ -109,15 +109,15 @@ export default function ProfileSettings() {
               <input id="profile-name" className="form-input" value={form.full_name} onChange={set('full_name')} required />
             </div>
             <div className="form-group">
-              <label className="form-label">Linh Thư Hộp Thư (Email)</label>
+              <label className="form-label">Linh Thư Hộp Thư</label>
               <input id="profile-email" className="form-input" type="email" value={form.email} onChange={set('email')} required />
             </div>
             <div className="form-group">
-              <label className="form-label">Truyền Âm Thần Lạc (SĐT)</label>
+              <label className="form-label">Truyền Âm Thần Lạc</label>
               <input id="profile-phone" className="form-input" type="tel" value={form.phone} onChange={set('phone')} />
             </div>
             <div className="form-group">
-              <label className="form-label">Danh Xưng Tông Môn (Username)</label>
+              <label className="form-label">Danh Xưng Tông Môn</label>
               <input className="form-input" value={user?.username} disabled style={{ opacity: 0.5 }} />
             </div>
           </div>
@@ -132,14 +132,14 @@ export default function ProfileSettings() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div className="form-group">
-              <label className="form-label">Tiên Trang (Ngân hàng / Ví)</label>
+              <label className="form-label">Tiên Trang</label>
               <select className="form-input" value={form.bank_name} onChange={set('bank_name')}>
                 {BANKS.map(b => <option key={b} value={b}>{b}</option>)}
               </select>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Số Tài Khoản Tiên Trang (STK)</label>
+              <label className="form-label">Số Tài Khoản Tiên Trang</label>
               <input id="bank-acc-no" className="form-input" placeholder="Ví dụ: 0987654321" value={form.bank_account_no} onChange={set('bank_account_no')} required />
             </div>
 
