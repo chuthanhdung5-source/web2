@@ -5,7 +5,7 @@ from pathlib import Path
 from app.config import settings
 from app.database import engine, Base
 import app.models  # Import tất cả models vào Base.metadata
-from app.routers import auth, admin, schedule, member, douluo
+from app.routers import auth, admin, schedule, member, douluo, chat
 from app.services.scheduler import start_scheduler
 
 # Tạo tables nếu chưa tồn tại
@@ -48,6 +48,7 @@ app.include_router(admin.router)
 app.include_router(schedule.router)
 app.include_router(member.router)
 app.include_router(douluo.router)
+app.include_router(chat.router)
 
 # Prefix /api compatibility
 app.include_router(auth.router, prefix="/api")
@@ -55,6 +56,7 @@ app.include_router(admin.router, prefix="/api")
 app.include_router(schedule.router, prefix="/api")
 app.include_router(member.router, prefix="/api")
 app.include_router(douluo.router, prefix="/api")
+app.include_router(chat.router, prefix="/api")
 
 # Serve local uploads (fallback khi chưa có GCS)
 uploads_dir = Path("uploads")

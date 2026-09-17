@@ -9,6 +9,7 @@ import DiamondMineModal from './components/Douluo/DiamondMineModal'
 import DiamondShopModal from './components/Douluo/DiamondShopModal'
 import ThemeModal from './components/Douluo/ThemeModal'
 import SessionTimerOverlay from './components/Common/SessionTimerOverlay'
+import AiChatWidget from './components/Chat/AiChatWidget'
 
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -101,6 +102,7 @@ export default function App() {
             <DiamondShopModal />
             <ThemeModal />
             <SessionTimerOverlay />
+            <AiChatWidget />
           </BrowserRouter>
         </ThemeProvider>
       </DouluoProvider>

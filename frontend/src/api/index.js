@@ -111,3 +111,8 @@ export const douluoAPI = {
   adminUpdateMemberCultivation: (userId, data) => api.put(`/douluo/admin/member/${userId}`, data),
 }
 
+export const chatAPI = {
+  ask: (message, history = []) => api.post('/chat/ask', { message, history }),
+  getSuggestions: () => api.get('/chat/suggestions'),
+}
+

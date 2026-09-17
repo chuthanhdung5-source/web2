@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     # Period salary
     PERIOD_SALARY: int = 35000  # VNĐ per period
 
+    # OpenAI AI Agent
+    OPENAI_API_KEY: str = ""
+    OPENAI_MODEL: str = "gpt-4o-mini"
+
     class Config:
         env_file = ".env"
 
