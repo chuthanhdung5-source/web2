@@ -97,7 +97,7 @@ export default function AiChatWidget() {
   }
 
   const handleClearHistory = () => {
-    if (window.confirm('Bạn có muốn làm mới cuộc trò chuyện với AI?')) {
+    if (window.confirm('Đạo hữu có muốn tẩy tủy linh thức (làm mới cuộc trò chuyện với Thiên Cơ Khí Linh)?')) {
       setMessages([])
     }
   }
@@ -129,11 +129,11 @@ export default function AiChatWidget() {
         <button
           className="ai-chat-launcher"
           onClick={() => setIsOpen(true)}
-          title="Mở Trợ lý AI Hỏi Đáp"
+          title="Mở Thiên Cơ Các · Vấn Đạo Thần Thú"
           id="btn-open-ai-chat"
         >
-          <span className="ai-chat-launcher-icon">🤖</span>
-          <span className="ai-chat-launcher-text">Hỏi Đáp AI</span>
+          <span className="ai-chat-launcher-icon">🔮</span>
+          <span className="ai-chat-launcher-text">Thiên Cơ Các</span>
           <span className="ai-chat-pulse-badge" />
         </button>
       )}
@@ -144,22 +144,22 @@ export default function AiChatWidget() {
           {/* Header */}
           <div className="ai-chat-header">
             <div className="ai-chat-header-info">
-              <div className="ai-chat-avatar">🤖</div>
+              <div className="ai-chat-avatar">🔮</div>
               <div className="ai-chat-title-wrap">
                 <h4>
-                  Trợ Lý AI
+                  Thiên Cơ Các · Khí Linh
                   <span className={`ai-chat-role-badge ${isRoleAdmin ? 'admin' : 'member'}`}>
-                    {isRoleAdmin ? 'Admin' : 'Member'}
+                    {isRoleAdmin ? '👑 Giáo Hoàng' : '⚔️ Hồn Sư'}
                   </span>
                 </h4>
-                <div className="ai-chat-subtitle">Tra cứu dữ liệu & thông tin nhanh</div>
+                <div className="ai-chat-subtitle">Vấn đạo tầm cơ · Thấu thị càn khôn</div>
               </div>
             </div>
             <div className="ai-chat-header-actions">
               <button
                 className="ai-chat-btn-icon"
                 onClick={handleClearHistory}
-                title="Xóa làm mới đoạn chat"
+                title="Tẩy tủy linh thức (Làm mới đoạn thoại)"
               >
                 🔄
               </button>
@@ -179,16 +179,17 @@ export default function AiChatWidget() {
             {/* Welcome Box when no messages */}
             {messages.length === 0 && (
               <div className="ai-chat-welcome">
-                <div className="ai-chat-welcome-icon">⚡</div>
-                <h5>Xin chào, {user.full_name || user.username}!</h5>
+                <div className="ai-chat-welcome-icon">✨</div>
+                <h5>Kính chào {user.full_name || user.username} đạo hữu!</h5>
                 <p>
-                  Tôi là Trợ lý AI hệ thống, được trang bị khả năng tra cứu trực tiếp dữ liệu ca học,
-                  điểm danh check-in, tiền lương và hồ sơ sinh viên học hộ theo đúng quyền hạn của bạn.
+                  Bản Khí Linh trấn thủ Thiên Cơ Các của Đấu La Tiên Giới. Tại hạ thấu triệt toàn bộ thiên thư:
+                  lịch trình thí luyện (ca học), khảo hạch ấn chứng (check-in), linh thạch bổng lộc (lương học hộ),
+                  cùng chân truyền ngọc giản của Tông Chủ...
                 </p>
 
                 {suggestions.length > 0 && (
                   <div>
-                    <div className="ai-chat-suggestions-title">💡 Câu hỏi gợi ý cho bạn:</div>
+                    <div className="ai-chat-suggestions-title">📜 Bí tịch thỉnh vấn nhanh:</div>
                     <div className="ai-chat-chips-list">
                       {suggestions.map((s, idx) => (
                         <button
@@ -209,7 +210,7 @@ export default function AiChatWidget() {
             {messages.map((msg, index) => (
               <div key={index} className={`ai-chat-message-row ${msg.role}`}>
                 <div className={`ai-chat-msg-avatar ${msg.role === 'assistant' ? 'ai' : 'user'}`}>
-                  {msg.role === 'assistant' ? '🤖' : '👤'}
+                  {msg.role === 'assistant' ? '🔮' : '🧙‍♂️'}
                 </div>
                 <div className={`ai-chat-bubble ${msg.role}`}>
                   {renderMessageContent(msg.content)}
@@ -217,7 +218,7 @@ export default function AiChatWidget() {
                   {/* Sources info */}
                   {msg.sources && msg.sources.length > 0 && (
                     <div className="ai-chat-sources">
-                      <span className="ai-chat-sources-label">Nguồn:</span>
+                      <span className="ai-chat-sources-label">Càn khôn ngọc giản:</span>
                       {msg.sources.map((src, sIdx) => (
                         <span key={sIdx} className="ai-chat-source-tag">{src}</span>
                       ))}
@@ -245,7 +246,7 @@ export default function AiChatWidget() {
             {/* Typing Indicator */}
             {isLoading && (
               <div className="ai-chat-typing-row">
-                <div className="ai-chat-msg-avatar ai">🤖</div>
+                <div className="ai-chat-msg-avatar ai">🔮</div>
                 <div className="ai-chat-typing-indicator">
                   <span className="ai-chat-typing-dot" />
                   <span className="ai-chat-typing-dot" />
@@ -272,8 +273,8 @@ export default function AiChatWidget() {
                 rows="1"
                 placeholder={
                   isRoleAdmin
-                    ? "Hỏi về ca học, duyệt ảnh, thành viên, lương..."
-                    : "Hỏi về ca của tôi, thu nhập, ca đang mở..."
+                    ? "Thỉnh vấn về ca thí luyện, ấn chứng check-in, bổng lộc đệ tử..."
+                    : "Thỉnh vấn về ca của ta, linh thạch tích lũy, chân truyền Tông Chủ..."
                 }
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -284,9 +285,9 @@ export default function AiChatWidget() {
                 type="submit"
                 className="ai-chat-send-btn"
                 disabled={!input.trim() || isLoading}
-                title="Gửi câu hỏi"
+                title="Truyền niệm thỉnh vấn"
               >
-                ➤
+                ⚡
               </button>
             </form>
           </div>

@@ -17,24 +17,24 @@ router = APIRouter(prefix="/chat", tags=["AI Chat Assistant"])
 
 @router.get("/suggestions", response_model=ChatSuggestionsResponse)
 def get_chat_suggestions(current_user: User = Depends(get_current_user)):
-    """Trả về danh sách câu hỏi gợi ý nhanh phù hợp với Role của người dùng."""
+    """Trả về danh sách câu hỏi gợi ý nhanh theo phong cách Tu Tiên / Đấu La."""
     if current_user.role == UserRole.admin:
         suggestions = [
-            "Hôm nay có những ca học nào cần duyệt?",
-            "Có bao nhiêu ảnh check-in tiết học đang chờ duyệt?",
-            "Tổng quan tình hình tài chính và thanh toán hiện tại?",
-            "Xem danh sách các ca học mở trong tuần này",
-            "Ai là những thành viên có thu nhập cao nhất?",
-            "Xem các góp ý hoặc phản ánh mới nhất của thành viên"
+            "Khởi bẩm Giáo Hoàng, hôm nay có bao nhiêu ca thí luyện cần sắc phong phê duyệt?",
+            "Kiểm tra ấn chứng check-in các tiết pháp đang chờ thẩm định",
+            "Xem tổng lượng linh thạch bổng lộc cần phát cho chư vị đệ tử",
+            "Tra cứu danh sách đệ tử có công huân tu vi bổng lộc cao nhất",
+            "Xem thiên đạo dị biến và tấu chương phản ánh của môn hạ",
+            "Mở thiên thư tra cứu toàn bộ các ca pháp trận tuần này"
         ]
     else:
         suggestions = [
-            "Tuần này tôi có những ca học nào đã được duyệt?",
-            "Hiện tại có ca học nào đang mở đăng ký không?",
-            "Xem thông tin sinh viên của Admin để đi học hộ",
-            "Tổng thu nhập và lịch sử nhận lương của tôi?",
-            "Kiểm tra trạng thái các tiết tôi đã check-in gần đây",
-            "Tóm tắt thống kê hoạt động học hộ của tôi"
+            "Tuần này ta có những tiết thí luyện nào đã được Giáo Hoàng phê chuẩn?",
+            "Hiện có ca thí luyện nào đang mở để tiếp nhận nhiệm vụ không?",
+            "Xem chân truyền ngọc giản (thông tin sinh viên) của Tông Chủ",
+            "Tổng kết linh thạch bổng lộc (tiền lương) đã tích lũy của ta",
+            "Tra cứu ấn chứng điểm danh các tiết pháp ta đã nạp gần đây",
+            "Tóm tắt công huân tu luyện và số ca thí luyện đã hoàn thành"
         ]
 
     return ChatSuggestionsResponse(
@@ -56,15 +56,15 @@ def ask_ai_assistant(
     if not api_key:
         return ChatResponse(
             answer=(
-                "⚠️ **Chưa cấu hình OpenAI API Key!**\n\n"
-                "Hệ thống đã chuẩn bị sẵn toàn bộ kiến trúc AI Agent và bảo mật phân quyền. "
-                "Quản trị viên vui lòng thêm cấu hình `OPENAI_API_KEY=sk-...` vào file `.env` "
-                "ở thư mục gốc rồi khởi động lại backend để kích hoạt trí tuệ nhân tạo."
+                "🔮 **Thiên Cơ Các Linh Khí Chưa Kích Hoạt!**\n\n"
+                "Khởi bẩm chư vị đạo hữu, Thiên Cơ Linh Trận đã sẵn sàng nhưng chưa được truyền nhập **OpenAI Thần Lực (API Key)**. "
+                "Giáo Hoàng / Tông Chủ đại nhân vui lòng truyền `OPENAI_API_KEY=sk-...` vào càn khôn ngọc giản `.env` "
+                "để đánh thức Thần Thú Khí Linh mở lối thiên cơ!"
             ),
-            sources=["Cấu hình hệ thống (.env)"],
+            sources=["Thiên Cơ Trận (.env)"],
             suggestions=[
-                "Làm sao để cấu hình OpenAI API Key?",
-                "Hệ thống hỗ trợ những tính năng tra cứu gì?"
+                "Cách truyền nhập OpenAI API Key?",
+                "Thiên Cơ Các có thể tra cứu những bí mật gì?"
             ]
         )
 
@@ -75,34 +75,37 @@ def ask_ai_assistant(
         logger.error(f"Error initializing OpenAI client: {e}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Không thể khởi tạo OpenAI client: {str(e)}"
+            detail=f"Không thể triệu hoán OpenAI Khí Linh: {str(e)}"
         )
 
-    # 1. Chuẩn bị system prompt với thông tin người dùng và quy định bảo mật
+    # 1. Chuẩn bị system prompt theo phong cách Tu Tiên / Đấu La Đại Khảo Chi Lưới
     is_admin = (current_user.role == UserRole.admin)
-    system_prompt = f"""Bạn là Trợ lý AI Thông Minh của hệ thống 'Web Học Hộ' (Đấu La Đại Khảo Chi Lưới).
-Nhiệm vụ của bạn là hỗ trợ người dùng tra cứu thông tin nhanh chóng, chính xác về:
-- Lịch học, ca học trong tuần, phòng học, tiết học, môn học.
-- Trạng thái check-in ảnh điểm danh từng tiết học.
-- Lịch sử tiền lương, thanh toán học hộ, thông tin tài khoản ngân hàng.
-- Thông tin sinh viên học hộ của Admin (mã SV, ngành, lớp, trường) để thành viên biết đi học hộ cho ai.
-- Góp ý/phản ánh (Feedback) và các hoạt động hệ thống.
+    system_prompt = f"""Bạn là KHÍ LINH THIÊN CƠ CÁC của 'Đấu La Đại Khảo Chi Lưới' (Hệ thống Khảo Thí & Quản Lý Học Hộ Tiên Giới).
+Bạn sở hữu thần thông thấu thị thiên cơ, chuyên phụ trách tra cứu thông tin môn phái, nhiệm vụ thí luyện (ca học), ấn chứng điểm danh (check-in), và linh thạch bổng lộc (tiền lương).
 
-THÔNG TIN NGƯỜI DÙNG HIỆN TẠI:
-- Họ và tên: {current_user.full_name}
-- Tên đăng nhập: {current_user.username}
-- Vai trò (Role): {'Quản trị viên (Admin)' if is_admin else 'Thành viên (Member)'}
+THÔNG TIN ĐẠO HỮU ĐANG THỈNH VẤN:
+- Đạo hiệu / Họ tên: {current_user.full_name} ({current_user.username})
+- Thân phận: {'👑 GIÁO HOÀNG ĐIỆN HẠ / TÔNG CHỦ TỐI CAO' if is_admin else '⚔️ HỒN SƯ ĐỆ TỬ / THÀNH VIÊN KHẢO THÍ'}
 
-QUY TẮC BẢO MẬT & TRUY VẤN (BẮT BUỘC TUÂN THỦ):
-1. TUYỆT ĐỐI KHÔNG tự bịa đặt số liệu hoặc thông tin. Hãy luôn gọi Function Calling Tools được cung cấp để truy vấn dữ liệu thực tế từ cơ sở dữ liệu trước khi trả lời.
-2. PHÂN QUYỀN CHẶT CHẼ:
-   - Nếu người dùng là 'Member': Họ CHỈ ĐƯỢC PHÉP xem ca học của chính họ (hoặc ca mở đăng ký), check-in của chính họ, thu nhập/thanh toán của chính họ, và feedback của chính họ.
-   - Nếu Member hỏi thông tin cá nhân của người khác (như danh sách thành viên, lương người khác, số điện thoại, log admin...), hãy TỪ CHỐI LỊCH SỰ và giải thích rằng quyền riêng tư chỉ cho phép Admin xem dữ liệu này.
-   - Nếu là 'Admin': Có toàn quyền xem toàn bộ ca học, danh sách thành viên, duyệt ca, check-in, tổng thu nhập và audit logs.
-3. PHONG CÁCH TRẢ LỜI:
-   - Luôn trả lời bằng tiếng Việt lịch sự, thân thiện, rõ ràng, gãy gọn.
-   - Sử dụng định dạng Markdown (in đậm, danh sách bullet `-`, bảng biểu nếu thích hợp) để người dùng dễ đọc.
-   - Kết thúc câu trả lời một cách tự nhiên và có thể gợi ý ngắn gọn bước tiếp theo.
+QUY CÁCH PHONG THÁI TU TIÊN & XƯNG HÔ (BẮT BUỘC):
+1. XƯNG HÔ:
+   - Nếu người hỏi là ADMIN: Tự xưng là 'Thuộc hạ', 'Khí Linh', 'Tiểu thần'. Cung kính gọi Admin là 'Giáo Hoàng đại nhân', 'Tông Chủ đại nhân', hoặc 'Tiên thượng'.
+   - Nếu người hỏi là MEMBER: Tự xưng là 'Bản Khí Linh', 'Tại hạ'. Gọi Member là 'Đạo hữu', 'Sư đệ/Sư muội', 'Hồn sư huynh đệ'.
+2. TỪ VỰNG TU TIÊN KẾT HỢP DỮ LIỆU THỰC TẾ:
+   - Ca học / Slot học -> 'Tiết thí luyện / Ca học hộ / Pháp trận'
+   - Tiết học / Giờ học -> 'Tiết pháp / Canh giờ'
+   - Điểm danh / Check-in ảnh -> 'Khảo hạch ấn chứng / Điểm danh ngọc giản'
+   - Tiền lương / Thu nhập -> 'Linh thạch bổng lộc' (PHẢI KÈM SỐ TIỀN VNĐ CHÍNH XÁC, ví dụ: '105,000 Linh Thạch (VNĐ)')
+   - Thông tin SV của Admin -> 'Chân truyền ngọc giản / Thân phận thế tục của Tông Chủ'
+   - Góp ý / Báo lỗi -> 'Tấu chương thỉnh an / Báo cáo dị biến'
+   - Nhật ký hệ thống -> 'Thiên Đạo Luân Hồi Ký'
+3. PHÂN QUYỀN THIÊN CƠ (TUYỆT ĐỐI TUÂN THỦ):
+   - Member CHỈ ĐƯỢC XEM ca học mở, ca của chính mình, bổng lộc của mình, check-in của mình.
+   - Nếu Member to gan dòm ngó cơ mật môn phái (hỏi danh sách đệ tử, bổng lộc của người khác, số điện thoại, tài khoản ngân hàng của đồng đạo...): Lập tức từ chối bằng giọng điệu tu chân uy nghiêm: 'Khởi bẩm đạo hữu, Thiên quy nghiêm ngặt! Cơ mật của đồng đạo khác và tông môn chỉ có Giáo Hoàng Tông Chủ mới có thần quyền mở phong ấn tra xét. Đạo hữu chớ phạm giới quy!'
+   - Admin có toàn quyền tra cứu càn khôn vạn vật.
+4. NGUYÊN TẮC THẦN THÔNG:
+   - TUYỆT ĐỐI KHÔNG BỊA ĐẶT SỐ LIỆU. Luôn gọi Function Calling Tools để tra cứu dữ liệu CSDL thực tế.
+   - Trả lời bằng tiếng Việt hào sảng, phong thái tiên hiệp, dùng Markdown (in đậm, bullet points, trích dẫn) rõ ràng, mạch lạc, lôi cuốn.
 """
 
     messages: List[Dict[str, Any]] = [
@@ -177,24 +180,24 @@ QUY TẮC BẢO MẬT & TRUY VẤN (BẮT BUỘC TUÂN THỦ):
         else:
             final_answer = response_message.content or "Tôi đã nhận được câu hỏi nhưng chưa có dữ liệu phản hồi."
 
-        # Tạo gợi ý tiếp theo ngắn gọn
+        # Tạo gợi ý tiếp theo ngắn gọn theo phong thái Tu Tiên
         suggested_followups = []
         if is_admin:
             suggested_followups = [
-                "Kiểm tra lại ca học hôm nay",
-                "Xem thống kê thanh toán",
-                "Xem thành viên mới"
+                "Tra cứu các ca thí luyện hôm nay",
+                "Kiểm toán linh thạch bổng lộc toàn tông môn",
+                "Khảo sát danh sách đệ tử mới nhập môn"
             ]
         else:
             suggested_followups = [
-                "Xem ca học khả dụng tuần này",
-                "Xem tổng thu nhập của tôi",
-                "Thông tin sinh viên Admin"
+                "Tìm ca thí luyện khả dụng tuần này",
+                "Xem linh thạch bổng lộc tích lũy của ta",
+                "Tra cứu chân truyền ngọc giản của Tông Chủ"
             ]
 
         return ChatResponse(
             answer=final_answer,
-            sources=list(sources_used) if sources_used else ["Kiến thức hệ thống Web Học Hộ"],
+            sources=list(sources_used) if sources_used else ["Thiên Thư Đấu La Chi Lưới"],
             suggestions=suggested_followups
         )
 
