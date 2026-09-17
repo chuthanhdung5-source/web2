@@ -1,3 +1,4 @@
+import React, { Component } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { DouluoProvider } from './context/DouluoContext'
@@ -36,6 +37,56 @@ import MemberProfile from './pages/member/ProfileSettings'
 
 import AppLayout from './components/Layout/AppLayout'
 
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('ErrorBoundary caught an error:', error, errorInfo)
+  }
+
+  handleReload = () => {
+    window.location.reload()
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex-center" style={{ minHeight: '100vh', flexDirection: 'column', gap: '16px', padding: '24px', textAlign: 'center', background: 'var(--bg-body, #0c0d16)' }}>
+          <div style={{ fontSize: '3rem' }}>🔮</div>
+          <h2 style={{ color: '#f59e0b', fontSize: '1.4rem', fontWeight: 800 }}>Trận Pháp Tiên Môn Vừa Gặp Chấn Động</h2>
+          <p style={{ color: '#94a3b8', maxWidth: '420px', fontSize: '0.9rem', lineHeight: 1.6 }}>
+            Kinh mạch kết nối vừa được tái định hình hoặc phiên làm việc tạm ngắt quãng. Hãy nhấn nút bên dưới để phục hồi đạo vụ.
+          </p>
+          <button
+            className="btn btn-primary"
+            style={{
+              padding: '10px 24px',
+              borderRadius: '9999px',
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #7c6af5, #6366f1)',
+              color: '#ffffff',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 4px 15px rgba(124, 106, 245, 0.4)'
+            }}
+            onClick={this.handleReload}
+          >
+            🔄 Tái Lập Trận Pháp (Tải Lại Trang)
+          </button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
+}
+
 function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth()
   if (loading) return (
@@ -51,17 +102,23 @@ function ProtectedRoute({ children, role }) {
 }
 
 function RootRedirect() {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
+  if (loading) return (
+    <div className="flex-center" style={{ height: '100vh' }}>
+      <div className="spinner" style={{ width: 32, height: 32 }} />
+    </div>
+  )
   if (!user) return <Navigate to="/login" replace />
   return <Navigate to={user.role === 'admin' ? '/admin' : '/member'} replace />
 }
 
 export default function App() {
   return (
-    <AuthProvider>
-      <DouluoProvider>
-        <ThemeProvider>
-          <BrowserRouter>
+    <ErrorBoundary>
+      <AuthProvider>
+        <DouluoProvider>
+          <ThemeProvider>
+            <BrowserRouter>
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
@@ -103,9 +160,10 @@ export default function App() {
             <ThemeModal />
             <SessionTimerOverlay />
             <AiChatWidget />
-          </BrowserRouter>
-        </ThemeProvider>
-      </DouluoProvider>
-    </AuthProvider>
+            </BrowserRouter>
+          </ThemeProvider>
+        </DouluoProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   )
 }

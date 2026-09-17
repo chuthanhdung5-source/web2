@@ -13,13 +13,11 @@ export default function AiChatWidget() {
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
 
-  // Chỉ hiển thị khi người dùng đã đăng nhập
-  if (!user) return null
-
-  const isRoleAdmin = user.role === 'admin'
+  const isRoleAdmin = user?.role === 'admin'
 
   // Tải danh sách câu hỏi gợi ý
   useEffect(() => {
+    if (!user) return
     let isMounted = true
     chatAPI.getSuggestions()
       .then((res) => {
@@ -46,6 +44,9 @@ export default function AiChatWidget() {
       }, 150)
     }
   }, [isOpen])
+
+  // Chỉ hiển thị khi người dùng đã đăng nhập (phải đặt SAU toàn bộ React Hooks)
+  if (!user) return null
 
   const handleSendMessage = async (textToSend) => {
     const query = (textToSend || input).trim()
