@@ -389,6 +389,20 @@ def mark_read(
     return {"message": "OK"}
 
 
+@router.post("/notifications/read-all")
+def mark_all_notifications_read(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    from app.models import Notification
+    db.query(Notification).filter(
+        Notification.user_id == current_user.id,
+        Notification.is_read == False
+    ).update({"is_read": True})
+    db.commit()
+    return {"message": "Đã đánh dấu đọc tất cả thông báo"}
+
+
 # ===== MEMBER FEEDBACK =====
 @router.post("/feedbacks")
 def create_feedback(

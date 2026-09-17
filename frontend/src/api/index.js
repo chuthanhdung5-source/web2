@@ -86,6 +86,7 @@ export const memberAPI = {
   getAdminInfo: () => api.get('/member/admin-info'),
   getNotifications: () => api.get('/member/notifications'),
   markNotifRead: (id) => api.post(`/member/notifications/${id}/read`),
+  markAllNotifsRead: () => api.post('/member/notifications/read-all'),
   getActivityLogs: () => api.get('/member/activity-logs'),
   createFeedback: (title, content, feedbackType) =>
     api.post('/member/feedbacks', null, { params: { title, content, feedback_type: feedbackType } }),

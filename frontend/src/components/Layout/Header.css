@@ -357,6 +357,14 @@
   .btn-theme-switcher .theme-btn-label {
     display: none;
   }
+
+  .notif-bell-btn {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    border-radius: 10px;
+  }
 }
 
 [data-theme="skin-light"] .top-header {

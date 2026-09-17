@@ -1,6 +1,7 @@
 import { useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useDouluo } from '../../context/DouluoContext'
+import NotificationBell from '../Common/NotificationBell'
 import './Header.css'
 
 const PAGE_TITLES = {
@@ -83,6 +84,8 @@ export default function Header({ onToggleSidebar }) {
       </div>
 
       <div className="header-right">
+        <NotificationBell />
+
         <div
           className="session-timer-badge"
           onClick={() => setIsShopOpen(true)}
