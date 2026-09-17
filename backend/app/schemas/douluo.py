@@ -31,8 +31,8 @@ class PurchaseRequest(BaseModel):
 
 
 class ExtendSessionRequest(BaseModel):
-    minutes: int = Field(default=120, ge=1)
-    price: int = Field(default=1000, ge=0)
+    minutes: int = Field(default=10, ge=1)
+    price: int = Field(default=100, ge=0)
 
 
 class CultivateRequest(BaseModel):

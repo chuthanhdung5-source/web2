@@ -74,10 +74,10 @@ export const SHOP_ITEMS = [
   },
   {
     id: 'session_extend_2h',
-    name: 'Gia Hạn 4 Khắc Bế Quan',
-    price: 1000,
+    name: 'Gia Hạn 10 Phút Bế Quan',
+    price: 100,
     icon: '⏳',
-    description: 'Cộng thêm 4 khắc nhập định tập trung mà không lo gián đoạn phiên tu luyện.',
+    description: 'Cộng thêm 10 phút nhập định tập trung mà không lo gián đoạn phiên tu luyện.',
     category: 'session',
     permanent: false,
   },
@@ -108,7 +108,7 @@ export function DouluoProvider({ children }) {
   const [vipTier, setVipTier] = useState(0)
   const [purchasedItems, setPurchasedItems] = useState([])
   const [sessionExpiry, setSessionExpiry] = useState(null)
-  const [sessionSecondsLeft, setSessionSecondsLeft] = useState(7200)
+  const [sessionSecondsLeft, setSessionSecondsLeft] = useState(600)
   const [isSessionExpired, setIsSessionExpired] = useState(false)
   const [loading, setLoading] = useState(true)
 
@@ -259,18 +259,23 @@ export function DouluoProvider({ children }) {
   useEffect(() => {
     if (!user) return
 
+    const SESSION_MS = 10 * 60 * 1000 // 10 phút
     let sessionEnd = Number(sessionStorage.getItem('douluo_session_end'))
     if (!sessionEnd || isNaN(sessionEnd) || sessionEnd < Date.now()) {
-      sessionEnd = Date.now() + 7200 * 1000
+      sessionEnd = Date.now() + SESSION_MS
       sessionStorage.setItem('douluo_session_end', String(sessionEnd))
     }
 
     const timer = setInterval(() => {
       const now = Date.now()
-      const diff = Math.max(0, Math.floor((sessionEnd - now) / 1000))
+      // Đọc trực tiếp từ sessionStorage mỗi giây để tránh đóng băng (stale closure)
+      const currentEnd = Number(sessionStorage.getItem('douluo_session_end')) || (now + SESSION_MS)
+      const diff = Math.max(0, Math.floor((currentEnd - now) / 1000))
       setSessionSecondsLeft(diff)
       if (diff <= 0) {
         setIsSessionExpired(true)
+      } else {
+        setIsSessionExpired(false)
       }
     }, 1000)
 
@@ -298,8 +303,9 @@ export function DouluoProvider({ children }) {
 
       if (item.id === 'session_extend_2h') {
         const currentEnd = Number(sessionStorage.getItem('douluo_session_end')) || Date.now()
-        const newEnd = Math.max(Date.now(), currentEnd) + 7200 * 1000
+        const newEnd = Math.max(Date.now(), currentEnd) + 10 * 60 * 1000
         sessionStorage.setItem('douluo_session_end', String(newEnd))
+        setSessionSecondsLeft(Math.max(0, Math.floor((newEnd - Date.now()) / 1000)))
         setIsSessionExpired(false)
       }
 
@@ -311,7 +317,7 @@ export function DouluoProvider({ children }) {
     }
   }
 
-  const extendSession = async (minutes = 120, price = 1000) => {
+  const extendSession = async (minutes = 10, price = 100) => {
     try {
       const res = await douluoAPI.extendSession(minutes, price)
       const data = res.data
@@ -320,6 +326,7 @@ export function DouluoProvider({ children }) {
       const currentEnd = Number(sessionStorage.getItem('douluo_session_end')) || Date.now()
       const newEnd = Math.max(Date.now(), currentEnd) + minutes * 60 * 1000
       sessionStorage.setItem('douluo_session_end', String(newEnd))
+      setSessionSecondsLeft(Math.max(0, Math.floor((newEnd - Date.now()) / 1000)))
       setIsSessionExpired(false)
 
       toast.success(data.message || `⏳ Đã gia hạn thành công thêm ${minutes} phút bế quan!`, { icon: '⌛' })
@@ -331,6 +338,10 @@ export function DouluoProvider({ children }) {
   }
 
   const dismissSessionWarning = () => {
+    // Bỏ qua: tự động cộng thêm 10 phút tu luyện miễn phí để không bị lặp lại cảnh báo liên tục
+    const newEnd = Date.now() + 10 * 60 * 1000
+    sessionStorage.setItem('douluo_session_end', String(newEnd))
+    setSessionSecondsLeft(600)
     setIsSessionExpired(false)
   }
 

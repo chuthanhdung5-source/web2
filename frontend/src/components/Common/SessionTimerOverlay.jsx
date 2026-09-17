@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useDouluo } from '../../context/DouluoContext'
 
 export default function SessionTimerOverlay() {
@@ -9,10 +9,17 @@ export default function SessionTimerOverlay() {
     dismissSessionWarning,
   } = useDouluo()
 
+  const [isExtending, setIsExtending] = useState(false)
+
   if (!isSessionExpired) return null
 
   const handleExtend = async () => {
-    await extendSession(120, 1000)
+    setIsExtending(true)
+    try {
+      await extendSession(10, 100)
+    } finally {
+      setIsExtending(false)
+    }
   }
 
   return (
@@ -58,7 +65,7 @@ export default function SessionTimerOverlay() {
             color: '#fbbf24',
           }}
         >
-          Phiên Khảo Thí Đã Đầy (2 Giờ)
+          Phiên Khảo Thí Đã Đầy (10 Phút)
         </h3>
 
         <p
@@ -69,7 +76,7 @@ export default function SessionTimerOverlay() {
             lineHeight: '1.55',
           }}
         >
-          Ngài đã tập trung làm việc liên tục suốt 2 giờ đồng hồ. Kinh mạch cần được nghỉ ngơi điều tiết, hoặc dùng <strong>1.000 💎</strong> để gia hạn thêm 120 phút tiếp tục tu hành!
+          Ngài đã tập trung làm việc liên tục suốt 10 phút. Kinh mạch cần được nghỉ ngơi điều tiết, hoặc dùng <strong>100 💎</strong> để gia hạn thêm 10 phút tiếp tục tu hành!
         </p>
 
         <div
@@ -101,10 +108,13 @@ export default function SessionTimerOverlay() {
               borderColor: '#f59e0b',
               color: '#000000',
               boxShadow: '0 4px 15px rgba(245, 158, 11, 0.35)',
+              opacity: isExtending ? 0.7 : 1,
+              cursor: isExtending ? 'not-allowed' : 'pointer',
             }}
             onClick={handleExtend}
+            disabled={isExtending}
           >
-            ⚡ Gia Hạn 120 Phút (-1.000 💎)
+            {isExtending ? 'Đang gia hạn...' : '⚡ Gia Hạn 10 Phút (-100 💎)'}
           </button>
 
           <button
@@ -118,7 +128,7 @@ export default function SessionTimerOverlay() {
             }}
             onClick={dismissSessionWarning}
           >
-            Vẫn tiếp tục
+            Bỏ qua, tiếp tục tu luyện (+10 phút)
           </button>
         </div>
       </div>
