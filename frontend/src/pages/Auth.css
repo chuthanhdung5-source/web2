@@ -632,15 +632,18 @@
     flex-direction: column;
     gap: 24px;
     width: 100%;
+    max-width: 100%;
     padding: 0 8px;
+    box-sizing: border-box;
   }
   .celestial-portal-sphere {
     width: 100%;
-    max-width: 380px;
+    max-width: 400px;
     height: auto;
-    min-height: 240px;
-    border-radius: 28px;
+    min-height: unset;
+    border-radius: 24px;
     padding: 24px 18px;
+    box-sizing: border-box;
   }
   .celestial-center-nexus {
     order: 3;
@@ -648,54 +651,96 @@
     margin-top: 6px;
   }
   .taiji-core-vortex {
-    width: 100px;
-    height: 100px;
-    margin-bottom: 14px;
+    width: 90px;
+    height: 90px;
+    margin-bottom: 12px;
   }
   .taiji-jewel-gem {
-    width: 54px;
-    height: 54px;
-    font-size: 1.3rem;
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
   }
   .btn-celestial-enter {
     width: 100%;
-    max-width: 340px;
+    max-width: 320px;
     min-width: unset;
+    box-sizing: border-box;
   }
 }
 
 @media (max-width: 480px) {
   .auth-page {
-    padding: 20px 10px;
+    padding: 16px 8px;
+    overflow-x: hidden;
+  }
+  .auth-realm-container {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
   }
   .celestial-header-shrine {
-    padding: 14px 18px 10px;
+    padding: 12px 14px 10px;
     width: 100%;
+    max-width: 100%;
     border-radius: 16px;
+    box-sizing: border-box;
   }
   .shrine-title {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
+    word-break: break-word;
   }
   .shrine-subtitle {
-    font-size: 0.8rem;
+    font-size: 0.78rem;
+  }
+  .celestial-dual-formation {
+    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
   }
   .celestial-portal-sphere {
+    width: 100%;
     max-width: 100%;
-    padding: 20px 14px;
+    padding: 18px 12px;
     border-radius: 20px;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  .sphere-ice::before, .sphere-fire::before {
+    inset: -4px;
+  }
+  .sphere-ice::after, .sphere-fire::after {
+    display: none;
   }
   .portal-heading {
-    font-size: 1.45rem;
+    font-size: 1.25rem;
+  }
+  .portal-subheading {
+    font-size: 0.78rem;
   }
   .celestial-input-tablet {
+    width: 100%;
     max-width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+  }
+  .celestial-raw-input {
+    font-size: 0.88rem;
+    min-width: 0;
   }
   .btn-celestial-enter {
-    font-size: 1.02rem;
-    padding: 12px 20px;
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.95rem;
+    padding: 11px 16px;
+    box-sizing: border-box;
+  }
+  .podium-halo-ring {
+    display: none;
   }
   .podium-axiom-quote {
-    font-size: 0.72rem;
+    font-size: 0.7rem;
   }
 }
 
@@ -835,23 +880,4 @@
   text-align: center;
   font-size: 0.88rem;
   color: #cbd5e1;
-}
-
-@media (max-width: 480px) {
-  .shrine-title {
-    font-size: 1.5rem;
-  }
-  .celestial-portal-sphere {
-    width: 320px;
-    height: 320px;
-    padding: 20px;
-  }
-  .portal-heading {
-    font-size: 1.4rem;
-  }
-  .btn-celestial-enter {
-    min-width: 220px;
-    font-size: 1rem;
-    padding: 12px 20px;
-  }
 }

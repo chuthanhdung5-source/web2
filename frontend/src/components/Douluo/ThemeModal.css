@@ -220,6 +220,8 @@
   color: #ffffff;
   margin: 0;
   flex: 1;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 [data-theme="skin-light"] .theme-card-name {
@@ -233,11 +235,14 @@
   border-radius: 4px;
   background: #10b981;
   color: #ffffff;
+  white-space: nowrap;
 }
 
 .theme-card-desc {
   font-size: 0.75rem;
   color: #94a3b8;
+  word-break: break-word;
+  overflow-wrap: break-word;
   margin: 0;
   line-height: 1.4;
   min-height: 32px;
