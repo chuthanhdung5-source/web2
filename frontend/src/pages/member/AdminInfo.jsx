@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { memberAPI } from '../../api'
+import { getImageUrl } from '../../api/client'
 
 export default function AdminInfo() {
   const [info, setInfo] = useState(null)
@@ -13,14 +14,13 @@ export default function AdminInfo() {
 
   if (!info) return (
     <div className="empty-state">
-      <div className="icon">😕</div>
-      <h3>Chưa có ngọc giản đồng môn</h3>
-      <p>Thỉnh thị Giáo Hoàng để cập nhật</p>
+      <div className="empty-icon">📭</div>
+      <p>Chưa có thông tức người cần hộ đạo</p>
     </div>
   )
 
   return (
-    <div>
+    <div className="animate-fade">
       <div className="page-header">
         <h1>🎓 Môn Quy Tiên Tông & Pháp Danh Đồng Môn</h1>
         <p>Ngọc giản ghi chép căn cốt đồng môn cần hộ đạo</p>
@@ -29,7 +29,7 @@ export default function AdminInfo() {
       <div className="grid grid-2" style={{ gap: 24 }}>
         <div className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 32 }}>
           {info.photo_url ? (
-            <img src={info.photo_url} alt="SV"
+            <img src={getImageUrl(info.photo_url)} alt="SV"
               style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--primary)' }} />
           ) : (
             <div className="avatar" style={{ width: 120, height: 120, fontSize: '2.5rem' }}>

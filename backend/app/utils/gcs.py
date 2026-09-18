@@ -65,8 +65,14 @@ async def upload_photo(file: UploadFile, folder: str = "checkins") -> tuple[str,
             bucket = client.bucket(settings.GCS_BUCKET_NAME)
             blob = bucket.blob(filename)
             blob.upload_from_string(content, content_type=file.content_type or "image/jpeg")
-            blob.make_public()
-            return blob.public_url, filename
+            try:
+                blob.make_public()
+            except Exception:
+                # Nếu bucket bật Uniform bucket-level access, make_public() sẽ báo lỗi ACL,
+                # quyền đọc công khai sẽ do IAM bucket (allUsers: Storage Object Viewer) quản lý.
+                pass
+            public_url = f"https://storage.googleapis.com/{settings.GCS_BUCKET_NAME}/{filename}"
+            return public_url, filename
         except Exception as e:
             print(f"[GCS UPLOAD ERROR] Fallback to local storage: {e}")
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { adminAPI } from '../../api'
+import { getImageUrl } from '../../api/client'
 import toast from 'react-hot-toast'
 
 export default function ProfileSettings() {
@@ -59,7 +60,7 @@ export default function ProfileSettings() {
         <div className="card" style={{ gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: 24 }}>
           <div>
             {(photoPreview || profile?.photo_url) ? (
-              <img src={photoPreview || profile.photo_url} alt="avatar"
+              <img src={photoPreview || getImageUrl(profile.photo_url)} alt="avatar"
                 style={{ width: 100, height: 100, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)' }} />
             ) : (
               <div className="avatar" style={{ width: 100, height: 100, fontSize: '2rem' }}>
